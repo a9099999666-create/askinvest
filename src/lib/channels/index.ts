@@ -40,6 +40,12 @@ export function listChannelStatus() {
 export function resolveOutboundChannel(preferred: ChannelKind): ChannelKind {
   const adapter = getAdapter(preferred);
   if (adapter.isConfigured()) return preferred;
-  if (preferred !== "test" && isTestChannelEnabled()) return "test";
+  if (
+    preferred !== "test" &&
+    process.env.NODE_ENV !== "production" &&
+    isTestChannelEnabled()
+  ) {
+    return "test";
+  }
   return preferred;
 }

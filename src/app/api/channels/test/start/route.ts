@@ -19,10 +19,7 @@ function authorizeTestStart(req: Request) {
   if (!secret) {
     return process.env.NODE_ENV !== "production";
   }
-  const url = new URL(req.url);
-  const fromQuery = url.searchParams.get("secret") || "";
-  const fromHeader = req.headers.get("x-test-channel-secret") || "";
-  const provided = fromHeader || fromQuery;
+  const provided = req.headers.get("x-test-channel-secret") || "";
   try {
     const a = Buffer.from(provided);
     const b = Buffer.from(secret);

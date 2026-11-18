@@ -50,12 +50,8 @@ export const testAdapter: ChannelAdapter = {
   },
   buildDeepLink(markerCode) {
     if (!isTestChannelEnabled()) return "";
-    const secret = getEnv().testChannelSecret;
-    const base = `/api/channels/test/start?code=${encodeURIComponent(markerCode)}`;
-    if (secret) {
-      return `${base}&secret=${encodeURIComponent(secret)}`;
-    }
-    return base;
+    if (process.env.NODE_ENV === "production") return "";
+    return `/api/channels/test/start?code=${encodeURIComponent(markerCode)}`;
   },
   async sendText({ text }) {
     if (!isTestChannelEnabled()) {

@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { count } from "drizzle-orm";
+import { requireIdentity } from "../../../../cursor/identity";
 import { db } from "@/db/client";
 import { siteSettings, subscriptionTopics, users } from "@/db/schema";
 import { OWNER_PERMISSIONS } from "@/lib/auth/permissions";
 import { createSession, hashPassword } from "@/lib/auth/session";
 
 export async function POST(req: Request) {
+  const identity = await requireIdentity(req);
+  if (identity instanceof Response) return identity;
+
   const [{ value: userCount }] = await db
     .select({ value: count() })
     .from(users);
