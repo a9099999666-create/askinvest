@@ -19,7 +19,9 @@ export function SiteHeader() {
       <nav className="flex items-center gap-4 text-sm font-semibold text-ink md:gap-8">
         {links.map((l) => {
           const active =
-            pathname === l.href || pathname.startsWith(l.href + "/");
+            pathname === l.href ||
+            pathname.startsWith(l.href + "/") ||
+            (pathname === "/" && l.href === "/services");
           return (
             <Link
               key={l.href}

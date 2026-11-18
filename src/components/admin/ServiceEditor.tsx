@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { CrystalHero } from "@/components/public/CrystalHero";
 import { nanoid } from "@/lib/utils";
 import { PageTitle } from "./PageTitle";
 import { IconCheck, IconGrip } from "./icons";
@@ -165,7 +164,8 @@ export function ServiceEditor({
         <aside className="rounded-[28px] bg-white p-5 shadow-panel">
           <div className="text-sm text-ink/45">Предпросмотр</div>
           <div className="mt-3 overflow-hidden rounded-2xl bg-gradient-to-b from-sky-50 to-white">
-            <CrystalHero className="mx-auto w-52" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/catalog-glass.png" alt="" className="mx-auto w-full max-w-xs" />
           </div>
           <h2 className="mt-4 text-2xl font-bold leading-tight text-ink">
             {title || "Без названия"}

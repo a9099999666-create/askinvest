@@ -2,7 +2,6 @@ import Link from "next/link";
 import { and, eq, gte, lte, sql } from "drizzle-orm";
 import { db } from "@/db/client";
 import { properties, propertyVersions } from "@/db/schema";
-import { CrystalHero } from "@/components/public/CrystalHero";
 import { InteriorShot } from "@/components/public/InteriorShot";
 
 export const dynamic = "force-dynamic";
@@ -62,7 +61,12 @@ export default async function PropertiesPage({
           <br />
           недвижимость
         </h1>
-        <CrystalHero className="md:-mr-4" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/catalog-glass.png"
+          alt=""
+          className="w-full max-w-md select-none justify-self-end"
+        />
       </div>
 
       <form className="glass-panel mt-6 rounded-[28px] p-4 md:p-5" action="/properties" method="get">

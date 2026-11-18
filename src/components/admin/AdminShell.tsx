@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "@/components/public/Logo";
-import { CrystalHero } from "@/components/public/CrystalHero";
 import { cn } from "@/lib/utils";
 import {
   IconBell,
@@ -87,9 +86,12 @@ export function AdminShell({
           </nav>
         </aside>
         <div className="relative min-w-0 flex-1">
-          <div className="pointer-events-none absolute right-36 top-1 z-0 hidden w-44 lg:block">
-            <CrystalHero />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/brand/catalog-glass.png"
+            alt=""
+            className="pointer-events-none absolute right-32 top-1 z-0 hidden w-48 select-none lg:block"
+          />
           <div className="absolute right-4 top-4 z-20 flex flex-col items-end gap-2 md:right-6">
             <UserMenu userName={userName} />
             {isOwner && (

@@ -29,11 +29,8 @@ export function DiscussForm({
   title?: string;
 }) {
   const [question, setQuestion] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
   const [channel, setChannel] = useState<ChannelKind>("telegram");
   const [error, setError] = useState("");
-  const [contactsOpen, setContactsOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const publicKey = useMemo(() => nanoid(), []);
 
@@ -52,8 +49,6 @@ export function DiscussForm({
             question,
             channel,
             publicKey,
-            visitorName: name || undefined,
-            visitorPhone: phone || undefined,
             serviceId,
             propertyId,
             intent,
@@ -90,33 +85,6 @@ export function DiscussForm({
           aria-invalid={Boolean(error)}
         />
       </label>
-      <button
-        type="button"
-        className="mt-2 text-xs font-semibold text-ink/45"
-        onClick={() => setContactsOpen((v) => !v)}
-      >
-        {contactsOpen ? "Скрыть контакты" : "Имя и телефон"}
-      </button>
-      {contactsOpen && (
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <label>
-            <span className="mb-1 block text-xs text-ink/50">Имя</span>
-            <input
-              className="field bg-white"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </label>
-          <label>
-            <span className="mb-1 block text-xs text-ink/50">Телефон</span>
-            <input
-              className="field bg-white"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </label>
-        </div>
-      )}
       <div className="mt-4 grid grid-cols-3 gap-2">
         {channels.map((c) => (
           <button
