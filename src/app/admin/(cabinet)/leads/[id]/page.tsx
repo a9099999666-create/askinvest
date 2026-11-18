@@ -1,0 +1,65 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { eq } from "drizzle-orm";
+import { db } from "@/db/client";
+import { leads, threads } from "@/db/schema";
+import { LeadActions } from "@/components/admin/LeadActions";
+
+export const dynamic = "force-dynamic";
+
+export default async function LeadDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const lead = await db.query.leads.findFirst({ where: eq(leads.id, id) });
+  if (!lead) notFound();
+  const thread = await db.query.threads.findFirst({
+    where: eq(threads.leadId, id),
+  });
+
+  return (
+    <div className="max-w-3xl">
+      <h1 className="font-display text-3xl font-bold">Заявка</h1>
+      <div className="mt-4 space-y-2 rounded-2xl bg-white/80 p-5 text-sm">
+        <p>
+          <strong>Вопрос:</strong> {lead.question}
+        </p>
+        <p>
+          <strong>Канал:</strong> {lead.channel}
+        </p>
+        <p>
+          <strong>Стадия:</strong> {lead.stage}
+        </p>
+        <p>
+          <strong>Связь с чатом:</strong> {lead.chatLinkStatus}
+        </p>
+        <p>
+          <strong>Источник:</strong> {lead.sourcePage}
+        </p>
+        <p>
+          <strong>Клиент:</strong> {lead.visitorName || "—"}{" "}
+          {lead.visitorPhone || ""}
+        </p>
+        <p>
+          <strong>Снимок услуги/объекта:</strong>{" "}
+          {lead.serviceTitleSnapshot || lead.propertyTitleSnapshot || "—"}
+        </p>
+        {thread && (
+          <p>
+            <Link className="text-brand-blue" href={`/admin/inbox?thread=${thread.id}`}>
+              Открыть диалог
+            </Link>
+          </p>
+        )}
+      </div>
+      <LeadActions
+        leadId={lead.id}
+        stage={lead.stage}
+        note={lead.note || ""}
+        nextAction={lead.nextAction || ""}
+      />
+    </div>
+  );
+}
