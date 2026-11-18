@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DiscussForm } from "@/components/forms/DiscussForm";
-import { getPublishedProperty } from "@/lib/public/cache";
+import { getPropertyCards, getPublishedProperty } from "@/lib/public/cache";
 import { formatArea, formatRub } from "@/lib/utils";
 
 export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const items = await getPropertyCards("all", "", "");
+  return items.map((item) => ({ slug: item.slug }));
+}
 
 export default async function PropertyPage({
   params,

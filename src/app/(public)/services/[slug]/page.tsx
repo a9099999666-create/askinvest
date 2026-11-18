@@ -2,9 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DiscussForm } from "@/components/forms/DiscussForm";
 import { GlassFolder } from "@/components/public/GlassFolder";
-import { getPublishedService } from "@/lib/public/cache";
+import { getPublishedService, getServiceCards } from "@/lib/public/cache";
 
 export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const items = await getServiceCards();
+  return items.map((item) => ({ slug: item.slug }));
+}
 
 export default async function ServicePage({
   params,

@@ -4,11 +4,15 @@ import { z } from "zod";
 import { db } from "@/db/client";
 import { properties, propertyVersions, services, serviceVersions } from "@/db/schema";
 import { createLeadFromForm } from "@/lib/crm/leads";
+import { nanoid } from "@/lib/utils";
 
 const schema = z.object({
   question: z.string().min(1),
   channel: z.enum(["telegram", "max", "whatsapp", "test"]),
-  publicKey: z.string().min(8),
+  publicKey: z
+    .string()
+    .optional()
+    .transform((value) => (value && value.length >= 8 ? value : undefined)),
   visitorName: z.string().optional(),
   visitorPhone: z.string().optional(),
   sourcePage: z.string().optional(),
@@ -17,10 +21,33 @@ const schema = z.object({
   propertyId: z.string().uuid().optional(),
 });
 
+function first(value: FormDataEntryValue | null) {
+  return typeof value === "string" ? value : undefined;
+}
+
+async function readBody(req: Request) {
+  const contentType = req.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) {
+    return schema.parse(await req.json());
+  }
+  const form = await req.formData();
+  return schema.parse({
+    question: first(form.get("question")),
+    channel: first(form.get("channel")) || "telegram",
+    publicKey: first(form.get("publicKey")),
+    visitorName: first(form.get("visitorName")),
+    visitorPhone: first(form.get("visitorPhone")),
+    sourcePage: first(form.get("sourcePage")),
+    intent: first(form.get("intent")),
+    serviceId: first(form.get("serviceId")) || undefined,
+    propertyId: first(form.get("propertyId")) || undefined,
+  });
+}
+
 export async function POST(req: Request) {
+  const wantsHtml = (req.headers.get("accept") || "").includes("text/html");
   try {
-    const json = await req.json();
-    const body = schema.parse(json);
+    const body = await readBody(req);
 
     let serviceTitleSnapshot: string | undefined;
     let propertyTitleSnapshot: string | undefined;
@@ -50,9 +77,17 @@ export async function POST(req: Request) {
 
     const result = await createLeadFromForm({
       ...body,
+      publicKey: body.publicKey || nanoid(),
       serviceTitleSnapshot,
       propertyTitleSnapshot,
     });
+
+    if (wantsHtml) {
+      if (result.deepLink) {
+        return NextResponse.redirect(result.deepLink, 303);
+      }
+      return NextResponse.redirect(new URL("/?lead=channel", req.url), 303);
+    }
 
     return NextResponse.json({
       leadId: result.lead.id,
@@ -62,9 +97,10 @@ export async function POST(req: Request) {
       chatLinkStatus: result.lead.chatLinkStatus,
     });
   } catch (e) {
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Ошибка" },
-      { status: 400 },
-    );
+    const message = e instanceof Error ? e.message : "Ошибка";
+    if (wantsHtml) {
+      return NextResponse.redirect(new URL("/?lead=error", req.url), 303);
+    }
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }

@@ -20,7 +20,7 @@ export default {
       },
       fontFamily: {
         sans: ["var(--font-manrope)", "Segoe UI", "sans-serif"],
-        display: ["var(--font-onest)", "var(--font-manrope)", "sans-serif"],
+        display: ["var(--font-manrope)", "sans-serif"],
       },
       boxShadow: {
         panel: "0 18px 50px rgba(20, 55, 100, 0.12)",
