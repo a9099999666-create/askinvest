@@ -7,7 +7,7 @@ import { createLeadFromForm } from "@/lib/crm/leads";
 import { nanoid } from "@/lib/utils";
 
 const schema = z.object({
-  question: z.string().min(1),
+  question: z.string().trim().min(1),
   channel: z.enum(["telegram", "max", "whatsapp", "test"]),
   publicKey: z
     .string()

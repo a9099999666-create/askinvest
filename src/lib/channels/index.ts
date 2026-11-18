@@ -37,6 +37,10 @@ export function listChannelStatus() {
   });
 }
 
+export function listPublicChannelStatus() {
+  return listChannelStatus().filter((item) => item.kind !== "test");
+}
+
 export function resolveOutboundChannel(preferred: ChannelKind): ChannelKind {
   const adapter = getAdapter(preferred);
   if (adapter.isConfigured()) return preferred;
