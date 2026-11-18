@@ -36,10 +36,10 @@ export function AdminShell({
   const pathname = usePathname();
   return (
     <div className="min-h-screen bg-atmosphere">
-      <div className="mx-auto flex min-h-screen max-w-7xl">
-        <aside className="hidden w-64 shrink-0 border-r border-white/40 bg-white/50 p-4 backdrop-blur md:block">
+      <div className="mx-auto flex min-h-screen max-w-[1400px]">
+        <aside className="hidden w-60 shrink-0 border-r border-white/50 bg-white/40 p-4 backdrop-blur md:block">
           <Logo />
-          <div className="mt-4 rounded-xl bg-ink px-3 py-2 text-sm font-medium text-white">
+          <div className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-medium text-ink shadow-sm">
             Закрытый кабинет
           </div>
           <nav className="mt-6 space-y-5">

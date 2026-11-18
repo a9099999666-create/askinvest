@@ -2,6 +2,7 @@ import Link from "next/link";
 import { and, eq, gte, lte, sql } from "drizzle-orm";
 import { db } from "@/db/client";
 import { properties, propertyVersions } from "@/db/schema";
+import { CrystalHero } from "@/components/public/CrystalHero";
 import { formatArea, formatRub } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -58,10 +59,15 @@ export default async function PropertiesPage({
   }
 
   return (
-    <div className="pt-4">
-      <h1 className="font-display text-4xl font-bold text-ink">
-        Коммерческая недвижимость
-      </h1>
+    <div className="pt-2">
+      <div className="grid items-center gap-4 md:grid-cols-[1fr_280px]">
+        <h1 className="font-display text-4xl font-bold leading-tight text-ink md:text-6xl">
+          Коммерческая
+          <br />
+          недвижимость
+        </h1>
+        <CrystalHero className="md:-mr-6" />
+      </div>
 
       <form
         className="glass-panel mt-8 rounded-3xl p-5"

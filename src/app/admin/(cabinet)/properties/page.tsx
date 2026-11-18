@@ -20,9 +20,12 @@ export default async function AdminPropertiesPage() {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-3xl font-bold text-ink">
-          Управление сайтом
-        </h1>
+        <div>
+          <h1 className="font-display text-4xl font-bold text-ink">
+            Управление сайтом
+          </h1>
+          <div className="mt-2 h-[3px] w-12 rounded bg-brand-red" />
+        </div>
         <div className="flex gap-2">
           <Link href="/admin/properties/new" className="btn-primary">
             + Добавить объект
