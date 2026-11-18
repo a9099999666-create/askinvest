@@ -88,7 +88,7 @@ export function AdminShell({
         <div className="relative min-w-0 flex-1">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/brand/catalog-glass.png"
+            src="/brand/catalog-glass.webp"
             alt=""
             className="pointer-events-none absolute right-32 top-1 z-0 hidden w-48 select-none lg:block"
           />

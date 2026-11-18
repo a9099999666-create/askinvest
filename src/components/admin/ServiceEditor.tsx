@@ -165,7 +165,7 @@ export function ServiceEditor({
           <div className="text-sm text-ink/45">Предпросмотр</div>
           <div className="mt-3 overflow-hidden rounded-2xl bg-gradient-to-b from-sky-50 to-white">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/brand/catalog-glass.png" alt="" className="mx-auto w-full max-w-xs" />
+            <img src="/brand/catalog-glass.webp" alt="" className="mx-auto w-full max-w-xs" />
           </div>
           <h2 className="mt-4 text-2xl font-bold leading-tight text-ink">
             {title || "Без названия"}

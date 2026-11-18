@@ -1,17 +1,9 @@
 import Link from "next/link";
-import { and, eq, gte, lte, sql } from "drizzle-orm";
-import { db } from "@/db/client";
-import { properties, propertyVersions } from "@/db/schema";
+import { Suspense } from "react";
 import { InteriorShot } from "@/components/public/InteriorShot";
+import { getPropertyCards } from "@/lib/public/cache";
 
-export const dynamic = "force-dynamic";
-
-const bands: Record<string, { min?: string; max?: string }> = {
-  "100": { max: "100" },
-  "300": { min: "100", max: "300" },
-  "1000": { min: "300", max: "1000" },
-  "1000p": { min: "1000" },
-};
+export const revalidate = 60;
 
 export default async function PropertiesPage({
   searchParams,
@@ -22,27 +14,6 @@ export default async function PropertiesPage({
   const deal = sp.deal || "all";
   const q = sp.q || "";
   const area = sp.area || "";
-  const band = bands[area];
-
-  const conditions = [eq(propertyVersions.status, "published")];
-  if (deal === "sale" || deal === "rent") {
-    conditions.push(eq(propertyVersions.dealType, deal));
-  }
-  if (q) conditions.push(sql`${propertyVersions.address} ilike ${"%" + q + "%"}`);
-  if (band?.min) conditions.push(gte(propertyVersions.areaSqm, band.min));
-  if (band?.max) conditions.push(lte(propertyVersions.areaSqm, band.max));
-
-  const items = await db
-    .select({
-      id: properties.id,
-      slug: properties.slug,
-      address: propertyVersions.address,
-      dealType: propertyVersions.dealType,
-      coverId: propertyVersions.coverId,
-    })
-    .from(properties)
-    .innerJoin(propertyVersions, eq(properties.publishedVersionId, propertyVersions.id))
-    .where(and(...conditions));
 
   function hrefFor(nextDeal: string) {
     const params = new URLSearchParams();
@@ -63,7 +34,7 @@ export default async function PropertiesPage({
         </h1>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/brand/catalog-glass.png"
+          src="/brand/catalog-glass.webp"
           alt=""
           className="w-full max-w-md select-none justify-self-end"
         />
@@ -107,7 +78,25 @@ export default async function PropertiesPage({
         </div>
       </form>
 
-      <div className="mt-8 grid gap-5 md:grid-cols-3">
+      <Suspense fallback={<div className="mt-8 h-56 rounded-[24px] bg-white/50" />}>
+        <PropertyGrid deal={deal} q={q} area={area} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function PropertyGrid({
+  deal,
+  q,
+  area,
+}: {
+  deal: string;
+  q: string;
+  area: string;
+}) {
+  const items = await getPropertyCards(deal, q, area);
+  return (
+    <div className="mt-8 grid gap-5 md:grid-cols-3">
         {items.map((item) => (
           <Link
             key={item.id}
@@ -144,7 +133,6 @@ export default async function PropertiesPage({
         {items.length === 0 && (
           <p className="text-ink/60">Нет объектов по выбранным фильтрам.</p>
         )}
-      </div>
     </div>
   );
 }

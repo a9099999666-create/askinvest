@@ -1,12 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { eq } from "drizzle-orm";
-import { db } from "@/db/client";
-import { properties, propertyVersions } from "@/db/schema";
 import { DiscussForm } from "@/components/forms/DiscussForm";
+import { getPublishedProperty } from "@/lib/public/cache";
 import { formatArea, formatRub } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function PropertyPage({
   params,
@@ -14,28 +12,7 @@ export default async function PropertyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const rows = await db
-    .select({
-      id: properties.id,
-      slug: properties.slug,
-      title: propertyVersions.title,
-      address: propertyVersions.address,
-      dealType: propertyVersions.dealType,
-      areaSqm: propertyVersions.areaSqm,
-      priceRub: propertyVersions.priceRub,
-      priceUnit: propertyVersions.priceUnit,
-      description: propertyVersions.description,
-      floorPlanId: propertyVersions.floorPlanId,
-    })
-    .from(properties)
-    .innerJoin(
-      propertyVersions,
-      eq(properties.publishedVersionId, propertyVersions.id),
-    )
-    .where(eq(properties.slug, slug))
-    .limit(1);
-
-  const property = rows[0];
+  const property = await getPublishedProperty(slug);
   if (!property) notFound();
 
   return (

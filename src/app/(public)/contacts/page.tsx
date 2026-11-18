@@ -1,14 +1,10 @@
-import { eq } from "drizzle-orm";
-import { db } from "@/db/client";
-import { siteSettings } from "@/db/schema";
 import { DiscussForm } from "@/components/forms/DiscussForm";
+import { getContactsHtml } from "@/lib/public/cache";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function ContactsPage() {
-  const settings = await db.query.siteSettings.findFirst({
-    where: eq(siteSettings.id, 1),
-  });
+  const contactsHtml = await getContactsHtml();
 
   return (
     <div className="grid gap-8 pt-4 md:grid-cols-2">
@@ -18,7 +14,7 @@ export default async function ContactsPage() {
           className="glass-panel prose prose-slate mt-6 max-w-none rounded-2xl p-6"
           dangerouslySetInnerHTML={{
             __html:
-              settings?.contactsHtml ||
+              contactsHtml ||
               "<p>Реквизиты и способы связи утвердит владелец.</p>",
           }}
         />

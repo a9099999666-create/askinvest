@@ -11,6 +11,7 @@ export function Logo({ className = "" }: { className?: string }) {
         height={36}
         className="h-9 w-9 object-contain"
         priority
+        unoptimized
       />
       <span className="font-display text-lg font-bold tracking-wide text-ink">
         АСКИНВЕСТ

@@ -5,11 +5,13 @@ import "./globals.css";
 const manrope = Manrope({
   subsets: ["latin", "cyrillic"],
   variable: "--font-manrope",
+  display: "swap",
 });
 
 const onest = Onest({
   subsets: ["latin", "cyrillic"],
   variable: "--font-onest",
+  display: "swap",
 });
 
 export const metadata: Metadata = {

@@ -1,12 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { eq } from "drizzle-orm";
-import { db } from "@/db/client";
-import { services, serviceVersions } from "@/db/schema";
 import { DiscussForm } from "@/components/forms/DiscussForm";
 import { GlassFolder } from "@/components/public/GlassFolder";
+import { getPublishedService } from "@/lib/public/cache";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function ServicePage({
   params,
@@ -14,20 +12,7 @@ export default async function ServicePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const rows = await db
-    .select({
-      id: services.id,
-      slug: services.slug,
-      title: serviceVersions.title,
-      shortDescription: serviceVersions.shortDescription,
-      workItems: serviceVersions.workItems,
-    })
-    .from(services)
-    .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
-    .where(eq(services.slug, slug))
-    .limit(1);
-
-  const service = rows[0];
+  const service = await getPublishedService(slug);
   if (!service) notFound();
 
   return (
