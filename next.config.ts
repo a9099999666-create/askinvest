@@ -6,6 +6,13 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "12mb",
     },
   },
+  webpack: (config) => {
+    config.resolve.extensionAlias = {
+      ...config.resolve.extensionAlias,
+      ".js": [".ts", ".tsx", ".js"],
+    };
+    return config;
+  },
 };
 
 export default nextConfig;

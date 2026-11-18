@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { count } from "drizzle-orm";
-import { requireIdentity } from "../../../../cursor/identity";
+import { requireIdentity } from "../../../../../cursor/identity";
 import { db } from "@/db/client";
 import { siteSettings, subscriptionTopics, users } from "@/db/schema";
 import { OWNER_PERMISSIONS } from "@/lib/auth/permissions";

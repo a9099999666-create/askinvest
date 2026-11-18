@@ -1,6 +1,6 @@
 import { count } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { requireIdentity } from "../../../../cursor/identity";
+import { requireIdentity } from "../../../../../cursor/identity";
 import { db } from "@/db/client";
 import { users } from "@/db/schema";
 
