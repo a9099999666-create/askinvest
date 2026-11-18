@@ -77,6 +77,15 @@ export async function loadMaterials(): Promise<MaterialItem[]> {
     });
   }
 
-  items.sort((a, b) => b.updatedAt - a.updatedAt);
-  return items.map(({ updatedAt: _updated, ...item }) => item);
+  return items
+    .sort((a, b) => b.updatedAt - a.updatedAt)
+    .map(({ id, href, title, subtitle, kind, status, thumb }) => ({
+      id,
+      href,
+      title,
+      subtitle,
+      kind,
+      status,
+      thumb,
+    }));
 }
