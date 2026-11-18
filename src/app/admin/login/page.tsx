@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Logo } from "@/components/public/Logo";
 
@@ -10,6 +10,15 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
+
+  useEffect(() => {
+    fetch("/api/auth/setup-status")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.needsSetup) router.replace("/admin/setup");
+      })
+      .catch(() => undefined);
+  }, [router]);
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
