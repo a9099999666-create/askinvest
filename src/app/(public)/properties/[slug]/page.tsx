@@ -19,10 +19,36 @@ export default async function PropertyPage({
   const { slug } = await params;
   const property = await getPublishedProperty(slug);
   if (!property) notFound();
+  const photos = [property.coverId, ...(property.galleryIds || [])].filter(
+    (id, index, list): id is string => Boolean(id) && list.indexOf(id) === index,
+  );
 
   return (
     <div className="grid gap-8 pt-4 md:grid-cols-2">
       <div>
+        {photos.length > 0 && (
+          <div className="mb-5 grid gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`/api/media/${photos[0]}`}
+              alt=""
+              className="h-64 w-full rounded-[24px] object-cover"
+            />
+            {photos.length > 1 && (
+              <div className="grid grid-cols-3 gap-2">
+                {photos.slice(1).map((id) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={id}
+                    src={`/api/media/${id}`}
+                    alt=""
+                    className="h-24 w-full rounded-2xl object-cover"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         <div
           className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold text-white ${
             property.dealType === "sale" ? "bg-brand-red" : "bg-brand-blue"

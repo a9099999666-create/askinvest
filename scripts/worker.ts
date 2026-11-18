@@ -33,13 +33,23 @@ async function processCampaignTick(campaignId: string) {
     return;
   }
 
+  if (!campaign.topicId) {
+    await db
+      .update(campaignRecipients)
+      .set({
+        status: "cancelled",
+        error: "У рассылки нет темы",
+        updatedAt: new Date(),
+      })
+      .where(eq(campaignRecipients.id, recipient.id));
+    return;
+  }
+
   const sub = await db.query.subscriptions.findFirst({
     where: and(
       eq(subscriptions.contactId, recipient.contactId),
       eq(subscriptions.channel, recipient.channel),
-      campaign.topicId
-        ? eq(subscriptions.topicId, campaign.topicId)
-        : undefined,
+      eq(subscriptions.topicId, campaign.topicId),
       isNull(subscriptions.revokedAt),
     ),
   });

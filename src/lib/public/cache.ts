@@ -102,6 +102,8 @@ export const getPublishedProperty = unstable_cache(
         priceRub: propertyVersions.priceRub,
         priceUnit: propertyVersions.priceUnit,
         description: propertyVersions.description,
+        coverId: propertyVersions.coverId,
+        galleryIds: propertyVersions.galleryIds,
         floorPlanId: propertyVersions.floorPlanId,
       })
       .from(properties)

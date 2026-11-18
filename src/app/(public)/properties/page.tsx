@@ -5,7 +5,44 @@ import { getPropertyCards } from "@/lib/public/cache";
 
 export const revalidate = 60;
 
-export default async function PropertiesPage({
+export default function PropertiesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  return (
+    <div className="pt-2">
+      <link rel="preload" href="/brand/catalog-glass.webp" as="image" type="image/webp" />
+      <div className="grid items-center gap-2 md:grid-cols-[1fr_320px]">
+        <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
+          Коммерческая
+          <br />
+          недвижимость
+        </h1>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/catalog-glass.webp"
+          alt=""
+          width={800}
+          height={250}
+          className="w-full max-w-md select-none justify-self-end"
+        />
+      </div>
+      <Suspense
+        fallback={
+          <>
+            <div className="glass-panel mt-6 h-40 rounded-[28px]" />
+            <div className="mt-8 h-56 rounded-[24px] bg-white/50" />
+          </>
+        }
+      >
+        <Catalog searchParams={searchParams} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function Catalog({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -24,22 +61,10 @@ export default async function PropertiesPage({
     return query ? `/properties?${query}` : "/properties";
   }
 
-  return (
-    <div className="pt-2">
-      <div className="grid items-center gap-2 md:grid-cols-[1fr_320px]">
-        <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
-          Коммерческая
-          <br />
-          недвижимость
-        </h1>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/brand/catalog-glass.webp"
-          alt=""
-          className="w-full max-w-md select-none justify-self-end"
-        />
-      </div>
+  const items = await getPropertyCards(deal, q, area);
 
+  return (
+    <>
       <form className="glass-panel mt-6 rounded-[28px] p-4 md:p-5" action="/properties" method="get">
         <div className="flex flex-wrap gap-2">
           {[
@@ -50,6 +75,7 @@ export default async function PropertiesPage({
             <Link
               key={value}
               href={hrefFor(value)}
+              prefetch={false}
               className={`rounded-2xl px-4 py-2 text-sm font-semibold ${
                 deal === value ? "bg-sky-100 text-sky-700" : "bg-white text-ink"
               }`}
@@ -78,29 +104,12 @@ export default async function PropertiesPage({
         </div>
       </form>
 
-      <Suspense fallback={<div className="mt-8 h-56 rounded-[24px] bg-white/50" />}>
-        <PropertyGrid deal={deal} q={q} area={area} />
-      </Suspense>
-    </div>
-  );
-}
-
-async function PropertyGrid({
-  deal,
-  q,
-  area,
-}: {
-  deal: string;
-  q: string;
-  area: string;
-}) {
-  const items = await getPropertyCards(deal, q, area);
-  return (
-    <div className="mt-8 grid gap-5 md:grid-cols-3">
+      <div className="mt-8 grid gap-5 md:grid-cols-3">
         {items.map((item) => (
           <Link
             key={item.id}
             href={`/properties/${item.slug}`}
+            prefetch={false}
             className="overflow-hidden rounded-[24px] bg-white shadow-panel transition hover:-translate-y-0.5"
           >
             <div className="relative h-44 bg-slate-100">
@@ -133,6 +142,7 @@ async function PropertyGrid({
         {items.length === 0 && (
           <p className="text-ink/60">Нет объектов по выбранным фильтрам.</p>
         )}
-    </div>
+      </div>
+    </>
   );
 }

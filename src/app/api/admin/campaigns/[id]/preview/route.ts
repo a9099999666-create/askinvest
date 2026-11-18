@@ -22,10 +22,13 @@ export async function POST(
       return NextResponse.json({ error: "Не найдено" }, { status: 404 });
     }
 
-    const conditions = [isNull(subscriptions.revokedAt)];
-    if (campaign.topicId) {
-      conditions.push(eq(subscriptions.topicId, campaign.topicId));
+    if (!campaign.topicId) {
+      return NextResponse.json({ error: "У рассылки нет темы" }, { status: 400 });
     }
+    const conditions = [
+      isNull(subscriptions.revokedAt),
+      eq(subscriptions.topicId, campaign.topicId),
+    ];
     if (campaign.channel) {
       conditions.push(eq(subscriptions.channel, campaign.channel));
     }

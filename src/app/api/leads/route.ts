@@ -25,6 +25,13 @@ function first(value: FormDataEntryValue | null) {
   return typeof value === "string" ? value : undefined;
 }
 
+function leadReturnUrl(req: Request, sourcePage: string | undefined, flag: "error" | "channel") {
+  const path = sourcePage?.startsWith("/") ? sourcePage.split("?")[0] : "/";
+  const url = new URL(path || "/", req.url);
+  url.searchParams.set("lead", flag);
+  return url;
+}
+
 async function readBody(req: Request) {
   const contentType = req.headers.get("content-type") || "";
   if (contentType.includes("application/json")) {
@@ -46,8 +53,10 @@ async function readBody(req: Request) {
 
 export async function POST(req: Request) {
   const wantsHtml = (req.headers.get("accept") || "").includes("text/html");
+  let sourcePage = "/";
   try {
     const body = await readBody(req);
+    sourcePage = body.sourcePage || "/";
 
     let serviceTitleSnapshot: string | undefined;
     let propertyTitleSnapshot: string | undefined;
@@ -86,7 +95,7 @@ export async function POST(req: Request) {
       if (result.deepLink) {
         return NextResponse.redirect(result.deepLink, 303);
       }
-      return NextResponse.redirect(new URL("/?lead=channel", req.url), 303);
+      return NextResponse.redirect(leadReturnUrl(req, body.sourcePage, "channel"), 303);
     }
 
     return NextResponse.json({
@@ -99,7 +108,7 @@ export async function POST(req: Request) {
   } catch (e) {
     const message = e instanceof Error ? e.message : "Ошибка";
     if (wantsHtml) {
-      return NextResponse.redirect(new URL("/?lead=error", req.url), 303);
+      return NextResponse.redirect(leadReturnUrl(req, sourcePage, "error"), 303);
     }
     return NextResponse.json({ error: message }, { status: 400 });
   }

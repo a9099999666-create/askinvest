@@ -20,19 +20,21 @@ export function DiscussForm({
   sourcePage?: string;
   title?: string;
 }) {
+  const storageKey = `askinvest_pk_${intent}_${propertyId || serviceId || "site"}`;
   return (
     <form
       className="glass-panel rounded-[28px] p-6 md:p-7"
       action="/api/leads"
       method="post"
+      data-storage-key={storageKey}
     >
       <h2 className="font-display text-[28px] font-bold leading-none text-ink">{title}</h2>
       <div className="mt-3 h-[3px] w-10 rounded bg-brand-red" />
-      <input type="hidden" name="publicKey" defaultValue="" className="askinvest-public-key" />
+      <p className="lead-notice mt-3 hidden text-sm text-brand-red" />
+      <input type="hidden" name="publicKey" defaultValue="" />
       <script
         dangerouslySetInnerHTML={{
-          __html:
-            '(function(){try{var k=sessionStorage.getItem("askinvest_pk");if(!k){k=Math.random().toString(36).slice(2)+Date.now().toString(36);sessionStorage.setItem("askinvest_pk",k);}var n=document.currentScript&&document.currentScript.previousElementSibling;if(n)n.value=k;}catch(e){}})();',
+          __html: `(function(){try{var f=document.currentScript&&document.currentScript.closest("form");if(!f)return;var key=f.getAttribute("data-storage-key")||"askinvest_pk";var k=sessionStorage.getItem(key);if(!k){k=Math.random().toString(36).slice(2)+Date.now().toString(36);sessionStorage.setItem(key,k);}var n=f.querySelector('input[name="publicKey"]');if(n)n.value=k;var q=new URLSearchParams(location.search).get("lead");var note=f.querySelector(".lead-notice");if(note&&q==="error"){note.textContent="Не удалось сохранить. Оставьте текст и нажмите ещё раз.";note.classList.remove("hidden");}if(note&&q==="channel"){note.textContent="Выбранный канал пока недоступен. Попробуйте другой.";note.classList.remove("hidden");}}catch(e){}})();`,
         }}
       />
       <input type="hidden" name="sourcePage" value={sourcePage || "/"} />

@@ -24,6 +24,7 @@ export function CampaignPanel({
   const [preview, setPreview] = useState<{ count: number } | null>(null);
 
   function create() {
+    if (!topicId) return;
     start(async () => {
       await fetch("/api/admin/campaigns", {
         method: "POST",

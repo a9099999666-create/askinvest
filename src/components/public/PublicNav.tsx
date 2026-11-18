@@ -22,6 +22,7 @@ export function PublicNav() {
           <Link
             key={link.href}
             href={link.href}
+            prefetch={false}
             className={`relative pb-1 transition ${
               active ? "text-ink" : "text-ink/70 hover:text-ink"
             }`}

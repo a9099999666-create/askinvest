@@ -27,11 +27,24 @@ export async function PATCH(
       .where(eq(users.id, id))
       .returning();
 
+    if (!updated) {
+      return NextResponse.json({ error: "Не найдено" }, { status: 404 });
+    }
+
     if (body.isActive === false) {
       await revokeUserSessions(id);
     }
 
-    return NextResponse.json({ user: updated });
+    return NextResponse.json({
+      user: {
+        id: updated.id,
+        email: updated.email,
+        name: updated.name,
+        isOwner: updated.isOwner,
+        isActive: updated.isActive,
+        permissions: updated.permissions,
+      },
+    });
   } catch (e) {
     if (e instanceof Response) return e;
     return NextResponse.json(

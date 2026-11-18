@@ -8,6 +8,7 @@ export const revalidate = 60;
 export default function HomePage() {
   return (
     <div>
+      <link rel="preload" href="/brand/home-glass.webp" as="image" type="image/webp" />
       <section className="grid items-start gap-4 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
         <div>
           <h1 className="font-display text-5xl font-bold leading-[0.95] tracking-tight text-ink md:text-6xl lg:text-[68px]">
@@ -49,6 +50,7 @@ async function HomeServices() {
         <Link
           key={item.id}
           href={`/services/${item.slug}`}
+          prefetch={false}
           className="glass-panel flex min-h-[88px] items-center justify-between gap-4 rounded-[24px] px-6 py-5"
         >
           <span className="text-lg font-semibold leading-snug text-ink">{item.title}</span>

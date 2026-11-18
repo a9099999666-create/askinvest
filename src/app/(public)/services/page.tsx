@@ -32,6 +32,7 @@ async function ServiceList() {
         <Link
           key={item.id}
           href={`/services/${item.slug}`}
+          prefetch={false}
           className="glass-panel rounded-2xl p-6 transition hover:-translate-y-0.5"
         >
           <h2 className="text-xl font-bold text-ink">{item.title}</h2>

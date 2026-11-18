@@ -7,12 +7,15 @@ export async function POST(req: Request) {
   try {
     const user = await requireUser("campaigns");
     const body = await req.json();
+    if (!body.topicId) {
+      return NextResponse.json({ error: "Укажите тему рассылки" }, { status: 400 });
+    }
     const [row] = await db
       .insert(campaigns)
       .values({
         title: body.title,
         body: body.body,
-        topicId: body.topicId || null,
+        topicId: body.topicId,
         channel: body.channel || "test",
         status: "draft",
         createdById: user.id,

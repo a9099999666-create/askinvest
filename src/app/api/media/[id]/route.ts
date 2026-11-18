@@ -5,6 +5,30 @@ import { mediaAssets, propertyVersions, serviceVersions } from "@/db/schema";
 import { getSessionUser } from "@/lib/auth/session";
 import { readStored } from "@/lib/storage";
 
+async function isPublishedMedia(id: string) {
+  const [svc] = await db
+    .select({ id: serviceVersions.id })
+    .from(serviceVersions)
+    .where(and(eq(serviceVersions.imageId, id), eq(serviceVersions.status, "published")))
+    .limit(1);
+  if (svc) return true;
+  const [prop] = await db
+    .select({ id: propertyVersions.id })
+    .from(propertyVersions)
+    .where(
+      and(
+        eq(propertyVersions.status, "published"),
+        or(
+          eq(propertyVersions.coverId, id),
+          eq(propertyVersions.floorPlanId, id),
+          sql`${propertyVersions.galleryIds}::jsonb ? ${id}`,
+        ),
+      ),
+    )
+    .limit(1);
+  return Boolean(prop);
+}
+
 export async function GET(
   _req: Request,
   ctx: { params: Promise<{ id: string }> },
@@ -15,33 +39,10 @@ export async function GET(
   });
   if (!asset) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const user = await getSessionUser();
-  if (!user) {
-    const [svc] = await db
-      .select({ id: serviceVersions.id })
-      .from(serviceVersions)
-      .where(
-        and(
-          eq(serviceVersions.imageId, id),
-          eq(serviceVersions.status, "published"),
-        ),
-      )
-      .limit(1);
-    const [prop] = await db
-      .select({ id: propertyVersions.id })
-      .from(propertyVersions)
-      .where(
-        and(
-          eq(propertyVersions.status, "published"),
-          or(
-            eq(propertyVersions.coverId, id),
-            eq(propertyVersions.floorPlanId, id),
-            sql`${propertyVersions.galleryIds}::jsonb ? ${id}`,
-          ),
-        ),
-      )
-      .limit(1);
-    if (!svc && !prop) {
+  const published = await isPublishedMedia(id);
+  if (!published) {
+    const user = await getSessionUser();
+    if (!user) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
   }
@@ -51,7 +52,9 @@ export async function GET(
     return new NextResponse(new Uint8Array(buf), {
       headers: {
         "Content-Type": asset.mimeType,
-        "Cache-Control": "public, max-age=3600",
+        "Cache-Control": published
+          ? "public, max-age=86400, stale-while-revalidate=604800"
+          : "private, max-age=0, no-store",
       },
     });
   } catch {
