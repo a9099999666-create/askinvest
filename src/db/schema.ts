@@ -244,6 +244,7 @@ export const contacts = pgTable("contacts", {
   id: uuid("id").primaryKey().defaultRandom(),
   displayName: varchar("display_name", { length: 255 }),
   phone: varchar("phone", { length: 64 }),
+  email: varchar("email", { length: 255 }),
   notes: text("notes").default(""),
   ...timestamps,
 });

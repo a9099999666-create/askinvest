@@ -41,8 +41,10 @@ export default async function LeadDetailPage({
           <strong>Источник:</strong> {lead.sourcePage}
         </p>
         <p>
-          <strong>Клиент:</strong> {lead.visitorName || "—"}{" "}
-          {lead.visitorPhone || ""}
+          <strong>Клиент:</strong> {lead.visitorName || "—"}
+        </p>
+        <p>
+          <strong>Телефон:</strong> {lead.visitorPhone || "—"}
         </p>
         <p>
           <strong>Снимок услуги/объекта:</strong>{" "}

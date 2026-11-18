@@ -15,6 +15,7 @@ const schema = z.object({
     .transform((value) => (value && value.length >= 8 ? value : undefined)),
   visitorName: z.string().optional(),
   visitorPhone: z.string().optional(),
+  visitorEmail: z.string().optional(),
   sourcePage: z.string().optional(),
   intent: z.string().optional(),
   serviceId: z.string().uuid().optional(),
@@ -25,9 +26,20 @@ function first(value: FormDataEntryValue | null) {
   return typeof value === "string" ? value : undefined;
 }
 
-function leadReturnUrl(req: Request, sourcePage: string | undefined, flag: "error" | "channel") {
-  const path = sourcePage?.startsWith("/") ? sourcePage.split("?")[0] : "/";
-  const url = new URL(path || "/", req.url);
+function safeSourcePath(sourcePage: string | undefined) {
+  if (sourcePage && /^\/[a-zA-Z0-9/_-]*$/.test(sourcePage)) {
+    return sourcePage;
+  }
+  return "/";
+}
+
+function leadReturnUrl(
+  req: Request,
+  sourcePage: string | undefined,
+  flag: "error" | "ok",
+) {
+  const url = new URL(safeSourcePath(sourcePage), req.url);
+  url.search = "";
   url.searchParams.set("lead", flag);
   return url;
 }
@@ -44,6 +56,7 @@ async function readBody(req: Request) {
     publicKey: first(form.get("publicKey")),
     visitorName: first(form.get("visitorName")),
     visitorPhone: first(form.get("visitorPhone")),
+    visitorEmail: first(form.get("visitorEmail")),
     sourcePage: first(form.get("sourcePage")),
     intent: first(form.get("intent")),
     serviceId: first(form.get("serviceId")) || undefined,
@@ -56,7 +69,7 @@ export async function POST(req: Request) {
   let sourcePage = "/";
   try {
     const body = await readBody(req);
-    sourcePage = body.sourcePage || "/";
+    sourcePage = safeSourcePath(body.sourcePage);
 
     let serviceTitleSnapshot: string | undefined;
     let propertyTitleSnapshot: string | undefined;
@@ -86,30 +99,38 @@ export async function POST(req: Request) {
 
     const result = await createLeadFromForm({
       ...body,
+      sourcePage,
       publicKey: body.publicKey || nanoid(),
       serviceTitleSnapshot,
       propertyTitleSnapshot,
     });
 
     if (wantsHtml) {
-      if (result.deepLink) {
+      if (!result.reused && result.deepLink?.startsWith("https://")) {
         return NextResponse.redirect(result.deepLink, 303);
       }
-      return NextResponse.redirect(leadReturnUrl(req, body.sourcePage, "channel"), 303);
+      return NextResponse.redirect(leadReturnUrl(req, sourcePage, "ok"), 303);
+    }
+
+    if (result.reused) {
+      return NextResponse.json({
+        ok: true,
+        reused: true,
+        leadId: result.lead.id,
+      });
     }
 
     return NextResponse.json({
       leadId: result.lead.id,
       markerCode: result.markerCode,
       deepLink: result.deepLink,
-      reused: result.reused,
+      reused: false,
       chatLinkStatus: result.lead.chatLinkStatus,
     });
-  } catch (e) {
-    const message = e instanceof Error ? e.message : "Ошибка";
+  } catch {
     if (wantsHtml) {
       return NextResponse.redirect(leadReturnUrl(req, sourcePage, "error"), 303);
     }
-    return NextResponse.json({ error: message }, { status: 400 });
+    return NextResponse.json({ error: "Не удалось сохранить заявку" }, { status: 400 });
   }
 }

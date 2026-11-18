@@ -5,7 +5,11 @@ import type { ChannelAdapter, NormalizedInbound } from "./types";
 export const telegramAdapter: ChannelAdapter = {
   kind: "telegram",
   isConfigured() {
-    return Boolean(getEnv().telegram.botToken && getEnv().telegram.webhookSecret);
+    try {
+      return Boolean(getEnv().telegram.botToken && getEnv().telegram.webhookSecret);
+    } catch {
+      return false;
+    }
   },
   verifyWebhook(req) {
     const secret = getEnv().telegram.webhookSecret;
@@ -50,11 +54,13 @@ export const telegramAdapter: ChannelAdapter = {
     return [inbound];
   },
   buildDeepLink(markerCode) {
-    const username = getEnv().telegram.botUsername;
-    if (!username) {
+    try {
+      const username = getEnv().telegram.botUsername;
+      if (!username) return "";
+      return `https://t.me/${username}?start=${encodeURIComponent(markerCode)}`;
+    } catch {
       return "";
     }
-    return `https://t.me/${username}?start=${encodeURIComponent(markerCode)}`;
   },
   async sendText({ externalThreadId, text }) {
     const token = getEnv().telegram.botToken;

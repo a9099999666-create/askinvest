@@ -5,10 +5,14 @@ import type { ChannelAdapter, NormalizedInbound } from "./types";
 export const whatsappAdapter: ChannelAdapter = {
   kind: "whatsapp",
   isConfigured() {
-    const e = getEnv().whatsapp;
-    return Boolean(
-      e.accessToken && e.phoneNumberId && e.businessNumber && e.appSecret,
-    );
+    try {
+      const e = getEnv().whatsapp;
+      return Boolean(
+        e.accessToken && e.phoneNumberId && e.businessNumber && e.appSecret,
+      );
+    } catch {
+      return false;
+    }
   },
   verifyWebhook(req, rawBody) {
     const secret = getEnv().whatsapp.appSecret;

@@ -22,14 +22,9 @@ export function getEnv() {
   return {
     databaseUrl: requireDatabaseUrl(),
     appUrl: process.env.APP_URL || "http://localhost:3000",
-    sessionSecret: (() => {
-      const secret = process.env.SESSION_SECRET?.trim();
-      if (secret) return secret;
-      if (isProduction()) {
-        throw new Error("SESSION_SECRET is required in production");
-      }
-      return "local-dev-session-secret";
-    })(),
+    sessionSecret:
+      process.env.SESSION_SECRET?.trim() ||
+      (isProduction() ? "" : "local-dev-session-secret"),
     storageDriver: process.env.STORAGE_DRIVER || "local",
     storageLocalPath: process.env.STORAGE_LOCAL_PATH || "./storage/uploads",
     s3: {

@@ -20,6 +20,7 @@ export default async function ContactsPage() {
             <tr>
               <th className="px-4 py-3">Имя</th>
               <th className="px-4 py-3">Телефон</th>
+              <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Каналы</th>
               <th className="px-4 py-3">Подписки</th>
             </tr>
@@ -29,6 +30,7 @@ export default async function ContactsPage() {
               <tr key={c.id} className="border-t border-slate-100">
                 <td className="px-4 py-3">{c.displayName || "Без имени"}</td>
                 <td className="px-4 py-3">{c.phone || "—"}</td>
+                <td className="px-4 py-3">{c.email || "—"}</td>
                 <td className="px-4 py-3">
                   {identities
                     .filter((i) => i.contactId === c.id)

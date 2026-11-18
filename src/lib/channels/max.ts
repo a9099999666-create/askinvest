@@ -5,7 +5,11 @@ import type { ChannelAdapter, NormalizedInbound } from "./types";
 export const maxAdapter: ChannelAdapter = {
   kind: "max",
   isConfigured() {
-    return Boolean(getEnv().max.botToken && getEnv().max.webhookSecret);
+    try {
+      return Boolean(getEnv().max.botToken && getEnv().max.webhookSecret);
+    } catch {
+      return false;
+    }
   },
   verifyWebhook(req) {
     const secret = getEnv().max.webhookSecret;
@@ -45,10 +49,14 @@ export const maxAdapter: ChannelAdapter = {
     return [inbound];
   },
   buildDeepLink(markerCode) {
-    const link = getEnv().max.botLink;
-    if (!link) return "";
-    const sep = link.includes("?") ? "&" : "?";
-    return `${link}${sep}start=${encodeURIComponent(markerCode)}`;
+    try {
+      const link = getEnv().max.botLink;
+      if (!link) return "";
+      const sep = link.includes("?") ? "&" : "?";
+      return `${link}${sep}start=${encodeURIComponent(markerCode)}`;
+    } catch {
+      return "";
+    }
   },
   async sendText({ externalThreadId, externalUserId, text }) {
     const token = getEnv().max.botToken;

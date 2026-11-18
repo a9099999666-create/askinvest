@@ -10,16 +10,20 @@ export default async function ContactsPage() {
     <div className="grid gap-8 pt-4 md:grid-cols-2">
       <div>
         <h1 className="font-display text-4xl font-bold text-ink">Контакты</h1>
+        <p className="mt-3 text-ink/70">
+          Оставьте ФИО и способ связи — заявка попадёт в кабинет, и мы ответим
+          вам.
+        </p>
         <div
           className="glass-panel prose prose-slate mt-6 max-w-none rounded-2xl p-6"
           dangerouslySetInnerHTML={{
             __html:
               contactsHtml ||
-              "<p>Реквизиты и способы связи утвердит владелец.</p>",
+              "<p>АСКИНВЕСТ. Связь через форму на сайте.</p>",
           }}
         />
       </div>
-      <DiscussForm sourcePage="/contacts" title="Общий вопрос" />
+      <DiscussForm sourcePage="/contacts" title="Оставить контакты" />
     </div>
   );
 }
