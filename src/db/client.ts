@@ -2,27 +2,44 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
-function connectionString() {
-  const url = process.env.DATABASE_URL?.trim();
-  if (!url) {
-    throw new Error("DATABASE_URL is required");
-  }
-  return url;
+export function connectionString() {
+  return (
+    process.env.DATABASE_URL?.trim() ||
+    process.env.POSTGRES_URL?.trim() ||
+    process.env.POSTGRES_PRISMA_URL?.trim() ||
+    ""
+  );
+}
+
+export function hasDatabase() {
+  return Boolean(connectionString());
 }
 
 const globalForDb = globalThis as unknown as {
   sql?: ReturnType<typeof postgres>;
 };
 
-export const sql =
-  globalForDb.sql ??
-  postgres(connectionString(), {
-    max: 3,
+function createSql() {
+  const url = connectionString();
+  if (!url) {
+    throw new Error("DATABASE_URL is required");
+  }
+  return postgres(url, {
+    max: process.env.VERCEL ? 1 : 3,
     prepare: false,
     connect_timeout: 5,
     idle_timeout: 20,
   });
+}
 
-globalForDb.sql = sql;
+export const sql = (globalForDb.sql ??= hasDatabase()
+  ? createSql()
+  : (undefined as unknown as ReturnType<typeof postgres>));
 
-export const db = drizzle(sql, { schema });
+if (sql) {
+  globalForDb.sql = sql;
+}
+
+export const db = hasDatabase()
+  ? drizzle(sql, { schema })
+  : (null as unknown as ReturnType<typeof drizzle<typeof schema>>);

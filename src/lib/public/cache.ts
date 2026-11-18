@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { and, asc, eq, gte, lte, sql } from "drizzle-orm";
-import { db } from "@/db/client";
+import { db, hasDatabase } from "@/db/client";
 import { properties, propertyVersions, services, serviceVersions, siteSettings } from "@/db/schema";
 
 const options = { revalidate: 60, tags: ["public-site"] };
@@ -13,8 +13,9 @@ const areaBands: Record<string, { min?: string; max?: string }> = {
 };
 
 export const getHomeServices = unstable_cache(
-  async () =>
-    db
+  async () => {
+    if (!hasDatabase()) return [];
+    return db
       .select({
         id: services.id,
         slug: services.slug,
@@ -22,14 +23,16 @@ export const getHomeServices = unstable_cache(
       })
       .from(services)
       .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
-      .orderBy(asc(services.sortOrder)),
+      .orderBy(asc(services.sortOrder));
+  },
   ["home-services"],
   options,
 );
 
 export const getServiceCards = unstable_cache(
-  async () =>
-    db
+  async () => {
+    if (!hasDatabase()) return [];
+    return db
       .select({
         id: services.id,
         slug: services.slug,
@@ -38,13 +41,15 @@ export const getServiceCards = unstable_cache(
       })
       .from(services)
       .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
-      .orderBy(asc(services.sortOrder)),
+      .orderBy(asc(services.sortOrder));
+  },
   ["service-cards"],
   options,
 );
 
 export const getPublishedService = unstable_cache(
   async (slug: string) => {
+    if (!hasDatabase()) return null;
     const rows = await db
       .select({
         id: services.id,
@@ -65,6 +70,7 @@ export const getPublishedService = unstable_cache(
 
 export const getPropertyCards = unstable_cache(
   async (deal: string, q: string, area: string) => {
+    if (!hasDatabase()) return [];
     const band = areaBands[area];
     const conditions = [eq(propertyVersions.status, "published")];
     if (deal === "sale" || deal === "rent") {
@@ -91,6 +97,7 @@ export const getPropertyCards = unstable_cache(
 
 export const getPublishedProperty = unstable_cache(
   async (slug: string) => {
+    if (!hasDatabase()) return null;
     const rows = await db
       .select({
         id: properties.id,
@@ -117,6 +124,7 @@ export const getPublishedProperty = unstable_cache(
 );
 
 export const getContactsHtml = unstable_cache(async () => {
+  if (!hasDatabase()) return "";
   const settings = await db.query.siteSettings.findFirst({
     where: eq(siteSettings.id, 1),
   });

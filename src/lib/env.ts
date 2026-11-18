@@ -1,5 +1,8 @@
 function requireDatabaseUrl() {
-  const url = process.env.DATABASE_URL?.trim();
+  const url =
+    process.env.DATABASE_URL?.trim() ||
+    process.env.POSTGRES_URL?.trim() ||
+    process.env.POSTGRES_PRISMA_URL?.trim();
   if (!url) {
     throw new Error("DATABASE_URL is required");
   }
@@ -21,7 +24,13 @@ export function isTestChannelEnabled() {
 export function getEnv() {
   return {
     databaseUrl: requireDatabaseUrl(),
-    appUrl: process.env.APP_URL || "http://localhost:3000",
+    appUrl:
+      process.env.APP_URL ||
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000"),
     sessionSecret:
       process.env.SESSION_SECRET?.trim() ||
       (isProduction() ? "" : "local-dev-session-secret"),

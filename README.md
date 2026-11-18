@@ -4,6 +4,10 @@
 
 Стек: Next.js (App Router) + TypeScript, PostgreSQL + Drizzle. Фото и документы хранятся в Postgres (или в S3, если задан). Очередь автоответов обрабатывается вместе с веб-запросом; локально можно поднять отдельный worker.
 
+## Vercel (как SHARENTA)
+
+Пуш в GitHub должен сам собирать сайт на Vercel. Один раз импортируйте репозиторий `a9099999666-create/askinvest` в тот же аккаунт Vercel, что и SHARENTA, Production Branch — ветка с кодом сайта. В Environment Variables задайте `DATABASE_URL` (Neon отдаёт и `POSTGRES_URL`) и `SESSION_SECRET`. После этого кнопки публикации в Cursor не нужны: пуш уходит на `*.vercel.app` сам.
+
 ## Быстрый старт
 
 ```bash

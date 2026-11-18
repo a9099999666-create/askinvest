@@ -16,7 +16,10 @@ export function loginRateLimited(key: string) {
 }
 
 export function loginAttemptKey(req: Request, email: string) {
-  const forwarded = req.headers.get("x-forwarded-for") || "";
-  const ip = forwarded.split(",")[0]?.trim() || "local";
+  const ip =
+    req.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("cf-connecting-ip")?.trim() ||
+    req.headers.get("x-real-ip")?.trim() ||
+    "local";
   return `${ip}:${email.toLowerCase()}`;
 }
