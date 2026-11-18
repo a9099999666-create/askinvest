@@ -1,11 +1,35 @@
+function requireDatabaseUrl() {
+  const url = process.env.DATABASE_URL?.trim();
+  if (!url) {
+    throw new Error("DATABASE_URL is required");
+  }
+  return url;
+}
+
+export function isProduction() {
+  return process.env.NODE_ENV === "production";
+}
+
+export function isTestChannelEnabled() {
+  if (process.env.ENABLE_TEST_CHANNEL !== "true") return false;
+  if (isProduction() && !process.env.TEST_CHANNEL_SECRET?.trim()) {
+    return false;
+  }
+  return true;
+}
+
 export function getEnv() {
   return {
-    databaseUrl:
-      process.env.DATABASE_URL ||
-      "postgres://askinvest:askinvest@127.0.0.1:5432/askinvest",
+    databaseUrl: requireDatabaseUrl(),
     appUrl: process.env.APP_URL || "http://localhost:3000",
-    sessionSecret:
-      process.env.SESSION_SECRET || "dev-only-change-me-askinvest-secret",
+    sessionSecret: (() => {
+      const secret = process.env.SESSION_SECRET?.trim();
+      if (secret) return secret;
+      if (isProduction()) {
+        throw new Error("SESSION_SECRET is required in production");
+      }
+      return "local-dev-session-secret";
+    })(),
     storageDriver: process.env.STORAGE_DRIVER || "local",
     storageLocalPath: process.env.STORAGE_LOCAL_PATH || "./storage/uploads",
     s3: {
@@ -32,6 +56,7 @@ export function getEnv() {
       verifyToken: process.env.WHATSAPP_VERIFY_TOKEN || "",
       appSecret: process.env.WHATSAPP_APP_SECRET || "",
     },
+    testChannelSecret: process.env.TEST_CHANNEL_SECRET || "",
     allowDemoSeed: process.env.ALLOW_DEMO_SEED === "true",
   };
 }

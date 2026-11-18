@@ -1,9 +1,28 @@
+import { timingSafeEqual } from "crypto";
+import { getEnv, isTestChannelEnabled } from "@/lib/env";
 import type { ChannelAdapter, NormalizedInbound } from "./types";
 
 export const testAdapter: ChannelAdapter = {
   kind: "test",
-  isConfigured: () => true,
-  verifyWebhook: () => true,
+  isConfigured() {
+    return isTestChannelEnabled();
+  },
+  verifyWebhook(req) {
+    if (!isTestChannelEnabled()) return false;
+    const secret = getEnv().testChannelSecret;
+    if (!secret) {
+      // local only: ENABLE_TEST_CHANNEL without secret
+      return process.env.NODE_ENV !== "production";
+    }
+    const header = req.headers.get("x-test-channel-secret") || "";
+    try {
+      const a = Buffer.from(header);
+      const b = Buffer.from(secret);
+      return a.length === b.length && timingSafeEqual(a, b);
+    } catch {
+      return false;
+    }
+  },
   parseInbound(payload) {
     const event = payload as {
       eventId?: string;
@@ -30,9 +49,22 @@ export const testAdapter: ChannelAdapter = {
     return [inbound];
   },
   buildDeepLink(markerCode) {
-    return `/api/channels/test/start?code=${encodeURIComponent(markerCode)}`;
+    if (!isTestChannelEnabled()) return "";
+    const secret = getEnv().testChannelSecret;
+    const base = `/api/channels/test/start?code=${encodeURIComponent(markerCode)}`;
+    if (secret) {
+      return `${base}&secret=${encodeURIComponent(secret)}`;
+    }
+    return base;
   },
   async sendText({ text }) {
+    if (!isTestChannelEnabled()) {
+      return {
+        externalMessageId: "",
+        status: "failed",
+        error: "Тестовый канал выключен",
+      };
+    }
     return {
       externalMessageId: `test-out-${Date.now()}`,
       status: "accepted",

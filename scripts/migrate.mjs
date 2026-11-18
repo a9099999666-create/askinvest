@@ -24,7 +24,19 @@ try {
       (r) => r.name,
     ),
   );
+  const existing = await client.query(
+    "select to_regclass('public.users') as users",
+  );
+  const schemaPresent = Boolean(existing.rows[0]?.users);
+
   for (const file of files.filter((f) => !done.has(f))) {
+    if (schemaPresent && file.startsWith("001_")) {
+      await client.query("insert into schema_migrations (name) values ($1)", [
+        file,
+      ]);
+      console.log(`migrate: recorded ${file} (schema already present)`);
+      continue;
+    }
     await client.query("begin");
     try {
       await client.query(await readFile(`migrations/${file}`, "utf8"));

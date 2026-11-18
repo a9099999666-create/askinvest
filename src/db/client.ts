@@ -2,9 +2,13 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
 
-const connectionString =
-  process.env.DATABASE_URL ||
-  "postgres://askinvest:askinvest@127.0.0.1:5432/askinvest";
+function connectionString() {
+  const url = process.env.DATABASE_URL?.trim();
+  if (!url) {
+    throw new Error("DATABASE_URL is required");
+  }
+  return url;
+}
 
 const globalForDb = globalThis as unknown as {
   sql?: ReturnType<typeof postgres>;
@@ -12,7 +16,7 @@ const globalForDb = globalThis as unknown as {
 
 export const sql =
   globalForDb.sql ??
-  postgres(connectionString, {
+  postgres(connectionString(), {
     max: 10,
     prepare: false,
   });

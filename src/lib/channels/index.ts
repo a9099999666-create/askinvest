@@ -1,3 +1,4 @@
+import { isTestChannelEnabled } from "@/lib/env";
 import { maxAdapter } from "./max";
 import { telegramAdapter } from "./telegram";
 import { testAdapter } from "./test";
@@ -26,7 +27,9 @@ export function listChannelStatus() {
       configured,
       mode:
         kind === "test"
-          ? "test_adapter"
+          ? isTestChannelEnabled()
+            ? "test_adapter"
+            : "disabled"
           : configured
             ? "live"
             : "credentials_missing",
@@ -36,7 +39,7 @@ export function listChannelStatus() {
 
 export function resolveOutboundChannel(preferred: ChannelKind): ChannelKind {
   const adapter = getAdapter(preferred);
-  if (adapter.isConfigured() || preferred === "test") return preferred;
-  if (getAdapter("test").isConfigured()) return "test";
+  if (adapter.isConfigured()) return preferred;
+  if (preferred !== "test" && isTestChannelEnabled()) return "test";
   return preferred;
 }

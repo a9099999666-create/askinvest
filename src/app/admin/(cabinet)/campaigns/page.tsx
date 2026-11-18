@@ -2,10 +2,12 @@ import { desc } from "drizzle-orm";
 import { CampaignPanel } from "@/components/admin/CampaignPanel";
 import { db } from "@/db/client";
 import { campaigns, subscriptionTopics } from "@/db/schema";
+import { requirePageAccess } from "@/lib/auth/guard";
 
 export const dynamic = "force-dynamic";
 
 export default async function CampaignsPage() {
+  await requirePageAccess("campaigns");
   const topics = await db.select().from(subscriptionTopics);
   const rows = await db.select().from(campaigns).orderBy(desc(campaigns.createdAt));
 

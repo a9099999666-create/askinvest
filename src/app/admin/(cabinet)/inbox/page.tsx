@@ -2,7 +2,7 @@ import { asc, desc, eq } from "drizzle-orm";
 import { InboxClient } from "@/components/admin/InboxClient";
 import { db } from "@/db/client";
 import { leads, messages, threads } from "@/db/schema";
-import { getSessionUser } from "@/lib/auth/session";
+import { requirePageAccess } from "@/lib/auth/guard";
 
 export const dynamic = "force-dynamic";
 
@@ -11,8 +11,8 @@ export default async function InboxPage({
 }: {
   searchParams: Promise<{ thread?: string }>;
 }) {
+  const user = await requirePageAccess("leads");
   const sp = await searchParams;
-  const user = await getSessionUser();
   const allThreads = await db
     .select()
     .from(threads)

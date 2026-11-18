@@ -5,14 +5,16 @@ import type { ChannelAdapter, NormalizedInbound } from "./types";
 export const telegramAdapter: ChannelAdapter = {
   kind: "telegram",
   isConfigured() {
-    return Boolean(getEnv().telegram.botToken);
+    return Boolean(getEnv().telegram.botToken && getEnv().telegram.webhookSecret);
   },
   verifyWebhook(req) {
     const secret = getEnv().telegram.webhookSecret;
-    if (!secret) return Boolean(getEnv().telegram.botToken);
+    if (!secret) return false;
     const header = req.headers.get("x-telegram-bot-api-secret-token") || "";
     try {
-      return timingSafeEqual(Buffer.from(header), Buffer.from(secret));
+      const a = Buffer.from(header);
+      const b = Buffer.from(secret);
+      return a.length === b.length && timingSafeEqual(a, b);
     } catch {
       return false;
     }
@@ -50,7 +52,7 @@ export const telegramAdapter: ChannelAdapter = {
   buildDeepLink(markerCode) {
     const username = getEnv().telegram.botUsername;
     if (!username) {
-      return `/api/channels/test/start?code=${encodeURIComponent(markerCode)}&via=telegram`;
+      return "";
     }
     return `https://t.me/${username}?start=${encodeURIComponent(markerCode)}`;
   },

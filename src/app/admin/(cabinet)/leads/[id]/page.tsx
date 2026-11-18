@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { leads, threads } from "@/db/schema";
 import { LeadActions } from "@/components/admin/LeadActions";
+import { requirePageAccess } from "@/lib/auth/guard";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,7 @@ export default async function LeadDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await requirePageAccess("leads");
   const { id } = await params;
   const lead = await db.query.leads.findFirst({ where: eq(leads.id, id) });
   if (!lead) notFound();

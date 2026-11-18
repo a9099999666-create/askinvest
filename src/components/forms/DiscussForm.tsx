@@ -56,9 +56,12 @@ export function DiscussForm({
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Не удалось сохранить");
-        if (data.deepLink) {
-          window.location.href = data.deepLink;
+        if (!data.deepLink) {
+          throw new Error(
+            "Выбранный канал пока недоступен. Попробуйте другой или повторите позже.",
+          );
         }
+        window.location.href = data.deepLink;
       } catch (e) {
         setError(e instanceof Error ? e.message : "Ошибка сохранения");
       }

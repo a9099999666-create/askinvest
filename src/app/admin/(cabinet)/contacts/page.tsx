@@ -1,10 +1,12 @@
 import { desc } from "drizzle-orm";
 import { db } from "@/db/client";
 import { channelIdentities, contacts, subscriptions } from "@/db/schema";
+import { requirePageAccess } from "@/lib/auth/guard";
 
 export const dynamic = "force-dynamic";
 
 export default async function ContactsPage() {
+  await requirePageAccess("contacts");
   const rows = await db.select().from(contacts).orderBy(desc(contacts.createdAt));
   const identities = await db.select().from(channelIdentities);
   const subs = await db.select().from(subscriptions);

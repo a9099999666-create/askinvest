@@ -9,6 +9,7 @@
 ```bash
 # PostgreSQL должен быть доступен по DATABASE_URL
 cp .env.example .env
+# заполните DATABASE_URL, SESSION_SECRET, OWNER_EMAIL, OWNER_PASSWORD
 npm install
 npm run db:migrate
 npm run seed:owner
@@ -21,9 +22,9 @@ npm run dev
 npm run worker
 ```
 
-Владелец по умолчанию: `owner@askinvest.local` / `askinvest-owner` (см. `.env`).
+Учётные данные владельца задаются только через `OWNER_EMAIL` / `OWNER_PASSWORD` в окружении (в код не вшиваются).
 
-Приёмка сценариев: `npm run acceptance` (нужны запущенные `dev` + `worker`).
+Приёмка: задайте те же переменные и выполните `npm run acceptance` при запущенных `dev` + `worker`.
 
 ## Маршруты
 
@@ -32,26 +33,21 @@ npm run worker
 **Кабинет:** `/admin/login`, `/admin/properties`, `/admin/services`, редакторы, `/admin/leads`, `/admin/inbox`, `/admin/contacts`, `/admin/campaigns`, `/admin/staff`, `/admin/settings`
 
 **API каналов:**  
-`POST /api/channels/{telegram|max|whatsapp|test}/webhook`  
-`GET /api/channels/test/start?code=MARKER` — локальный deep-link тестового адаптера
+`POST /api/channels/{telegram|max|whatsapp|test}/webhook` (подпись обязательна)  
+`GET /api/channels/test/start?code=MARKER` — только при `ENABLE_TEST_CHANNEL=true` (в production ещё `TEST_CHANNEL_SECRET`)
 
 ## Каналы
 
-Без credentials исходящие deep-link’и ведут в **тестовый адаптер**. Статус — `/admin/settings`.
+Без credentials канала форма сообщит, что канал недоступен. Локально можно включить тестовый адаптер (`ENABLE_TEST_CHANNEL=true`). Статус — `/admin/settings`.
 
 | Канал | Переменные | Вебхук |
 |---|---|---|
 | Telegram | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `TELEGRAM_WEBHOOK_SECRET` | `POST /api/channels/telegram/webhook` (+ secret header) |
 | MAX | `MAX_BOT_TOKEN`, `MAX_BOT_LINK`, `MAX_WEBHOOK_SECRET` | `POST /api/channels/max/webhook` |
 | WhatsApp | `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_BUSINESS_NUMBER`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET` | verify `GET` + `POST /api/channels/whatsapp/webhook` |
+| Test | `ENABLE_TEST_CHANNEL`, `TEST_CHANNEL_SECRET` | только для локальной проверки |
 
 Перед боем сверьте актуальные требования провайдера, правила исходящих и шаблоны согласий. Боевые массовые рассылки в разработке не запускаются.
-
-Тестовая отправка на контролируемый контакт:
-
-1. Создайте заявку с сайта, перейдите по deep-link тестового канала.
-2. Убедитесь, что worker отвечает в `/admin/inbox`.
-3. Для live-канала укажите credentials, повесьте вебхук на `APP_URL`, повторите сценарий на своём аккаунте.
 
 ## Резервное копирование
 
@@ -70,7 +66,7 @@ tar -xzf media.tgz
 | `npm run dev` | веб |
 | `npm run worker` | очередь автоответов и рассылок |
 | `npm run db:migrate` | миграции |
-| `npm run seed:owner` | первый владелец |
+| `npm run seed:owner` | первый владелец (из env) |
 | `npm run seed:demo` | демо (только с `ALLOW_DEMO_SEED=true`) |
 | `npm run acceptance` | локальная приёмка API |
-| `npm run build` | production-сборка |
+| `npm run build` | production-сборка + migrate |

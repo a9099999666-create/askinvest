@@ -1,12 +1,12 @@
 /**
  * Локальная приёмка ключевых сценариев через API.
- * Требует: миграции, seed:owner, запущенный next (APP_URL) и желательно worker.
+ * Требует OWNER_EMAIL, OWNER_PASSWORD, DATABASE_URL, ENABLE_TEST_CHANNEL=true,
+ * запущенные next (APP_URL) и желательно worker.
  */
 import { and, eq, isNull } from "drizzle-orm";
 import { db, sql } from "../src/db/client";
 import {
   campaignRecipients,
-  campaigns,
   channelIdentities,
   contacts,
   leads,
@@ -20,6 +20,8 @@ import { hashPassword } from "../src/lib/auth/session";
 import { OWNER_PERMISSIONS } from "../src/lib/auth/permissions";
 
 const APP = process.env.APP_URL || "http://localhost:3000";
+const OWNER_EMAIL = process.env.OWNER_EMAIL?.trim();
+const OWNER_PASSWORD = process.env.OWNER_PASSWORD;
 
 async function req(
   path: string,
@@ -49,28 +51,39 @@ function getCookie(headers: Headers) {
 }
 
 async function main() {
+  if (!OWNER_EMAIL || !OWNER_PASSWORD) {
+    console.error("Задайте OWNER_EMAIL и OWNER_PASSWORD в окружении");
+    process.exit(1);
+  }
+  if (process.env.ENABLE_TEST_CHANNEL !== "true") {
+    console.error("Для приёмки нужен ENABLE_TEST_CHANNEL=true");
+    process.exit(1);
+  }
+
   const results: { name: string; ok: boolean; detail?: string }[] = [];
 
-  // ensure owner
-  let owner = await db.query.users.findFirst({ where: eq(users.isOwner, true) });
+  let owner = await db.query.users.findFirst({
+    where: eq(users.email, OWNER_EMAIL.toLowerCase()),
+  });
   if (!owner) {
     await db.insert(users).values({
-      email: "owner@askinvest.local",
+      email: OWNER_EMAIL.toLowerCase(),
       name: "Владелец",
-      passwordHash: await hashPassword("askinvest-owner"),
+      passwordHash: await hashPassword(OWNER_PASSWORD),
       isOwner: true,
       isActive: true,
       permissions: OWNER_PERMISSIONS,
     });
-    owner = await db.query.users.findFirst({ where: eq(users.isOwner, true) });
+    owner = await db.query.users.findFirst({
+      where: eq(users.email, OWNER_EMAIL.toLowerCase()),
+    });
   }
 
-  // login
   const login = await req("/api/auth/login", {
     method: "POST",
     body: JSON.stringify({
-      email: "owner@askinvest.local",
-      password: "askinvest-owner",
+      email: OWNER_EMAIL,
+      password: OWNER_PASSWORD,
     }),
   });
   const cookie = getCookie(login.headers);
@@ -80,7 +93,6 @@ async function main() {
     detail: String(login.res.status),
   });
 
-  // create + publish service
   const serviceCreate = await req("/api/admin/services", {
     method: "POST",
     cookie,
@@ -106,7 +118,6 @@ async function main() {
     detail: serviceId,
   });
 
-  // create rent property + publish
   const propCreate = await req("/api/admin/properties", {
     method: "POST",
     cookie,
@@ -132,11 +143,10 @@ async function main() {
     detail: propertyId,
   });
 
-  // lead idempotency
   const key = `acc-${Date.now()}`;
   const leadBody = {
     question: "Нужна консультация по аренде",
-    channel: "telegram",
+    channel: "test",
     publicKey: key,
     sourcePage: "/",
     propertyId,
@@ -157,11 +167,10 @@ async function main() {
   const lead = await db.query.leads.findFirst({ where: eq(leads.id, leadId!) });
   results.push({
     name: "Идемпотентная заявка, чат не начат",
-    ok: Boolean(same && lead?.chatLinkStatus === "not_started" && marker),
-    detail: `${leadId} / ${marker}`,
+    ok: Boolean(same && lead?.chatLinkStatus === "not_started" && marker && deepLink),
+    detail: leadId,
   });
 
-  // start test chat
   if (deepLink) {
     const start = await fetch(`${APP}${deepLink}`);
     results.push({
@@ -171,7 +180,6 @@ async function main() {
     });
   }
 
-  // wait for bot reply job a bit (worker may process)
   await new Promise((r) => setTimeout(r, 2500));
   const thread = await db.query.threads.findFirst({
     where: eq(threads.leadId, leadId!),
@@ -185,7 +193,6 @@ async function main() {
     detail: thread?.id,
   });
 
-  // take dialog cancels bot mode
   if (thread) {
     const take = await req(`/api/admin/threads/${thread.id}/take`, {
       method: "POST",
@@ -200,15 +207,15 @@ async function main() {
     });
   }
 
-  // staff without publish rejected
   const staffEmail = `staff${Date.now()}@askinvest.local`;
+  const staffPassword = process.env.STAFF_PASSWORD || `Staff-${Date.now()}x`;
   const invite = await req("/api/admin/staff/invite", {
     method: "POST",
     cookie,
     body: JSON.stringify({
       email: staffEmail,
       name: "Сотрудник",
-      password: "staff-pass-1",
+      password: staffPassword,
       permissions: {
         editContent: true,
         publish: false,
@@ -220,7 +227,7 @@ async function main() {
   });
   const staffLogin = await req("/api/auth/login", {
     method: "POST",
-    body: JSON.stringify({ email: staffEmail, password: "staff-pass-1" }),
+    body: JSON.stringify({ email: staffEmail, password: staffPassword }),
   });
   const staffCookie = getCookie(staffLogin.headers);
   const denied = await req(`/api/admin/services/${serviceId}/publish`, {
@@ -233,7 +240,6 @@ async function main() {
     detail: String(denied.res.status),
   });
 
-  // campaign consent filter
   let topic = await db.query.subscriptionTopics.findFirst({
     where: eq(subscriptionTopics.slug, "rent"),
   });
@@ -281,12 +287,11 @@ async function main() {
     revokedAt: new Date(),
   });
 
-  // re-login owner (staff login overwrote cookie jar conceptually)
   const ownerLogin2 = await req("/api/auth/login", {
     method: "POST",
     body: JSON.stringify({
-      email: "owner@askinvest.local",
-      password: "askinvest-owner",
+      email: OWNER_EMAIL,
+      password: OWNER_PASSWORD,
     }),
   });
   const ownerCookie = getCookie(ownerLogin2.headers);
@@ -319,16 +324,28 @@ async function main() {
     detail: `count=${(preview.json as { count?: number }).count}`,
   });
 
-  // home page renders
   const home = await fetch(APP);
   results.push({
     name: "Главная отдаёт HTML",
     ok: home.ok && (await home.text()).includes("АСКИНВЕСТ"),
   });
 
+  // test channel disabled path: without secret in prod-like check of unauthorized webhook
+  const blocked = await req("/api/channels/test/webhook", {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
+  results.push({
+    name: "Тестовый вебхук без подписи отклоняется",
+    ok: blocked.res.status === 401 || blocked.res.status === 404,
+    detail: String(blocked.res.status),
+  });
+
   console.log("\n=== ASKINVEST acceptance ===");
   for (const r of results) {
-    console.log(`${r.ok ? "OK" : "FAIL"} · ${r.name}${r.detail ? ` · ${r.detail}` : ""}`);
+    console.log(
+      `${r.ok ? "OK" : "FAIL"} · ${r.name}${r.detail ? ` · ${r.detail}` : ""}`,
+    );
   }
   const failed = results.filter((r) => !r.ok).length;
   console.log(failed ? `\nFailed: ${failed}` : "\nAll checks passed");

@@ -6,17 +6,20 @@ export const whatsappAdapter: ChannelAdapter = {
   kind: "whatsapp",
   isConfigured() {
     const e = getEnv().whatsapp;
-    return Boolean(e.accessToken && e.phoneNumberId && e.businessNumber);
+    return Boolean(
+      e.accessToken && e.phoneNumberId && e.businessNumber && e.appSecret,
+    );
   },
   verifyWebhook(req, rawBody) {
     const secret = getEnv().whatsapp.appSecret;
-    if (!secret) return Boolean(getEnv().whatsapp.accessToken);
+    if (!secret) return false;
     const sig = req.headers.get("x-hub-signature-256") || "";
     const expected =
-      "sha256=" +
-      createHmac("sha256", secret).update(rawBody).digest("hex");
+      "sha256=" + createHmac("sha256", secret).update(rawBody).digest("hex");
     try {
-      return timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
+      const a = Buffer.from(sig);
+      const b = Buffer.from(expected);
+      return a.length === b.length && timingSafeEqual(a, b);
     } catch {
       return false;
     }
@@ -66,9 +69,7 @@ export const whatsappAdapter: ChannelAdapter = {
     const text = encodeURIComponent(
       `Здравствуйте! Хочу обсудить задачу. Код заявки ASK-${markerCode}`,
     );
-    if (!number) {
-      return `/api/channels/test/start?code=${encodeURIComponent(markerCode)}&via=whatsapp`;
-    }
+    if (!number) return "";
     const digits = number.replace(/\D/g, "");
     return `https://wa.me/${digits}?text=${text}`;
   },

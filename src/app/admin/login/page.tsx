@@ -6,8 +6,8 @@ import { Logo } from "@/components/public/Logo";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("owner@askinvest.local");
-  const [password, setPassword] = useState("askinvest-owner");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
 
