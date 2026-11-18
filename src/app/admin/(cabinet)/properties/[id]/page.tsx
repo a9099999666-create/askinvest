@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { desc, eq } from "drizzle-orm";
 import { PropertyEditor } from "@/components/admin/PropertyEditor";
 import { db } from "@/db/client";
-import { propertyVersions } from "@/db/schema";
+import { mediaAssets, propertyVersions } from "@/db/schema";
 import { can } from "@/lib/auth/permissions";
 import { getSessionUser } from "@/lib/auth/session";
 
@@ -22,27 +22,32 @@ export default async function EditPropertyPage({
     .orderBy(desc(propertyVersions.version));
   const current = rows[0];
   if (!current) notFound();
+  const floor = current.floorPlanId
+    ? await db.query.mediaAssets.findFirst({
+        where: eq(mediaAssets.id, current.floorPlanId),
+      })
+    : null;
 
   return (
-    <div>
-      <h1 className="mb-4 font-display text-3xl font-bold">Редактор объекта</h1>
-      <PropertyEditor
-        propertyId={id}
-        canPublish={Boolean(user && can(user, "publish"))}
-        initial={{
-          title: current.title,
-          address: current.address,
-          dealType: current.dealType,
-          areaSqm: String(current.areaSqm),
-          priceRub: String(current.priceRub),
-          priceUnit: current.priceUnit,
-          description: current.description,
-          coverId: current.coverId,
-          galleryIds: current.galleryIds || [],
-          floorPlanId: current.floorPlanId,
-          updatedAt: new Date(current.updatedAt).toISOString(),
-        }}
-      />
-    </div>
+    <PropertyEditor
+      propertyId={id}
+      heading="Редактирование объекта"
+      canPublish={Boolean(user && can(user, "publish"))}
+      initial={{
+        title: current.title,
+        address: current.address,
+        dealType: current.dealType,
+        areaSqm: String(current.areaSqm),
+        priceRub: String(current.priceRub),
+        priceUnit: current.priceUnit,
+        description: current.description,
+        coverId: current.coverId,
+        galleryIds: current.galleryIds || [],
+        floorPlanId: current.floorPlanId,
+        floorPlanName: floor?.originalName || null,
+        floorPlanSize: floor?.sizeBytes || null,
+        updatedAt: new Date(current.updatedAt).toISOString(),
+      }}
+    />
   );
 }

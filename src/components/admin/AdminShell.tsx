@@ -2,24 +2,37 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { Logo } from "@/components/public/Logo";
+import { CrystalHero } from "@/components/public/CrystalHero";
 import { cn } from "@/lib/utils";
+import {
+  IconBell,
+  IconCase,
+  IconChat,
+  IconClipboard,
+  IconLayers,
+  IconLock,
+  IconMail,
+  IconUser,
+  IconUsers,
+} from "./icons";
 
 const nav = [
   {
     group: "Сайт",
     items: [
-      { href: "/admin/properties", label: "Объекты" },
-      { href: "/admin/services", label: "Услуги" },
+      { href: "/admin/properties", label: "Объекты", icon: IconLayers },
+      { href: "/admin/services", label: "Услуги", icon: IconCase },
     ],
   },
   {
     group: "CRM",
     items: [
-      { href: "/admin/leads", label: "Заявки" },
-      { href: "/admin/inbox", label: "Диалоги" },
-      { href: "/admin/contacts", label: "Контакты" },
-      { href: "/admin/campaigns", label: "Рассылки" },
+      { href: "/admin/leads", label: "Заявки", icon: IconClipboard },
+      { href: "/admin/inbox", label: "Диалоги", icon: IconChat },
+      { href: "/admin/contacts", label: "Контакты", icon: IconUsers },
+      { href: "/admin/campaigns", label: "Рассылки", icon: IconMail },
     ],
   },
 ];
@@ -36,32 +49,33 @@ export function AdminShell({
   const pathname = usePathname();
   return (
     <div className="min-h-screen bg-atmosphere">
-      <div className="mx-auto flex min-h-screen max-w-[1400px]">
-        <aside className="hidden w-60 shrink-0 border-r border-white/50 bg-white/40 p-4 backdrop-blur md:block">
+      <div className="flex min-h-screen flex-col md:flex-row">
+        <aside className="w-full shrink-0 px-4 py-4 md:w-[232px] md:px-4 md:py-5">
           <Logo />
-          <div className="mt-4 inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-medium text-ink shadow-sm">
+          <div className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-ink shadow-sm">
+            <IconLock className="h-4 w-4 text-ink/70" />
             Закрытый кабинет
           </div>
-          <nav className="mt-6 space-y-5">
+          <nav className="mt-6 flex gap-4 overflow-x-auto md:block md:space-y-6 md:overflow-visible">
             {nav.map((g) => (
-              <div key={g.group}>
-                <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink/50">
-                  {g.group}
-                </div>
-                <ul className="space-y-1">
+              <div key={g.group} className="min-w-max md:min-w-0">
+                <div className="mb-2 text-sm font-medium text-slate-400">{g.group}</div>
+                <ul className="flex gap-1 md:block md:space-y-1">
                   {g.items.map((item) => {
-                    const active = pathname.startsWith(item.href);
+                    const active = pathname === item.href || pathname.startsWith(item.href + "/");
+                    const Icon = item.icon;
                     return (
                       <li key={item.href}>
                         <Link
                           href={item.href}
                           className={cn(
-                            "block rounded-lg px-3 py-2 text-sm font-medium",
+                            "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold",
                             active
-                              ? "border-l-2 border-brand-red bg-sky-100 text-ink"
-                              : "text-ink/70 hover:bg-white/70",
+                              ? "border-l-[3px] border-brand-red bg-[#e7f3ff] text-ink"
+                              : "text-ink/75 hover:bg-white/70",
                           )}
                         >
+                          <Icon className={active ? "text-ink" : "text-ink/55"} />
                           {item.label}
                         </Link>
                       </li>
@@ -70,41 +84,66 @@ export function AdminShell({
                 </ul>
               </div>
             ))}
+          </nav>
+        </aside>
+        <div className="relative min-w-0 flex-1">
+          <div className="pointer-events-none absolute right-36 top-1 z-0 hidden w-44 lg:block">
+            <CrystalHero />
+          </div>
+          <div className="absolute right-4 top-4 z-20 flex flex-col items-end gap-2 md:right-6">
+            <UserMenu userName={userName} />
             {isOwner && (
               <Link
                 href="/admin/staff"
-                className="block rounded-lg px-3 py-2 text-sm font-medium text-ink/70 hover:bg-white/70"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#3c6fd6]"
               >
+                <IconUsers className="h-4 w-4" />
                 Сотрудники
               </Link>
             )}
-            <Link
-              href="/admin/settings"
-              className="block rounded-lg px-3 py-2 text-sm font-medium text-ink/70 hover:bg-white/70"
-            >
-              Каналы
-            </Link>
-          </nav>
-        </aside>
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex items-center justify-between gap-3 border-b border-white/40 px-4 py-4 md:px-6">
-            <div className="md:hidden">
-              <Logo />
-            </div>
-            <div className="ml-auto flex items-center gap-3 text-sm">
-              <span className="rounded-full bg-white/80 px-3 py-1.5 font-medium text-ink">
-                {userName}
-              </span>
-              <form action="/api/auth/logout" method="post">
-                <button className="btn-ghost" type="submit">
-                  Выйти
-                </button>
-              </form>
-            </div>
-          </header>
-          <div className="flex-1 p-4 md:p-6">{children}</div>
+          </div>
+          <div className="relative z-10 px-4 pb-10 pt-4 md:px-6 md:pt-5">{children}</div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function UserMenu({ userName }: { userName: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center gap-2 rounded-full bg-white/95 py-1 pl-1 pr-3 text-sm font-semibold text-ink shadow-sm"
+        aria-expanded={open}
+      >
+        <span className="grid h-8 w-8 place-items-center rounded-full bg-slate-100 text-ink/60">
+          <IconUser />
+        </span>
+        {userName}
+        <span className="text-ink/40" aria-hidden>
+          ▾
+        </span>
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 w-48 rounded-2xl bg-white p-1.5 text-sm shadow-panel">
+          <Link
+            href="/admin/settings"
+            className="flex items-center gap-2 rounded-xl px-3 py-2 hover:bg-slate-50"
+            onClick={() => setOpen(false)}
+          >
+            <IconBell className="h-4 w-4" />
+            Каналы
+          </Link>
+          <form action="/api/auth/logout" method="post">
+            <button type="submit" className="w-full rounded-xl px-3 py-2 text-left hover:bg-slate-50">
+              Выйти
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 }

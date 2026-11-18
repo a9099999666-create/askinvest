@@ -209,6 +209,9 @@ export async function createPropertyDraft(
     priceUnit: "total" | "per_month";
     description?: string;
     slug?: string;
+    coverId?: string | null;
+    galleryIds?: string[];
+    floorPlanId?: string | null;
   },
 ) {
   if (!can(user, "editContent")) throw new Error("Нет права редактирования");
@@ -233,6 +236,9 @@ export async function createPropertyDraft(
       priceRub: data.priceRub,
       priceUnit: data.priceUnit,
       description: data.description || "",
+      coverId: data.coverId || null,
+      galleryIds: data.galleryIds || [],
+      floorPlanId: data.floorPlanId || null,
       version: 1,
       createdById: user.id,
     })

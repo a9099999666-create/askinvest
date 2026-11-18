@@ -24,20 +24,18 @@ export default async function EditServicePage({
   if (!current) notFound();
 
   return (
-    <div>
-      <h1 className="mb-4 font-display text-3xl font-bold">Редактор услуги</h1>
-      <ServiceEditor
-        serviceId={id}
-        canPublish={Boolean(user && can(user, "publish"))}
-        initial={{
-          title: current.title,
-          shortDescription: current.shortDescription,
-          fullDescription: current.fullDescription,
-          workItems: current.workItems || [],
-          updatedAt: new Date(current.updatedAt).toISOString(),
-          status: current.status,
-        }}
-      />
-    </div>
+    <ServiceEditor
+      serviceId={id}
+      heading="Редактирование услуги"
+      canPublish={Boolean(user && can(user, "publish"))}
+      initial={{
+        title: current.title,
+        shortDescription: current.shortDescription,
+        fullDescription: current.fullDescription,
+        workItems: current.workItems || [],
+        updatedAt: new Date(current.updatedAt).toISOString(),
+        status: current.status,
+      }}
+    />
   );
 }
