@@ -3,7 +3,7 @@ import { and, asc, eq, gte, lte, sql } from "drizzle-orm";
 import { db } from "@/db/client";
 import { properties, propertyVersions, services, serviceVersions, siteSettings } from "@/db/schema";
 
-const options = { revalidate: 60 };
+const options = { revalidate: 60, tags: ["public-site"] };
 
 const areaBands: Record<string, { min?: string; max?: string }> = {
   "100": { max: "100" },

@@ -1,5 +1,6 @@
 import {
   boolean,
+  customType,
   integer,
   jsonb,
   numeric,
@@ -13,6 +14,19 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType() {
+    return "bytea";
+  },
+  toDriver(value) {
+    return value;
+  },
+  fromDriver(value) {
+    if (Buffer.isBuffer(value)) return value;
+    return Buffer.from(value as Uint8Array);
+  },
+});
 
 export const dealTypeEnum = pgEnum("deal_type", ["sale", "rent"]);
 export const priceUnitEnum = pgEnum("price_unit", ["total", "per_month"]);
@@ -148,6 +162,7 @@ export const mediaAssets = pgTable("media_assets", {
   originalName: varchar("original_name", { length: 255 }).notNull(),
   width: integer("width"),
   height: integer("height"),
+  content: bytea("content"),
   uploadedById: uuid("uploaded_by_id").references(() => users.id),
   ...timestamps,
 });

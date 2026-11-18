@@ -130,9 +130,13 @@ export async function storeBuffer(opts: {
     return { storageKey: `s3://${bucket}/${key}`, mimeType: opts.mimeType };
   }
 
-  const full = path.join(localRoot(), key);
-  await mkdir(path.dirname(full), { recursive: true });
-  await writeFile(full, opts.buffer);
+  try {
+    const full = path.join(localRoot(), key);
+    await mkdir(path.dirname(full), { recursive: true });
+    await writeFile(full, opts.buffer);
+  } catch {
+    // Host filesystems are ephemeral; Postgres keeps the bytes.
+  }
   return { storageKey: key, mimeType: opts.mimeType };
 }
 

@@ -8,6 +8,7 @@ import {
 } from "@/db/schema";
 import type { SessionUser } from "@/lib/auth/permissions";
 import { can } from "@/lib/auth/permissions";
+import { revalidatePublic } from "@/lib/public/revalidate";
 import { slugify } from "@/lib/utils";
 
 export async function createServiceDraft(
@@ -152,6 +153,9 @@ export async function publishService(user: SessionUser, serviceId: string) {
       .set({ publishedVersionId: published.id, updatedAt: new Date() })
       .where(eq(services.id, serviceId));
     return published;
+  }).then((published) => {
+    revalidatePublic();
+    return published;
   });
 }
 
@@ -170,6 +174,7 @@ export async function unpublishService(user: SessionUser, serviceId: string) {
         eq(serviceVersions.status, "published"),
       ),
     );
+  revalidatePublic();
 }
 
 async function getEditableServiceVersion(serviceId: string) {
@@ -364,6 +369,9 @@ export async function publishProperty(user: SessionUser, propertyId: string) {
       .set({ publishedVersionId: published.id, updatedAt: new Date() })
       .where(eq(properties.id, propertyId));
     return published;
+  }).then((published) => {
+    revalidatePublic();
+    return published;
   });
 }
 
@@ -382,6 +390,7 @@ export async function unpublishProperty(user: SessionUser, propertyId: string) {
         eq(propertyVersions.status, "published"),
       ),
     );
+  revalidatePublic();
 }
 
 async function getEditablePropertyVersion(propertyId: string) {

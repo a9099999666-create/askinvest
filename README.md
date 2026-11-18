@@ -2,7 +2,7 @@
 
 Русскоязычный сайт услуг и коммерческой недвижимости с закрытым кабинетом CRM, диалогами и рассылками. Отдельный проект (не SHARENTA).
 
-Стек: Next.js (App Router) + TypeScript, PostgreSQL + Drizzle, локальное/S3 object storage, фоновый worker.
+Стек: Next.js (App Router) + TypeScript, PostgreSQL + Drizzle. Фото и документы хранятся в Postgres (или в S3, если задан). Очередь автоответов обрабатывается вместе с веб-запросом; локально можно поднять отдельный worker.
 
 ## Быстрый старт
 
@@ -53,10 +53,8 @@ npm run worker
 
 ```bash
 pg_dump "$DATABASE_URL" > backup.sql
-tar -czf media.tgz storage/uploads
 # восстановление
 psql "$DATABASE_URL" < backup.sql
-tar -xzf media.tgz
 ```
 
 ## Скрипты

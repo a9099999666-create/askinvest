@@ -26,9 +26,16 @@ export async function POST(req: Request) {
         mimeType: stored.mimeType,
         sizeBytes: buffer.length,
         originalName: file.name,
+        content: buffer,
         uploadedById: user.id,
       })
-      .returning();
+      .returning({
+        id: mediaAssets.id,
+        storageKey: mediaAssets.storageKey,
+        mimeType: mediaAssets.mimeType,
+        sizeBytes: mediaAssets.sizeBytes,
+        originalName: mediaAssets.originalName,
+      });
     return NextResponse.json(asset);
   } catch (e) {
     if (e instanceof Response) return e;

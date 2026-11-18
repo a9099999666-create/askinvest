@@ -19,6 +19,10 @@ export async function enqueueJob(opts: {
       })
       .onConflictDoNothing()
       .returning();
+    if (row && (!opts.runAfter || opts.runAfter.getTime() <= Date.now())) {
+      const { drainJobs } = await import("@/lib/queue");
+      await drainJobs(3);
+    }
     return row || null;
   } catch {
     return null;

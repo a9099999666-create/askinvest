@@ -48,7 +48,7 @@ export async function GET(
   }
 
   try {
-    const buf = await readStored(asset.storageKey);
+    const buf = asset.content?.length ? asset.content : await readStored(asset.storageKey);
     return new NextResponse(new Uint8Array(buf), {
       headers: {
         "Content-Type": asset.mimeType,
