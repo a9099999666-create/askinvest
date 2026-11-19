@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { contacts, leadMarkers, leads } from "@/db/schema";
 import { getAdapter, resolveOutboundChannel, type ChannelKind } from "@/lib/channels";
+import { parseReplyTo } from "@/lib/crm/replyTo";
 import { nanoid, shortCode } from "@/lib/utils";
 
 async function upsertContact(input: {
@@ -66,15 +67,20 @@ export async function createLeadFromForm(input: {
   visitorName?: string;
   visitorPhone?: string;
   visitorEmail?: string;
+  replyTo?: string;
   serviceId?: string;
   propertyId?: string;
   serviceTitleSnapshot?: string;
   propertyTitleSnapshot?: string;
 }) {
+  const fromReply = parseReplyTo(input.replyTo);
+  const visitorPhone = input.visitorPhone?.trim() || fromReply.phone;
+  const visitorEmail = input.visitorEmail?.trim().toLowerCase() || fromReply.email;
+
   const contactId = await upsertContact({
     name: input.visitorName,
-    phone: input.visitorPhone,
-    email: input.visitorEmail,
+    phone: visitorPhone,
+    email: visitorEmail,
     note: input.question,
   });
 
@@ -82,17 +88,20 @@ export async function createLeadFromForm(input: {
     where: eq(leads.publicKey, input.publicKey),
   });
   if (existing) {
-    await db
+    const [updated] = await db
       .update(leads)
       .set({
+        question: input.question || existing.question,
         visitorName: input.visitorName?.trim() || existing.visitorName,
-        visitorPhone: input.visitorPhone?.trim() || existing.visitorPhone,
+        visitorPhone: visitorPhone || existing.visitorPhone,
+        visitorEmail: visitorEmail || existing.visitorEmail,
         contactId: contactId || existing.contactId,
         updatedAt: new Date(),
       })
-      .where(eq(leads.id, existing.id));
+      .where(eq(leads.id, existing.id))
+      .returning();
     return {
-      lead: existing,
+      lead: updated ?? existing,
       markerCode: "",
       deepLink: "",
       reused: true,
@@ -107,7 +116,8 @@ export async function createLeadFromForm(input: {
       channel,
       question: input.question,
       visitorName: input.visitorName?.trim() || null,
-      visitorPhone: input.visitorPhone?.trim() || null,
+      visitorPhone: visitorPhone || null,
+      visitorEmail: visitorEmail || null,
       sourcePage: input.sourcePage || null,
       intent: input.intent || "discuss",
       serviceId: input.serviceId || null,

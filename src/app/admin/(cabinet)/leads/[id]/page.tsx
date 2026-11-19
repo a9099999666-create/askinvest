@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { leads, threads } from "@/db/schema";
 import { LeadActions } from "@/components/admin/LeadActions";
+import { listPublicChannelStatus } from "@/lib/channels";
 import { requirePageAccess } from "@/lib/auth/guard";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +21,14 @@ export default async function LeadDetailPage({
   const thread = await db.query.threads.findFirst({
     where: eq(threads.leadId, id),
   });
+  const liveChannels = new Set(
+    listPublicChannelStatus()
+      .filter((item) => item.configured)
+      .map((item) => item.kind),
+  );
+  const channelLabel = liveChannels.has(lead.channel)
+    ? lead.channel
+    : "Форма на сайте";
 
   return (
     <div className="max-w-3xl">
@@ -29,7 +38,7 @@ export default async function LeadDetailPage({
           <strong>Вопрос:</strong> {lead.question}
         </p>
         <p>
-          <strong>Канал:</strong> {lead.channel}
+          <strong>Канал:</strong> {channelLabel}
         </p>
         <p>
           <strong>Стадия:</strong> {lead.stage}
@@ -44,7 +53,14 @@ export default async function LeadDetailPage({
           <strong>Клиент:</strong> {lead.visitorName || "—"}
         </p>
         <p>
+          <strong>Обратный контакт:</strong>{" "}
+          {lead.visitorPhone || lead.visitorEmail || "—"}
+        </p>
+        <p>
           <strong>Телефон:</strong> {lead.visitorPhone || "—"}
+        </p>
+        <p>
+          <strong>Email:</strong> {lead.visitorEmail || "—"}
         </p>
         <p>
           <strong>Снимок услуги/объекта:</strong>{" "}

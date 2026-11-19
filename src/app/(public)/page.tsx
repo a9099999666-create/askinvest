@@ -19,37 +19,46 @@ const demoHomeServices = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ lead?: string }>;
+}) {
   const channelStatus = listPublicChannelStatus();
+  const params = await searchParams;
+  const notice = params.lead === "ok" || params.lead === "error" ? params.lead : undefined;
 
   return (
     <div>
       <link rel="preload" href="/brand/home-glass.webp" as="image" type="image/webp" />
-      <section className="grid items-start gap-3 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10">
-        <div className="min-w-0">
-          <h1 className="font-display text-[40px] font-semibold leading-[1.08] tracking-tight text-ink md:text-[48px] lg:text-[52px]">
-            Услуги
-            <br />
-            для бизнеса
-          </h1>
+      <section className="grid items-start gap-3 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:gap-y-3">
+        <h1 className="order-1 font-display text-[40px] font-semibold leading-[1.08] tracking-tight text-ink md:text-[48px] lg:col-start-1 lg:row-start-1 lg:text-[52px]">
+          Услуги
+          <br />
+          для бизнеса
+        </h1>
+        <div className="order-2 lg:order-3 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          <DiscussForm
+            sourcePage="/"
+            variant="compact"
+            channelStatus={channelStatus}
+            notice={notice}
+          />
+        </div>
+        <div className="order-3 min-w-0 lg:order-2 lg:col-start-1 lg:row-start-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/home-glass.webp"
             alt=""
-            width={900}
-            height={668}
+            width={980}
+            height={720}
             fetchPriority="high"
-            className="hero-glass mt-1 h-auto w-full max-h-[200px] max-w-[560px] object-contain object-left select-none sm:max-h-[240px] lg:max-h-[320px]"
+            className="hero-glass mt-1 h-auto w-full max-h-[120px] max-w-[420px] object-contain object-left select-none sm:max-h-[180px] sm:max-w-[560px] lg:mt-0 lg:max-h-[384px] lg:max-w-[660px]"
           />
         </div>
-        <DiscussForm
-          sourcePage="/"
-          variant="compact"
-          channelStatus={channelStatus}
-        />
       </section>
 
-      <section className="relative z-10 mt-4 lg:-mt-2">
+      <section className="relative z-10 mt-6 lg:mt-8">
         <h2 className="sr-only">Направления услуг</h2>
         <Suspense fallback={<CardSkeleton />}>
           <HomeServices />

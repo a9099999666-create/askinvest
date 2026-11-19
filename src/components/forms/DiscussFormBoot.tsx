@@ -5,9 +5,11 @@ import { useEffect } from "react";
 export function DiscussFormBoot({
   storageKey,
   compact,
+  anyLive,
 }: {
   storageKey: string;
   compact: boolean;
+  anyLive: boolean;
 }) {
   useEffect(() => {
     const form = document.querySelector<HTMLFormElement>(
@@ -24,7 +26,9 @@ export function DiscussFormBoot({
     if (publicKeyInput) publicKeyInput.value = publicKey;
 
     const fieldNames = compact
-      ? ["question"]
+      ? anyLive
+        ? ["question"]
+        : ["question", "replyTo"]
       : ["visitorName", "visitorPhone", "visitorEmail", "question"];
     fieldNames.forEach((name) => {
       const el = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`);
@@ -38,32 +42,16 @@ export function DiscussFormBoot({
     const syncSubmit = () => {
       const checked = form.querySelector<HTMLInputElement>('input[name="channel"]:checked');
       const label = form.querySelector("[data-submit-label]");
-      if (!checked || !label || !compact) return;
-      const live = checked.getAttribute("data-configured") === "1";
-      const name = checked.getAttribute("data-label") || "";
-      label.textContent = live ? `Написать в ${name}` : "Оставить заявку";
+      if (!label || !compact) return;
+      if (checked?.getAttribute("data-configured") === "1") {
+        label.textContent = `Продолжить в ${checked.getAttribute("data-label") || ""}`;
+      }
     };
     form.querySelectorAll<HTMLInputElement>('input[name="channel"]').forEach((el) => {
       el.addEventListener("change", syncSubmit);
     });
     syncSubmit();
-
-    const flag = new URLSearchParams(location.search).get("lead");
-    const note = form.querySelector(".lead-notice");
-    if (!note) return;
-    if (flag === "ok") {
-      note.textContent = compact
-        ? "Заявка принята. Мы получили ваш вопрос."
-        : "Заявка принята. Мы свяжемся с вами по указанным контактам.";
-      note.className = "lead-notice mt-3 text-sm text-emerald-700";
-      note.classList.remove("hidden");
-      fieldNames.forEach((name) => sessionStorage.removeItem(`${storageKey}_${name}`));
-    } else if (flag === "error") {
-      note.textContent = "Не удалось сохранить. Проверьте поля и нажмите ещё раз.";
-      note.className = "lead-notice mt-3 text-sm text-brand-red";
-      note.classList.remove("hidden");
-    }
-  }, [storageKey, compact]);
+  }, [storageKey, compact, anyLive]);
 
   return null;
 }

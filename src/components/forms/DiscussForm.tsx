@@ -18,6 +18,7 @@ export function DiscussForm({
   title = "Обсудить задачу",
   variant = "full",
   channelStatus = [],
+  notice,
 }: {
   serviceId?: string;
   propertyId?: string;
@@ -26,13 +27,20 @@ export function DiscussForm({
   title?: string;
   variant?: "compact" | "full";
   channelStatus?: ChannelStatus[];
+  notice?: "ok" | "error";
 }) {
   const storageKey = `askinvest_pk_${intent}_${propertyId || serviceId || "site"}`;
   const compact = variant === "compact";
   const statusByKind = new Map(channelStatus.map((item) => [item.kind, item.configured]));
-  const defaultChannel =
-    channels.find((channel) => statusByKind.get(channel.id))?.id ?? channels[0].id;
-  const unconfigured = channels.filter((channel) => statusByKind.get(channel.id) === false);
+  const liveChannels = channels.filter((channel) => statusByKind.get(channel.id));
+  const anyLive = liveChannels.length > 0;
+  const defaultChannel = liveChannels[0]?.id;
+  const compactCallback = compact && !anyLive;
+  const submitLabel = compact
+    ? anyLive
+      ? `Продолжить в ${liveChannels[0].label}`
+      : "Оставить заявку"
+    : "Отправить заявку";
 
   return (
     <form
@@ -56,9 +64,21 @@ export function DiscussForm({
         {title}
       </h2>
       <div className="mt-3 h-[3px] w-10 rounded bg-brand-red" />
-      <p className="lead-notice mt-3 hidden text-sm" />
+      {notice === "ok" ? (
+        <p className="lead-notice mt-3 text-sm text-emerald-700">
+          {compact
+            ? "Заявка принята. Мы получили ваш вопрос."
+            : "Заявка принята. Мы свяжемся с вами по указанным контактам."}
+        </p>
+      ) : notice === "error" ? (
+        <p className="lead-notice mt-3 text-sm text-brand-red">
+          Не удалось сохранить. Проверьте поля и нажмите ещё раз.
+        </p>
+      ) : (
+        <p className="lead-notice mt-3 hidden text-sm" />
+      )}
       <input type="hidden" name="publicKey" defaultValue="" />
-      <DiscussFormBoot storageKey={storageKey} compact={compact} />
+      <DiscussFormBoot storageKey={storageKey} compact={compact} anyLive={anyLive} />
       <input type="hidden" name="sourcePage" value={sourcePage || "/"} />
       <input type="hidden" name="intent" value={intent} />
       {serviceId ? <input type="hidden" name="serviceId" value={serviceId} /> : null}
@@ -116,49 +136,48 @@ export function DiscussForm({
         />
       </label>
 
-      <p className="mt-4 text-sm font-medium text-ink/70">Удобный способ связи</p>
-      <div className="mt-2 flex gap-2">
-        {channels.map((channel) => {
-          const configured = statusByKind.get(channel.id);
-          const known = statusByKind.has(channel.id);
-          return (
-            <label
-              key={channel.id}
-              className={`inline-flex min-w-0 flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-2xl border bg-white px-1 py-2 text-[11px] font-semibold leading-tight text-ink has-[:checked]:border-sky-300 has-[:checked]:bg-sky-50 has-[:checked]:shadow-sm sm:px-2 sm:py-2.5 sm:text-sm ${
-                known && !configured
-                  ? "border-dashed border-slate-300 text-ink/70"
-                  : "border-slate-200"
-              }`}
-            >
-              <input
-                type="radio"
-                name="channel"
-                value={channel.id}
-                defaultChecked={channel.id === defaultChannel}
-                data-configured={configured ? "1" : "0"}
-                data-label={channel.label}
-                className="sr-only"
-              />
-              <span className="inline-flex max-w-full items-center gap-1 sm:gap-1.5">
-                {channel.icon}
-                <span className="truncate">{channel.label}</span>
-              </span>
-              {known && !configured ? (
-                <span className="text-[10px] font-medium leading-none text-ink/45 sm:text-[11px]">
-                  не подключён
-                </span>
-              ) : null}
-            </label>
-          );
-        })}
-      </div>
-      {compact && unconfigured.length > 0 ? (
-        <p className="mt-2 text-xs leading-snug text-ink/50">
-          {unconfigured.length === channels.length
-            ? "Мессенджеры пока не подключены — заявка сохранится на сайте, мы ответим вам."
-            : `${unconfigured.map((item) => item.label).join(", ")} пока не подключены. Заявка всё равно сохранится.`}
-        </p>
+      {compactCallback ? (
+        <label className="mt-3 block">
+          <span className="mb-1 block text-sm text-ink/70">Телефон или email для ответа</span>
+          <input
+            className="field bg-white"
+            name="replyTo"
+            autoComplete="tel"
+            required
+            placeholder="+7 900 000-00-00 или email"
+          />
+        </label>
       ) : null}
+
+      {anyLive ? (
+        <>
+          <p className="mt-4 text-sm font-medium text-ink/70">Удобный способ связи</p>
+          <div className="mt-2 flex gap-2">
+            {liveChannels.map((channel) => (
+              <label
+                key={channel.id}
+                className="inline-flex min-w-0 flex-1 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-2xl border border-slate-200 bg-white px-1 py-2 text-[11px] font-semibold leading-tight text-ink has-[:checked]:border-sky-300 has-[:checked]:bg-sky-50 has-[:checked]:shadow-sm sm:px-2 sm:py-2.5 sm:text-sm"
+              >
+                <input
+                  type="radio"
+                  name="channel"
+                  value={channel.id}
+                  defaultChecked={channel.id === defaultChannel}
+                  data-configured="1"
+                  data-label={channel.label}
+                  className="sr-only"
+                />
+                <span className="inline-flex max-w-full items-center gap-1 sm:gap-1.5">
+                  {channel.icon}
+                  <span className="truncate">{channel.label}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </>
+      ) : (
+        <input type="hidden" name="channel" value="telegram" />
+      )}
 
       <button
         className={
@@ -168,7 +187,7 @@ export function DiscussForm({
         }
         type="submit"
       >
-        <span data-submit-label>{compact ? "Оставить заявку" : "Отправить заявку"}</span>
+        <span data-submit-label>{submitLabel}</span>
         <span aria-hidden className="text-xl">
           →
         </span>
@@ -176,4 +195,3 @@ export function DiscussForm({
     </form>
   );
 }
-

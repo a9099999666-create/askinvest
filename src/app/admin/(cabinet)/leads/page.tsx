@@ -36,7 +36,7 @@ export default async function LeadsPage() {
                         {l.visitorName || l.question}
                       </div>
                       <div className="mt-1 text-xs text-ink/60">
-                        {l.visitorPhone || l.channel} · {l.question.slice(0, 80)}
+                        {l.visitorPhone || l.visitorEmail || l.channel} · {l.question.slice(0, 80)}
                         {l.serviceTitleSnapshot
                           ? ` · ${l.serviceTitleSnapshot}`
                           : ""}

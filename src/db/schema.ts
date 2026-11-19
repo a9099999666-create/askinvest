@@ -277,6 +277,7 @@ export const leads = pgTable(
     question: text("question").notNull(),
     visitorName: varchar("visitor_name", { length: 255 }),
     visitorPhone: varchar("visitor_phone", { length: 64 }),
+    visitorEmail: varchar("visitor_email", { length: 255 }),
     sourcePage: varchar("source_page", { length: 500 }),
     intent: varchar("intent", { length: 64 }).default("discuss"),
     serviceId: uuid("service_id").references(() => services.id),

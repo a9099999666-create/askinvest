@@ -175,8 +175,8 @@ body {
 }
 
 .hero-glass {
-  -webkit-mask-image: radial-gradient(ellipse 78% 74% at 46% 58%, #000 54%, transparent 86%);
-  mask-image: radial-gradient(ellipse 78% 74% at 46% 58%, #000 54%, transparent 86%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 88% at 46% 54%, #000 64%, transparent 94%);
+  mask-image: radial-gradient(ellipse 90% 88% at 46% 54%, #000 64%, transparent 94%);
 }
 
 .atmosphere-wash {

@@ -3,7 +3,9 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/db/client";
 import { properties, propertyVersions, services, serviceVersions } from "@/db/schema";
+import { getAdapter } from "@/lib/channels";
 import { createLeadFromForm } from "@/lib/crm/leads";
+import { parseReplyTo } from "@/lib/crm/replyTo";
 import { nanoid } from "@/lib/utils";
 
 const schema = z.object({
@@ -16,6 +18,7 @@ const schema = z.object({
   visitorName: z.string().optional(),
   visitorPhone: z.string().optional(),
   visitorEmail: z.string().optional(),
+  replyTo: z.string().optional(),
   sourcePage: z.string().optional(),
   intent: z.string().optional(),
   serviceId: z.string().uuid().optional(),
@@ -57,6 +60,7 @@ async function readBody(req: Request) {
     visitorName: first(form.get("visitorName")),
     visitorPhone: first(form.get("visitorPhone")),
     visitorEmail: first(form.get("visitorEmail")),
+    replyTo: first(form.get("replyTo")),
     sourcePage: first(form.get("sourcePage")),
     intent: first(form.get("intent")),
     serviceId: first(form.get("serviceId")) || undefined,
@@ -70,6 +74,18 @@ export async function POST(req: Request) {
   try {
     const body = await readBody(req);
     sourcePage = safeSourcePath(body.sourcePage);
+    const reply = parseReplyTo(body.replyTo);
+    const visitorPhone = body.visitorPhone?.trim() || reply.phone;
+    const visitorEmail = body.visitorEmail?.trim().toLowerCase() || reply.email;
+    let channelConfigured = false;
+    try {
+      channelConfigured = getAdapter(body.channel).isConfigured();
+    } catch {
+      channelConfigured = false;
+    }
+    if (!channelConfigured && !visitorPhone && !visitorEmail) {
+      throw new Error("callback_required");
+    }
 
     let serviceTitleSnapshot: string | undefined;
     let propertyTitleSnapshot: string | undefined;
@@ -99,6 +115,8 @@ export async function POST(req: Request) {
 
     const result = await createLeadFromForm({
       ...body,
+      visitorPhone,
+      visitorEmail,
       sourcePage,
       publicKey: body.publicKey || nanoid(),
       serviceTitleSnapshot,
