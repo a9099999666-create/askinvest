@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
         setError(data.error || "Ошибка входа");
         return;
       }
-      router.push("/admin");
+      router.push("/admin/properties");
       router.refresh();
     });
   }

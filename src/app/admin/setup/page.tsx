@@ -26,7 +26,7 @@ export default function AdminSetupPage() {
         setError(data.error || "Не удалось создать владельца");
         return;
       }
-      router.push("/admin");
+      router.push("/admin/properties");
       router.refresh();
     });
   }

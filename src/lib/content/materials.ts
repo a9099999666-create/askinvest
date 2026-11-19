@@ -1,6 +1,7 @@
 import { desc } from "drizzle-orm";
 import { db } from "@/db/client";
 import { properties, propertyVersions, services, serviceVersions } from "@/db/schema";
+import { asPlaceKind, placeKindLabel } from "@/lib/content/kinds";
 import { formatArea } from "@/lib/utils";
 
 export type MaterialItem = {
@@ -13,13 +14,14 @@ export type MaterialItem = {
   thumb: string | null;
 };
 
-function placeKind(title: string) {
+function placeKindFrom(title: string, stored?: string | null) {
+  if (stored) return placeKindLabel[asPlaceKind(stored)];
   const t = title.toLowerCase();
-  if (t.includes("офис")) return "Офис";
-  if (t.includes("склад")) return "Склад";
-  if (t.includes("торг")) return "Торговое";
-  if (t.includes("производ")) return "Производство";
-  return "Помещение";
+  if (t.includes("офис")) return placeKindLabel.office;
+  if (t.includes("склад")) return placeKindLabel.warehouse;
+  if (t.includes("торг")) return placeKindLabel.retail;
+  if (t.includes("производ")) return placeKindLabel.production;
+  return placeKindLabel.other;
 }
 
 function pickVersion<T extends { status: string; version: number; id: string }>(
@@ -51,7 +53,7 @@ export async function loadMaterials(): Promise<MaterialItem[]> {
       id: property.id,
       href: `/admin/properties/${property.id}`,
       title: editable.title,
-      subtitle: `${placeKind(editable.title)} · ${formatArea(editable.areaSqm)}`,
+      subtitle: `${placeKindFrom(editable.title, editable.placeKind)} · ${formatArea(editable.areaSqm)}`,
       kind: "property",
       status: editable.status,
       thumb: editable.coverId ? `/api/media/${editable.coverId}` : null,

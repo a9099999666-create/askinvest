@@ -19,7 +19,7 @@ export async function createServiceDraft(
     slug?: string;
     shortDescription?: string;
     fullDescription?: string;
-    workItems?: { id: string; text: string }[];
+    workItems?: { id: string; text: string; icon?: "doc" | "pen" | "handshake" }[];
     imageId?: string | null;
     sortOrder?: number;
   },
@@ -71,7 +71,7 @@ export async function saveServiceVersion(
     slug: string;
     shortDescription: string;
     fullDescription: string;
-    workItems: { id: string; text: string }[];
+    workItems: { id: string; text: string; icon?: "doc" | "pen" | "handshake" }[];
     imageId: string | null;
     sortOrder: number;
     status: "draft" | "review";
@@ -308,6 +308,7 @@ export async function createPropertyDraft(
     title: string;
     address: string;
     dealType: "sale" | "rent";
+    placeKind?: "office" | "warehouse" | "retail" | "production" | "other";
     areaSqm: string;
     priceRub: string;
     priceUnit: "total" | "per_month";
@@ -336,6 +337,7 @@ export async function createPropertyDraft(
       title: data.title,
       address: data.address,
       dealType: data.dealType,
+      placeKind: data.placeKind || "other",
       areaSqm: data.areaSqm,
       priceRub: data.priceRub,
       priceUnit: data.priceUnit,
@@ -358,6 +360,7 @@ export async function savePropertyVersion(
     title: string;
     address: string;
     dealType: "sale" | "rent";
+    placeKind: "office" | "warehouse" | "retail" | "production" | "other";
     areaSqm: string;
     priceRub: string;
     priceUnit: "total" | "per_month";
@@ -398,6 +401,7 @@ export async function savePropertyVersion(
         title: patch.title ?? current.title,
         address: patch.address ?? current.address,
         dealType: patch.dealType ?? current.dealType,
+        placeKind: patch.placeKind ?? current.placeKind,
         areaSqm: patch.areaSqm ?? current.areaSqm,
         priceRub: patch.priceRub ?? current.priceRub,
         priceUnit: patch.priceUnit ?? current.priceUnit,
@@ -421,6 +425,7 @@ export async function savePropertyVersion(
       title: patch.title ?? current.title,
       address: patch.address ?? current.address,
       dealType: patch.dealType ?? current.dealType,
+      placeKind: patch.placeKind ?? current.placeKind,
       areaSqm: patch.areaSqm ?? current.areaSqm,
       priceRub: patch.priceRub ?? current.priceRub,
       priceUnit: patch.priceUnit ?? current.priceUnit,

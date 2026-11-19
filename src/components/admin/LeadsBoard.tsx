@@ -15,9 +15,9 @@ type Lead = {
 };
 
 const stages = [
-  { id: "new", title: "Новые" },
-  { id: "in_progress", title: "В работе" },
-  { id: "done", title: "Завершены" },
+  { id: "new", title: "Вопрос" },
+  { id: "in_progress", title: "Созвон" },
+  { id: "done", title: "Закрыто" },
 ] as const;
 
 export function LeadsBoard({ leads }: { leads: Lead[] }) {

@@ -1,15 +1,9 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { DiscussForm } from "@/components/forms/DiscussForm";
-import { HowWeWork } from "@/components/public/HowWeWork";
+import { isPublicServiceTitle } from "@/lib/content/kinds";
 import { listPublicChannelStatus } from "@/lib/channels";
 import { getHomeServices } from "@/lib/public/cache";
-
-const homePrompts = [
-  "Проверить договор",
-  "Сопроводить сделку",
-  "Подобрать помещение",
-];
 
 export const revalidate = 60;
 
@@ -50,10 +44,10 @@ export default async function HomePage({
             variant="compact"
             channelStatus={channelStatus}
             notice={notice}
-            prompts={homePrompts}
+            actionLabel="Обсудить задачу"
           />
         </div>
-        <div className="order-3 min-w-0 lg:order-2 lg:col-start-1 lg:row-start-2">
+        <div className="order-3 min-w-0 lg:order-2 lg:col-start-1 lg:row-start-2 lg:-mb-6">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/home-glass.webp"
@@ -61,24 +55,25 @@ export default async function HomePage({
             width={980}
             height={720}
             fetchPriority="high"
-            className="hero-glass mt-1 h-auto w-full max-h-[120px] max-w-[420px] object-contain object-left select-none sm:max-h-[180px] sm:max-w-[560px] lg:mt-0 lg:max-h-[384px] lg:max-w-[660px]"
+            className="hero-glass mt-1 h-auto w-full max-h-[150px] max-w-[480px] object-contain object-left select-none sm:max-h-[220px] sm:max-w-[620px] lg:mt-0 lg:max-h-[440px] lg:max-w-[740px]"
           />
         </div>
       </section>
 
-      <section className="relative z-10 mt-6 lg:mt-8">
+      <section className="relative z-10 mt-4 lg:mt-6">
         <h2 className="sr-only">Направления услуг</h2>
         <Suspense fallback={<CardSkeleton />}>
           <HomeServices />
         </Suspense>
       </section>
-      <HowWeWork />
     </div>
   );
 }
 
 async function HomeServices() {
-  const published = await getHomeServices();
+  const published = (await getHomeServices()).filter((item) =>
+    isPublicServiceTitle(item.title),
+  );
   const items =
     published.length > 0
       ? published.slice(0, 2)
@@ -109,7 +104,7 @@ async function HomeServices() {
         className="glass-panel flex min-h-[76px] items-center justify-between gap-4 rounded-[24px] px-5 py-4 md:min-h-[84px] md:px-6"
       >
         <span className="text-[17px] font-semibold leading-snug text-ink md:text-lg">
-          Все услуги
+          Другие услуги
         </span>
         <span className="shrink-0 text-xl text-[#ff3142]" aria-hidden>
           →

@@ -28,12 +28,18 @@ export const getHomeServices = unstable_cache(
       .from(services)
       .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
       .orderBy(asc(services.sortOrder));
+    const publicRows = rows.filter(
+      (row) => !/\d{10,}/.test(row.title) && !/черновик/i.test(row.title),
+    );
     if (featured.length) {
-      return featured
-        .map((id) => rows.find((row) => row.id === id))
+      const picked = featured
+        .map((id) => publicRows.find((row) => row.id === id))
         .filter((row): row is (typeof rows)[number] => Boolean(row));
+      if (picked.length >= 2) return picked.slice(0, 2);
+      const rest = publicRows.filter((row) => !picked.some((item) => item.id === row.id));
+      return [...picked, ...rest].slice(0, 2);
     }
-    return rows.slice(0, 2);
+    return publicRows.slice(0, 2);
   },
   ["home-services"],
   options,
@@ -98,6 +104,7 @@ export const getPropertyCards = unstable_cache(
         slug: properties.slug,
         address: propertyVersions.address,
         dealType: propertyVersions.dealType,
+        placeKind: propertyVersions.placeKind,
         coverId: propertyVersions.coverId,
       })
       .from(properties)
@@ -118,6 +125,7 @@ export const getPublishedProperty = unstable_cache(
         title: propertyVersions.title,
         address: propertyVersions.address,
         dealType: propertyVersions.dealType,
+        placeKind: propertyVersions.placeKind,
         areaSqm: propertyVersions.areaSqm,
         priceRub: propertyVersions.priceRub,
         priceUnit: propertyVersions.priceUnit,
@@ -143,3 +151,22 @@ export const getContactsHtml = unstable_cache(async () => {
   });
   return settings?.contactsHtml || "";
 }, ["contacts-html"], options);
+
+export const getPublicContacts = unstable_cache(
+  async () => {
+    if (!hasDatabase()) {
+      return { phone: "", address: "", hours: "", html: "" };
+    }
+    const settings = await db.query.siteSettings.findFirst({
+      where: eq(siteSettings.id, 1),
+    });
+    return {
+      phone: settings?.contactPhone || "",
+      address: settings?.contactAddress || "",
+      hours: settings?.contactHours || "",
+      html: settings?.contactsHtml || "",
+    };
+  },
+  ["public-contacts"],
+  options,
+);

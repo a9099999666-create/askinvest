@@ -29,6 +29,13 @@ const bytea = customType<{ data: Buffer; driverData: Buffer }>({
 });
 
 export const dealTypeEnum = pgEnum("deal_type", ["sale", "rent"]);
+export const placeKindEnum = pgEnum("place_kind", [
+  "office",
+  "warehouse",
+  "retail",
+  "production",
+  "other",
+]);
 export const priceUnitEnum = pgEnum("price_unit", ["total", "per_month"]);
 export const publishStatusEnum = pgEnum("publish_status", [
   "draft",
@@ -188,7 +195,7 @@ export const serviceVersions = pgTable(
     fullDescription: text("full_description").notNull().default(""),
     imageId: uuid("image_id").references(() => mediaAssets.id),
     workItems: jsonb("work_items")
-      .$type<{ id: string; text: string }[]>()
+      .$type<{ id: string; text: string; icon?: "doc" | "pen" | "handshake" }[]>()
       .notNull()
       .default([]),
     version: integer("version").notNull().default(1),
@@ -221,6 +228,7 @@ export const propertyVersions = pgTable(
     title: varchar("title", { length: 255 }).notNull(),
     address: varchar("address", { length: 500 }).notNull(),
     dealType: dealTypeEnum("deal_type").notNull(),
+    placeKind: placeKindEnum("place_kind").notNull().default("other"),
     areaSqm: numeric("area_sqm", { precision: 12, scale: 2 }).notNull(),
     priceRub: numeric("price_rub", { precision: 16, scale: 2 }).notNull(),
     priceUnit: priceUnitEnum("price_unit").notNull(),
@@ -470,6 +478,9 @@ export const jobs = pgTable(
 export const siteSettings = pgTable("site_settings", {
   id: integer("id").primaryKey().default(1),
   contactsHtml: text("contacts_html").notNull().default(""),
+  contactPhone: varchar("contact_phone", { length: 64 }).notNull().default(""),
+  contactAddress: varchar("contact_address", { length: 500 }).notNull().default(""),
+  contactHours: varchar("contact_hours", { length: 255 }).notNull().default(""),
   homeServiceIds: jsonb("home_service_ids")
     .$type<string[]>()
     .notNull()

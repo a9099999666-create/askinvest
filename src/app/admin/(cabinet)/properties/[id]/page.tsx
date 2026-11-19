@@ -37,6 +37,7 @@ export default async function EditPropertyPage({
         title: current.title,
         address: current.address,
         dealType: current.dealType,
+        placeKind: current.placeKind,
         areaSqm: String(current.areaSqm),
         priceRub: String(current.priceRub),
         priceUnit: current.priceUnit,

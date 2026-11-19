@@ -38,9 +38,9 @@ export function LeadActions({
           value={form.stage}
           onChange={(e) => setForm({ ...form, stage: e.target.value })}
         >
-          <option value="new">Новая</option>
-          <option value="in_progress">В работе</option>
-          <option value="done">Завершена</option>
+          <option value="new">Вопрос</option>
+          <option value="in_progress">Созвон</option>
+          <option value="done">Закрыто</option>
         </select>
       </label>
       <label className="block">

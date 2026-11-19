@@ -57,6 +57,7 @@ export async function POST(req: Request) {
       id: 1,
       contactsHtml:
         "<p>АСКИНВЕСТ</p><p>Связь через форму на сайте или мессенджеры.</p>",
+      contactHours: "Пн–Пт 10:00–19:00 по Москве",
     })
     .onConflictDoNothing();
 

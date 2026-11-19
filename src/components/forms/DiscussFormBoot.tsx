@@ -5,11 +5,9 @@ import { useEffect } from "react";
 export function DiscussFormBoot({
   storageKey,
   compact,
-  anyLive,
 }: {
   storageKey: string;
   compact: boolean;
-  anyLive: boolean;
 }) {
   useEffect(() => {
     const form = document.querySelector<HTMLFormElement>(
@@ -26,9 +24,7 @@ export function DiscussFormBoot({
     if (publicKeyInput) publicKeyInput.value = publicKey;
 
     const fieldNames = compact
-      ? anyLive
-        ? ["question"]
-        : ["question", "replyTo"]
+      ? ["question", "replyTo"]
       : ["visitorName", "visitorPhone", "visitorEmail", "question"];
     fieldNames.forEach((name) => {
       const el = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`);
@@ -39,19 +35,21 @@ export function DiscussFormBoot({
       el.addEventListener("input", () => sessionStorage.setItem(key, el.value));
     });
 
-    const syncSubmit = () => {
+    const replyWrap = form.querySelector<HTMLLabelElement>("[data-reply-wrap]");
+    const replyInput = form.querySelector<HTMLInputElement>('input[name="replyTo"]');
+
+    const syncReply = () => {
       const checked = form.querySelector<HTMLInputElement>('input[name="channel"]:checked');
-      const label = form.querySelector("[data-submit-label]");
-      if (!label || !compact) return;
-      if (checked?.getAttribute("data-configured") === "1") {
-        label.textContent = `Продолжить в ${checked.getAttribute("data-label") || ""}`;
-      }
+      const needsCallback = compact && checked?.getAttribute("data-configured") !== "1";
+      if (replyWrap) replyWrap.classList.toggle("hidden", !needsCallback);
+      if (replyInput) replyInput.required = Boolean(needsCallback);
     };
+
     form.querySelectorAll<HTMLInputElement>('input[name="channel"]').forEach((el) => {
-      el.addEventListener("change", syncSubmit);
+      el.addEventListener("change", syncReply);
     });
-    syncSubmit();
-  }, [storageKey, compact, anyLive]);
+    syncReply();
+  }, [storageKey, compact]);
 
   return null;
 }

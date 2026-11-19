@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { InteriorShot } from "@/components/public/InteriorShot";
+import { asPlaceKind, placeKindLabel, placeKinds, type PlaceKind } from "@/lib/content/kinds";
 import { formatArea } from "@/lib/utils";
 import { PageTitle } from "./PageTitle";
 import { IconDoc, IconPin } from "./icons";
@@ -21,6 +22,7 @@ export function PropertyEditor({
     title: string;
     address: string;
     dealType: "sale" | "rent";
+    placeKind?: PlaceKind;
     areaSqm: string;
     priceRub: string;
     priceUnit: "total" | "per_month";
@@ -39,6 +41,7 @@ export function PropertyEditor({
     title: initial?.title || "",
     address: initial?.address || "",
     dealType: initial?.dealType || ("sale" as "sale" | "rent"),
+    placeKind: asPlaceKind(initial?.placeKind),
     areaSqm: plainNumber(initial?.areaSqm || ""),
     priceRub: plainNumber(initial?.priceRub || ""),
     priceUnit: initial?.priceUnit || ("total" as "total" | "per_month"),
@@ -196,6 +199,24 @@ export function PropertyEditor({
               </div>
             </div>
             <label>
+              <span className="mb-1.5 block text-sm font-semibold text-ink">Тип помещения</span>
+              <select
+                className="field"
+                value={form.placeKind}
+                onChange={(e) =>
+                  setForm({ ...form, placeKind: asPlaceKind(e.target.value) })
+                }
+              >
+                {placeKinds.map((kind) => (
+                  <option key={kind} value={kind}>
+                    {placeKindLabel[kind]}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <label>
               <span className="mb-1.5 block text-sm font-semibold text-ink">Площадь</span>
               <input
                 className="field"
@@ -328,7 +349,7 @@ export function PropertyEditor({
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={`/api/media/${previewImage}`} alt="" className="h-full w-full object-cover" />
               ) : (
-                <InteriorShot seed={form.address || title} className="h-full w-full" />
+                <InteriorShot seed={form.address || title} kind={form.placeKind} className="h-full w-full" />
               )}
               <span className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/90 text-rose-400">
                 ♥

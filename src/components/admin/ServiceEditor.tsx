@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { workIcons, type WorkIconKind, type WorkItem } from "@/lib/content/kinds";
 import { nanoid, slugify } from "@/lib/utils";
+import { WorkIcon } from "@/components/public/WorkIcon";
 import { PageTitle } from "./PageTitle";
-import { IconCheck, IconGrip } from "./icons";
-
-type WorkItem = { id: string; text: string };
+import { IconGrip } from "./icons";
 
 export function ServiceEditor({
   serviceId,
@@ -260,9 +260,23 @@ export function ServiceEditor({
                   className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3"
                 >
                   <IconGrip className="shrink-0 cursor-grab text-slate-300" />
+                  <button
+                    type="button"
+                    className="shrink-0"
+                    title="Сменить иконку"
+                    onClick={() => {
+                      const next = [...workItems];
+                      const current = workIcons.indexOf((item.icon || workIcons[i % 3]) as WorkIconKind);
+                      next[i] = { ...item, icon: workIcons[(current + 1) % workIcons.length] };
+                      setItems(next);
+                    }}
+                  >
+                    <WorkIcon kind={item.icon || workIcons[i % 3]} />
+                  </button>
                   <input
                     className="w-full bg-transparent py-3 outline-none"
                     value={item.text}
+                    placeholder="Проверим документы"
                     onChange={(e) => {
                       const next = [...workItems];
                       next[i] = { ...item, text: e.target.value };
@@ -299,7 +313,12 @@ export function ServiceEditor({
             <button
               type="button"
               className="mt-3 inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-ink/80"
-              onClick={() => setItems([...workItems, { id: nanoid(), text: "" }])}
+              onClick={() =>
+                setItems([
+                  ...workItems,
+                  { id: nanoid(), text: "", icon: workIcons[workItems.length % workIcons.length] },
+                ])
+              }
             >
               + Добавить пункт
             </button>
@@ -322,9 +341,9 @@ export function ServiceEditor({
           <p className="mt-2 text-sm text-ink/60">{shortDescription}</p>
           <div className="mt-4 text-sm font-semibold text-ink">Чем поможем:</div>
           <ul className="mt-2 space-y-2">
-            {points.map((item) => (
-              <li key={item.id} className="flex items-start gap-2 text-sm text-ink">
-                <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+            {points.map((item, index) => (
+              <li key={item.id} className="flex items-center gap-2 text-sm text-ink">
+                <WorkIcon kind={item.icon || workIcons[index % workIcons.length]} />
                 {item.text}
               </li>
             ))}

@@ -110,9 +110,9 @@ async function Catalog({
             key={item.id}
             href={`/properties/${item.slug}`}
             prefetch={false}
-            className="overflow-hidden rounded-[24px] bg-white shadow-panel transition hover:-translate-y-0.5"
+            className="overflow-hidden rounded-[28px] bg-white shadow-panel transition hover:-translate-y-0.5"
           >
-            <div className="relative h-44 bg-slate-100">
+            <div className="relative h-52 bg-slate-100 md:h-56">
               {item.coverId ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -121,7 +121,7 @@ async function Catalog({
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <InteriorShot seed={item.address} className="h-full w-full" />
+                <InteriorShot seed={item.address} kind={item.placeKind} className="h-full w-full" />
               )}
               <span
                 className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-xs font-semibold ${
