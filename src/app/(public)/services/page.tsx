@@ -35,6 +35,14 @@ async function ServiceList() {
           prefetch={false}
           className="glass-panel rounded-2xl p-6 transition hover:-translate-y-0.5"
         >
+          {item.imageId ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={`/api/media/${item.imageId}`}
+              alt=""
+              className="mb-4 h-36 w-full rounded-xl object-cover"
+            />
+          ) : null}
           <h2 className="text-xl font-bold text-ink">{item.title}</h2>
           <p className="mt-2 text-ink/70">{item.shortDescription}</p>
           <span className="mt-4 inline-block text-brand-red">Подробнее →</span>

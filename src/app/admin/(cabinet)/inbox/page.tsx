@@ -91,6 +91,8 @@ export default async function InboxPage({
               propertyTitleSnapshot: lead.propertyTitleSnapshot,
               note: lead.note,
               visitorName: lead.visitorName,
+              visitorPhone: lead.visitorPhone,
+              visitorEmail: lead.visitorEmail,
             }
           : null
       }

@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
-import { desc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { ServiceEditor } from "@/components/admin/ServiceEditor";
 import { db } from "@/db/client";
-import { serviceVersions } from "@/db/schema";
+import { services } from "@/db/schema";
 import { can } from "@/lib/auth/permissions";
-import { getSessionUser } from "@/lib/auth/session";
+import { requirePageAccess } from "@/lib/auth/guard";
+import { getEditableServiceVersion } from "@/lib/crm/content";
 
 export const dynamic = "force-dynamic";
 
@@ -13,28 +14,29 @@ export default async function EditServicePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const user = await requirePageAccess("editContent");
   const { id } = await params;
-  const user = await getSessionUser();
-  const rows = await db
-    .select()
-    .from(serviceVersions)
-    .where(eq(serviceVersions.serviceId, id))
-    .orderBy(desc(serviceVersions.version));
-  const current = rows[0];
-  if (!current) notFound();
+  const service = await db.query.services.findFirst({
+    where: eq(services.id, id),
+  });
+  const current = await getEditableServiceVersion(id);
+  if (!service || !current) notFound();
 
   return (
     <ServiceEditor
       serviceId={id}
       heading="Редактирование услуги"
-      canPublish={Boolean(user && can(user, "publish"))}
+      canPublish={can(user, "publish")}
       initial={{
         title: current.title,
+        slug: service.slug,
         shortDescription: current.shortDescription,
         fullDescription: current.fullDescription,
         workItems: current.workItems || [],
+        imageId: current.imageId,
         updatedAt: new Date(current.updatedAt).toISOString(),
         status: current.status,
+        published: Boolean(service.publishedVersionId),
       }}
     />
   );

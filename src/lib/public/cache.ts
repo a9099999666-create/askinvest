@@ -15,7 +15,11 @@ const areaBands: Record<string, { min?: string; max?: string }> = {
 export const getHomeServices = unstable_cache(
   async () => {
     if (!hasDatabase()) return [];
-    return db
+    const settings = await db.query.siteSettings.findFirst({
+      where: eq(siteSettings.id, 1),
+    });
+    const featured = (settings?.homeServiceIds || []).filter(Boolean).slice(0, 2);
+    const rows = await db
       .select({
         id: services.id,
         slug: services.slug,
@@ -24,6 +28,12 @@ export const getHomeServices = unstable_cache(
       .from(services)
       .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
       .orderBy(asc(services.sortOrder));
+    if (featured.length) {
+      return featured
+        .map((id) => rows.find((row) => row.id === id))
+        .filter((row): row is (typeof rows)[number] => Boolean(row));
+    }
+    return rows.slice(0, 2);
   },
   ["home-services"],
   options,
@@ -38,6 +48,7 @@ export const getServiceCards = unstable_cache(
         slug: services.slug,
         title: serviceVersions.title,
         shortDescription: serviceVersions.shortDescription,
+        imageId: serviceVersions.imageId,
       })
       .from(services)
       .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
@@ -56,7 +67,9 @@ export const getPublishedService = unstable_cache(
         slug: services.slug,
         title: serviceVersions.title,
         shortDescription: serviceVersions.shortDescription,
+        fullDescription: serviceVersions.fullDescription,
         workItems: serviceVersions.workItems,
+        imageId: serviceVersions.imageId,
       })
       .from(services)
       .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))

@@ -33,15 +33,12 @@ export default async function LeadsPage() {
                       className="block rounded-xl border border-slate-100 bg-white p-3 hover:border-brand-blue"
                     >
                       <div className="text-sm font-semibold line-clamp-2">
-                        {l.visitorName || l.question}
+                        {l.serviceTitleSnapshot || l.visitorName || l.question}
                       </div>
                       <div className="mt-1 text-xs text-ink/60">
-                        {l.visitorPhone || l.visitorEmail || l.channel} · {l.question.slice(0, 80)}
-                        {l.serviceTitleSnapshot
-                          ? ` · ${l.serviceTitleSnapshot}`
-                          : ""}
-                        {l.propertyTitleSnapshot
-                          ? ` · ${l.propertyTitleSnapshot}`
+                        {l.question.slice(0, 80)}
+                        {l.visitorPhone || l.visitorEmail
+                          ? ` · ${l.visitorPhone || l.visitorEmail}`
                           : ""}
                       </div>
                     </Link>

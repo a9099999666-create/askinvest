@@ -470,6 +470,10 @@ export const jobs = pgTable(
 export const siteSettings = pgTable("site_settings", {
   id: integer("id").primaryKey().default(1),
   contactsHtml: text("contacts_html").notNull().default(""),
+  homeServiceIds: jsonb("home_service_ids")
+    .$type<string[]>()
+    .notNull()
+    .default([]),
   privacyUrl: text("privacy_url").default(""),
   consentUrl: text("consent_url").default(""),
   channelStatus: jsonb("channel_status")

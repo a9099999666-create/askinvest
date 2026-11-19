@@ -35,7 +35,15 @@ export default async function LeadDetailPage({
       <h1 className="font-display text-3xl font-bold">Заявка</h1>
       <div className="mt-4 space-y-2 rounded-2xl bg-white/80 p-5 text-sm">
         <p>
-          <strong>Вопрос:</strong> {lead.question}
+          <strong>Заинтересовала услуга:</strong>{" "}
+          {lead.serviceTitleSnapshot || lead.propertyTitleSnapshot || "—"}
+        </p>
+        <p>
+          <strong>Что спросил:</strong> {lead.question}
+        </p>
+        <p>
+          <strong>Куда ответить:</strong>{" "}
+          {lead.visitorPhone || lead.visitorEmail || "—"}
         </p>
         <p>
           <strong>Канал:</strong> {channelLabel}
@@ -53,18 +61,10 @@ export default async function LeadDetailPage({
           <strong>Клиент:</strong> {lead.visitorName || "—"}
         </p>
         <p>
-          <strong>Обратный контакт:</strong>{" "}
-          {lead.visitorPhone || lead.visitorEmail || "—"}
-        </p>
-        <p>
           <strong>Телефон:</strong> {lead.visitorPhone || "—"}
         </p>
         <p>
           <strong>Email:</strong> {lead.visitorEmail || "—"}
-        </p>
-        <p>
-          <strong>Снимок услуги/объекта:</strong>{" "}
-          {lead.serviceTitleSnapshot || lead.propertyTitleSnapshot || "—"}
         </p>
         {thread && (
           <p>

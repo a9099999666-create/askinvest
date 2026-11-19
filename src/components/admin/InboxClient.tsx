@@ -40,6 +40,8 @@ type Lead = {
   propertyTitleSnapshot: string | null;
   note: string | null;
   visitorName: string | null;
+  visitorPhone: string | null;
+  visitorEmail: string | null;
 } | null;
 
 const stages: Record<string, string> = {
@@ -214,7 +216,7 @@ export function InboxClient({
                 <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-4 py-2 text-sm">
                   <span className="text-ink/70">
                     {lead.serviceTitleSnapshot
-                      ? `Услуга: ${lead.serviceTitleSnapshot}`
+                      ? `Заинтересовала услуга: ${lead.serviceTitleSnapshot}`
                       : lead.propertyTitleSnapshot
                         ? `Объект: ${lead.propertyTitleSnapshot}`
                         : "Без привязки"}
@@ -336,8 +338,12 @@ export function InboxClient({
                   ↗
                 </a>
               </div>
-              <Field label={lead.serviceTitleSnapshot ? "Услуга" : "Объект"}>
+              <Field label={lead.serviceTitleSnapshot ? "Заинтересовала услуга" : "Объект"}>
                 {lead.serviceTitleSnapshot || lead.propertyTitleSnapshot || "—"}
+              </Field>
+              <Field label="Что спросил">{lead.question}</Field>
+              <Field label="Куда ответить">
+                {lead.visitorPhone || lead.visitorEmail || "—"}
               </Field>
               <Field label="Канал">
                 <span className="inline-flex items-center gap-1.5">
@@ -351,9 +357,11 @@ export function InboxClient({
                   {stages[lead.stage] || lead.stage}
                 </span>
               </Field>
-              <Field label="Комментарий к заявке">
-                <p className="text-ink/70">{lead.note || lead.question}</p>
-              </Field>
+              {lead.note ? (
+                <Field label="Комментарий к заявке">
+                  <p className="text-ink/70">{lead.note}</p>
+                </Field>
+              ) : null}
               <a className="inline-flex font-semibold text-[#ff3142]" href={`/admin/leads/${lead.id}`}>
                 Открыть карточку →
               </a>

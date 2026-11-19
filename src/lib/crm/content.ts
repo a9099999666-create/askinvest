@@ -1,10 +1,11 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ne, sql } from "drizzle-orm";
 import { db } from "@/db/client";
 import {
   properties,
   propertyVersions,
   services,
   serviceVersions,
+  siteSettings,
 } from "@/db/schema";
 import type { SessionUser } from "@/lib/auth/permissions";
 import { can } from "@/lib/auth/permissions";
@@ -23,7 +24,8 @@ export async function createServiceDraft(
   },
 ) {
   if (!can(user, "editContent")) throw new Error("Нет права редактирования");
-  const slugBase = data.slug || slugify(data.title);
+  if (!data.title?.trim()) throw new Error("Укажите название услуги");
+  const slugBase = slugify(data.slug || data.title) || "usluga";
   let slug = slugBase;
   let n = 1;
   while (await db.query.services.findFirst({ where: eq(services.slug, slug) })) {
@@ -56,6 +58,7 @@ export async function saveServiceVersion(
   expectedUpdatedAt: string,
   patch: Partial<{
     title: string;
+    slug: string;
     shortDescription: string;
     fullDescription: string;
     workItems: { id: string; text: string }[];
@@ -68,6 +71,17 @@ export async function saveServiceVersion(
     where: eq(services.id, serviceId),
   });
   if (!service) throw new Error("Услуга не найдена");
+  if (patch.slug && patch.slug !== service.slug) {
+    const slug = slugify(patch.slug) || service.slug;
+    const taken = await db.query.services.findFirst({
+      where: and(eq(services.slug, slug), ne(services.id, serviceId)),
+    });
+    if (taken) throw new Error("Такой адрес страницы уже занят");
+    await db
+      .update(services)
+      .set({ slug, updatedAt: new Date() })
+      .where(eq(services.id, serviceId));
+  }
 
   const current = await getEditableServiceVersion(serviceId);
   if (!current) throw new Error("Нет версии");
@@ -161,20 +175,88 @@ export async function publishService(user: SessionUser, serviceId: string) {
 
 export async function unpublishService(user: SessionUser, serviceId: string) {
   if (!can(user, "publish")) throw new Error("Нет права публикации");
+  const editable = await getEditableServiceVersion(serviceId);
   await db
     .update(services)
     .set({ publishedVersionId: null, updatedAt: new Date() })
     .where(eq(services.id, serviceId));
+  const keepDraft = editable && editable.status !== "published";
   await db
     .update(serviceVersions)
-    .set({ status: "archived", updatedAt: new Date() })
+    .set({
+      status: keepDraft ? "archived" : "draft",
+      updatedAt: new Date(),
+    })
     .where(
       and(
         eq(serviceVersions.serviceId, serviceId),
         eq(serviceVersions.status, "published"),
       ),
     );
+  const settings = await db.query.siteSettings.findFirst({
+    where: eq(siteSettings.id, 1),
+  });
+  const featured = (settings?.homeServiceIds || []).filter((id) => id !== serviceId);
+  if (settings && featured.length !== (settings.homeServiceIds || []).length) {
+    await db
+      .update(siteSettings)
+      .set({ homeServiceIds: featured, updatedAt: new Date() })
+      .where(eq(siteSettings.id, 1));
+  }
   revalidatePublic();
+}
+
+export async function setHomeFeaturedServices(
+  user: SessionUser,
+  ids: string[],
+) {
+  if (!can(user, "publish")) throw new Error("Нет права публикации");
+  const unique = [...new Set(ids.filter(Boolean))].slice(0, 2);
+  for (const id of unique) {
+    const row = await db.query.services.findFirst({
+      where: eq(services.id, id),
+    });
+    if (!row?.publishedVersionId) {
+      throw new Error("На главную можно поставить только опубликованную услугу");
+    }
+  }
+  const existing = await db.query.siteSettings.findFirst({
+    where: eq(siteSettings.id, 1),
+  });
+  if (existing) {
+    await db
+      .update(siteSettings)
+      .set({ homeServiceIds: unique, updatedAt: new Date() })
+      .where(eq(siteSettings.id, 1));
+  } else {
+    await db.insert(siteSettings).values({
+      id: 1,
+      homeServiceIds: unique,
+    });
+  }
+  revalidatePublic();
+  return unique;
+}
+
+export async function listPublishedServices() {
+  return db
+    .select({
+      id: services.id,
+      title: serviceVersions.title,
+    })
+    .from(services)
+    .innerJoin(
+      serviceVersions,
+      eq(services.publishedVersionId, serviceVersions.id),
+    )
+    .orderBy(asc(services.sortOrder));
+}
+
+export async function getHomeFeaturedIds() {
+  const settings = await db.query.siteSettings.findFirst({
+    where: eq(siteSettings.id, 1),
+  });
+  return settings?.homeServiceIds || [];
 }
 
 async function getEditableServiceVersion(serviceId: string) {
