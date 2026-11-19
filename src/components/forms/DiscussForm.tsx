@@ -19,6 +19,7 @@ export function DiscussForm({
   variant = "full",
   channelStatus = [],
   notice,
+  actionLabel,
 }: {
   serviceId?: string;
   propertyId?: string;
@@ -28,6 +29,7 @@ export function DiscussForm({
   variant?: "compact" | "full";
   channelStatus?: ChannelStatus[];
   notice?: "ok" | "error";
+  actionLabel?: string;
 }) {
   const storageKey = `askinvest_pk_${intent}_${propertyId || serviceId || "site"}`;
   const compact = variant === "compact";
@@ -39,8 +41,8 @@ export function DiscussForm({
   const submitLabel = compact
     ? anyLive
       ? `Продолжить в ${liveChannels[0].label}`
-      : "Оставить заявку"
-    : "Отправить заявку";
+      : actionLabel || "Оставить заявку"
+    : actionLabel || "Отправить заявку";
 
   return (
     <form

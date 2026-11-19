@@ -25,7 +25,7 @@ export default function PropertiesPage({
           alt=""
           width={800}
           height={250}
-          className="w-full max-w-md select-none justify-self-end"
+          className="w-full max-w-lg select-none justify-self-end"
         />
       </div>
       <Suspense

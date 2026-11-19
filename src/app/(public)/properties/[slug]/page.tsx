@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DiscussForm } from "@/components/forms/DiscussForm";
+import { listPublicChannelStatus } from "@/lib/channels";
 import { getPropertyCards, getPublishedProperty } from "@/lib/public/cache";
 import { formatArea, formatRub } from "@/lib/utils";
 
 export const revalidate = 60;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const items = await getPropertyCards("all", "", "");
@@ -13,12 +15,17 @@ export async function generateStaticParams() {
 
 export default async function PropertyPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ lead?: string }>;
 }) {
   const { slug } = await params;
   const property = await getPublishedProperty(slug);
   if (!property) notFound();
+  const query = await searchParams;
+  const notice = query.lead === "ok" || query.lead === "error" ? query.lead : undefined;
+  const channelStatus = listPublicChannelStatus();
   const photos = [property.coverId, ...(property.galleryIds || [])].filter(
     (id, index, list): id is string => Boolean(id) && list.indexOf(id) === index,
   );
@@ -93,6 +100,10 @@ export default async function PropertyPage({
             intent="question"
             sourcePage={`/properties/${property.slug}`}
             title="Задать вопрос"
+            variant="compact"
+            channelStatus={channelStatus}
+            notice={notice}
+            actionLabel="Задать вопрос"
           />
         </div>
         <div id="viewing">
@@ -101,6 +112,9 @@ export default async function PropertyPage({
             intent="viewing"
             sourcePage={`/properties/${property.slug}`}
             title="Записаться на просмотр"
+            variant="compact"
+            channelStatus={channelStatus}
+            actionLabel="Записаться"
           />
         </div>
       </div>

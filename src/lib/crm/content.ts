@@ -21,6 +21,7 @@ export async function createServiceDraft(
     fullDescription?: string;
     workItems?: { id: string; text: string }[];
     imageId?: string | null;
+    sortOrder?: number;
   },
 ) {
   if (!can(user, "editContent")) throw new Error("Нет права редактирования");
@@ -31,9 +32,18 @@ export async function createServiceDraft(
   while (await db.query.services.findFirst({ where: eq(services.slug, slug) })) {
     slug = `${slugBase}-${++n}`;
   }
+  const maxOrder = await db
+    .select({ v: sql<number>`max(${services.sortOrder})` })
+    .from(services);
   const [service] = await db
     .insert(services)
-    .values({ slug, sortOrder: Date.now() % 100000 })
+    .values({
+      slug,
+      sortOrder:
+        typeof data.sortOrder === "number" && Number.isFinite(data.sortOrder)
+          ? Math.round(data.sortOrder)
+          : Number(maxOrder[0]?.v || 0) + 1,
+    })
     .returning();
   const [version] = await db
     .insert(serviceVersions)
@@ -63,6 +73,7 @@ export async function saveServiceVersion(
     fullDescription: string;
     workItems: { id: string; text: string }[];
     imageId: string | null;
+    sortOrder: number;
     status: "draft" | "review";
   }>,
 ) {
@@ -80,6 +91,12 @@ export async function saveServiceVersion(
     await db
       .update(services)
       .set({ slug, updatedAt: new Date() })
+      .where(eq(services.id, serviceId));
+  }
+  if (typeof patch.sortOrder === "number" && Number.isFinite(patch.sortOrder)) {
+    await db
+      .update(services)
+      .set({ sortOrder: Math.round(patch.sortOrder), updatedAt: new Date() })
       .where(eq(services.id, serviceId));
   }
 

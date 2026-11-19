@@ -29,8 +29,8 @@ export default async function ServicePage({
 
   return (
     <div className="pt-2">
-      <div className="grid items-center gap-4 lg:grid-cols-2">
-        <div>
+      <div className="grid items-start gap-x-8 gap-y-5 lg:grid-cols-2">
+        <div className="order-1">
           <p className="text-sm text-ink/45">
             <Link href="/services" className="hover:text-ink">
               Услуги
@@ -41,25 +41,26 @@ export default async function ServicePage({
           <h1 className="mt-4 font-display text-5xl font-bold leading-[1.02] text-ink md:text-6xl">
             {service.title}
           </h1>
-          {service.shortDescription ? (
-            <p className="mt-4 max-w-xl text-ink/70">{service.shortDescription}</p>
-          ) : null}
           <div className="mt-5 h-[3px] w-16 rounded-full bg-[#ff3142]" />
         </div>
-        {service.imageId ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={`/api/media/${service.imageId}`}
-            alt=""
-            className="mx-auto h-auto max-h-80 w-full max-w-md rounded-[28px] object-cover"
-          />
-        ) : (
-          <GlassFolder className="mx-auto max-w-md" />
-        )}
-      </div>
-      <div className="mt-6 grid items-start gap-6 lg:grid-cols-2">
-        <div className="glass-panel rounded-[28px] p-5 md:p-6">
-          <h2 className="text-2xl font-bold text-ink">Что входит в услугу</h2>
+
+        <div className="order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          <GlassFolder className="mx-auto max-h-[180px] max-w-sm object-contain lg:max-h-[240px] lg:max-w-md" />
+          <div className="relative z-10 lg:-mt-2">
+            <DiscussForm
+              serviceId={service.id}
+              sourcePage={`/services/${service.slug}`}
+              title="Обсудить задачу"
+              variant="compact"
+              channelStatus={channelStatus}
+              notice={notice}
+              actionLabel="Обсудить задачу"
+            />
+          </div>
+        </div>
+
+        <div className="order-3 glass-panel rounded-[28px] p-5 md:p-6">
+          <h2 className="text-2xl font-bold text-ink">Чем поможем:</h2>
           <ul className="mt-4 space-y-3">
             {(service.workItems || []).map((item, index) => (
               <li
@@ -73,17 +74,9 @@ export default async function ServicePage({
             ))}
           </ul>
           {service.fullDescription ? (
-            <p className="mt-4 text-sm text-ink/55">{service.fullDescription}</p>
+            <p className="mt-4 text-sm leading-relaxed text-ink/60">{service.fullDescription}</p>
           ) : null}
         </div>
-        <DiscussForm
-          serviceId={service.id}
-          sourcePage={`/services/${service.slug}`}
-          title="Обсудить задачу"
-          variant="compact"
-          channelStatus={channelStatus}
-          notice={notice}
-        />
       </div>
     </div>
   );

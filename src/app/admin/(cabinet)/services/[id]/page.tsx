@@ -34,6 +34,7 @@ export default async function EditServicePage({
         fullDescription: current.fullDescription,
         workItems: current.workItems || [],
         imageId: current.imageId,
+        sortOrder: service.sortOrder,
         updatedAt: new Date(current.updatedAt).toISOString(),
         status: current.status,
         published: Boolean(service.publishedVersionId),

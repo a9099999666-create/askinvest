@@ -24,6 +24,7 @@ export function ServiceEditor({
     fullDescription: string;
     workItems: WorkItem[];
     imageId: string | null;
+    sortOrder: number;
     updatedAt: string;
     status: string;
     published: boolean;
@@ -37,6 +38,7 @@ export function ServiceEditor({
   const [shortDescription, setShort] = useState(initial?.shortDescription || "");
   const [fullDescription, setFull] = useState(initial?.fullDescription || "");
   const [imageId, setImageId] = useState<string | null>(initial?.imageId || null);
+  const [sortOrder, setSortOrder] = useState(String(initial?.sortOrder ?? ""));
   const [workItems, setItems] = useState<WorkItem[]>(
     initial?.workItems?.length ? initial.workItems : [{ id: nanoid(), text: "" }],
   );
@@ -45,6 +47,7 @@ export function ServiceEditor({
   const [status, setStatus] = useState(initial?.status || "draft");
   const [conflict, setConflict] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [saved, setSaved] = useState("");
   const [pending, start] = useTransition();
 
   function dropOn(index: number) {
@@ -76,6 +79,7 @@ export function ServiceEditor({
 
   function save(extra?: { status?: "draft" | "review"; publish?: boolean }) {
     setError("");
+    setSaved("");
     setConflict(null);
     start(async () => {
       const payload = {
@@ -84,6 +88,7 @@ export function ServiceEditor({
         shortDescription,
         fullDescription,
         imageId,
+        sortOrder: sortOrder === "" ? undefined : Number(sortOrder),
         workItems: workItems.filter((w) => w.text.trim()),
         expectedUpdatedAt: updatedAt,
         status: extra?.status,
@@ -135,6 +140,9 @@ export function ServiceEditor({
         if (pubData.version?.updatedAt) setUpdatedAt(pubData.version.updatedAt);
         if (pubData.version?.status) setStatus(pubData.version.status);
       }
+      if (extra?.publish) setSaved("Опубликовано. Посетители видят эту версию.");
+      else if (extra?.status === "review") setSaved("Отправлено на проверку.");
+      else setSaved("Черновик сохранён.");
       if (!serviceId) {
         router.push(`/admin/services/${id}`);
       }
@@ -143,7 +151,6 @@ export function ServiceEditor({
   }
 
   const points = workItems.filter((w) => w.text.trim());
-  const previewImage = imageId ? `/api/media/${imageId}` : "/brand/catalog-glass.webp";
 
   return (
     <div>
@@ -185,7 +192,7 @@ export function ServiceEditor({
             </div>
           </label>
           <label className="mt-4 block">
-            <span className="mb-1.5 block text-sm font-semibold">Обложка</span>
+            <span className="mb-1.5 block text-sm font-semibold">Обложка для каталога</span>
             <input
               className="field"
               type="file"
@@ -196,14 +203,33 @@ export function ServiceEditor({
               }}
             />
             {imageId ? (
-              <button
-                type="button"
-                className="mt-2 text-sm font-semibold text-ink/50"
-                onClick={() => setImageId(null)}
-              >
-                Убрать обложку
-              </button>
+              <div className="mt-2 flex items-center gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/api/media/${imageId}`}
+                  alt=""
+                  className="h-14 w-20 rounded-xl object-cover"
+                />
+                <button
+                  type="button"
+                  className="text-sm font-semibold text-ink/50"
+                  onClick={() => setImageId(null)}
+                >
+                  Убрать обложку
+                </button>
+              </div>
             ) : null}
+          </label>
+          <label className="mt-4 block">
+            <span className="mb-1.5 block text-sm font-semibold">Порядок в каталоге</span>
+            <input
+              className="field"
+              type="number"
+              min={1}
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              placeholder="Чем меньше число, тем выше в списке"
+            />
           </label>
           <label className="mt-4 block">
             <span className="mb-1.5 block text-sm font-semibold">Краткое описание</span>
@@ -284,13 +310,18 @@ export function ServiceEditor({
           <div className="text-sm text-ink/45">Предпросмотр</div>
           <div className="mt-3 overflow-hidden rounded-2xl bg-gradient-to-b from-sky-50 to-white">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={previewImage} alt="" className="mx-auto h-40 w-full object-cover" />
+            <img
+              src="/brand/catalog-glass.webp"
+              alt=""
+              className="mx-auto h-36 w-full object-contain object-bottom"
+            />
           </div>
           <h2 className="mt-4 text-2xl font-bold leading-tight text-ink">
             {title || "Без названия"}
           </h2>
           <p className="mt-2 text-sm text-ink/60">{shortDescription}</p>
-          <ul className="mt-4 space-y-2">
+          <div className="mt-4 text-sm font-semibold text-ink">Чем поможем:</div>
+          <ul className="mt-2 space-y-2">
             {points.map((item) => (
               <li key={item.id} className="flex items-start gap-2 text-sm text-ink">
                 <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
@@ -298,9 +329,6 @@ export function ServiceEditor({
               </li>
             ))}
           </ul>
-          {fullDescription ? (
-            <p className="mt-4 text-sm text-ink/55">{fullDescription}</p>
-          ) : null}
           <div className="mt-4 text-right text-xl text-[#ff3142]" aria-hidden>
             →
           </div>
@@ -316,6 +344,7 @@ export function ServiceEditor({
         </aside>
       </div>
 
+      {saved && <p className="mt-3 text-sm font-medium text-emerald-700">{saved}</p>}
       {error && <p className="field-error mt-3">{error}</p>}
       {conflict && (
         <pre className="mt-3 max-h-40 overflow-auto rounded-2xl bg-amber-50 p-3 text-xs">{conflict}</pre>
