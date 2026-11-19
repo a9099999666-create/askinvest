@@ -1,3 +1,4 @@
+import { SiteFooter } from "@/components/public/SiteFooter";
 import { SiteHeader } from "@/components/public/SiteHeader";
 
 export const revalidate = 60;
@@ -12,9 +13,10 @@ export default function PublicLayout({
       <div className="atmosphere-wash pointer-events-none absolute inset-0 opacity-60" aria-hidden />
       <div className="relative">
         <SiteHeader />
-        <main className="mx-auto w-full max-w-6xl px-4 pb-16 md:px-6">
+        <main className="mx-auto w-full max-w-6xl px-4 pb-8 md:px-6">
           {children}
         </main>
+        <SiteFooter />
       </div>
     </div>
   );

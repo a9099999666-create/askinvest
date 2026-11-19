@@ -1,3 +1,11 @@
+export function IconHome({ className = "h-[18px] w-[18px]" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" />
+    </svg>
+  );
+}
+
 export function IconLock({ className = "h-4 w-4" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" width="18" height="18" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>

@@ -1,4 +1,5 @@
 import { DiscussFormBoot } from "@/components/forms/DiscussFormBoot";
+import { QuestionPrompts } from "@/components/forms/QuestionPrompts";
 import { MaxIcon, TelegramIcon, WhatsIcon } from "@/components/icons/channels";
 import type { ChannelKind } from "@/lib/channels";
 
@@ -20,6 +21,7 @@ export function DiscussForm({
   channelStatus = [],
   notice,
   actionLabel,
+  prompts = [],
 }: {
   serviceId?: string;
   propertyId?: string;
@@ -30,6 +32,7 @@ export function DiscussForm({
   channelStatus?: ChannelStatus[];
   notice?: "ok" | "error";
   actionLabel?: string;
+  prompts?: string[];
 }) {
   const storageKey = `askinvest_pk_${intent}_${propertyId || serviceId || "site"}`;
   const compact = variant === "compact";
@@ -43,36 +46,41 @@ export function DiscussForm({
       ? `Продолжить в ${liveChannels[0].label}`
       : actionLabel || "Оставить заявку"
     : actionLabel || "Отправить заявку";
+  const panelClass = compact
+    ? "glass-panel rounded-[28px] p-5 md:p-6"
+    : "glass-panel rounded-[28px] p-6 md:p-7";
+  const titleClass = compact
+    ? "font-display text-[26px] font-semibold leading-none text-ink md:text-[30px]"
+    : "font-display text-[28px] font-bold leading-none text-ink";
+
+  if (notice === "ok") {
+    return (
+      <div className={panelClass}>
+        <h2 className={titleClass}>Заявка принята</h2>
+        <div className="mt-3 h-[3px] w-10 rounded bg-brand-red" />
+        <div className="lead-notice mt-4 space-y-2 text-sm text-ink/80">
+          <p className="font-semibold text-emerald-700">Что дальше:</p>
+          <ol className="list-decimal space-y-1 pl-4">
+            <li>Мы получили ваш вопрос и контакт.</li>
+            <li>Ответим в рабочие часы по Москве.</li>
+            <li>Если задача сложная — предложим короткий созвон.</li>
+          </ol>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form
-      className={
-        compact
-          ? "glass-panel rounded-[28px] p-5 md:p-6"
-          : "glass-panel rounded-[28px] p-6 md:p-7"
-      }
+      className={panelClass}
       action="/api/leads"
       method="post"
       data-storage-key={storageKey}
       data-compact={compact ? "1" : "0"}
     >
-      <h2
-        className={
-          compact
-            ? "font-display text-[26px] font-semibold leading-none text-ink md:text-[30px]"
-            : "font-display text-[28px] font-bold leading-none text-ink"
-        }
-      >
-        {title}
-      </h2>
+      <h2 className={titleClass}>{title}</h2>
       <div className="mt-3 h-[3px] w-10 rounded bg-brand-red" />
-      {notice === "ok" ? (
-        <p className="lead-notice mt-3 text-sm text-emerald-700">
-          {compact
-            ? "Заявка принята. Мы получили ваш вопрос."
-            : "Заявка принята. Мы свяжемся с вами по указанным контактам."}
-        </p>
-      ) : notice === "error" ? (
+      {notice === "error" ? (
         <p className="lead-notice mt-3 text-sm text-brand-red">
           Не удалось сохранить. Проверьте поля и нажмите ещё раз.
         </p>
@@ -136,6 +144,7 @@ export function DiscussForm({
           placeholder="Чем можем помочь?"
           required
         />
+        {compact ? <QuestionPrompts prompts={prompts} /> : null}
       </label>
 
       {compactCallback ? (

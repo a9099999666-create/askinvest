@@ -40,6 +40,7 @@ export default async function ContactsPage({
         channelStatus={channelStatus}
         notice={notice}
         actionLabel="Обсудить задачу"
+        prompts={["Нужна консультация", "Вопрос по договору", "Подобрать помещение"]}
       />
     </div>
   );

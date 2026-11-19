@@ -1,8 +1,15 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { DiscussForm } from "@/components/forms/DiscussForm";
+import { HowWeWork } from "@/components/public/HowWeWork";
 import { listPublicChannelStatus } from "@/lib/channels";
 import { getHomeServices } from "@/lib/public/cache";
+
+const homePrompts = [
+  "Проверить договор",
+  "Сопроводить сделку",
+  "Подобрать помещение",
+];
 
 export const revalidate = 60;
 
@@ -43,6 +50,7 @@ export default async function HomePage({
             variant="compact"
             channelStatus={channelStatus}
             notice={notice}
+            prompts={homePrompts}
           />
         </div>
         <div className="order-3 min-w-0 lg:order-2 lg:col-start-1 lg:row-start-2">
@@ -64,6 +72,7 @@ export default async function HomePage({
           <HomeServices />
         </Suspense>
       </section>
+      <HowWeWork />
     </div>
   );
 }

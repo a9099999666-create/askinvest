@@ -10,6 +10,7 @@ import {
   IconCase,
   IconChat,
   IconClipboard,
+  IconHome,
   IconLayers,
   IconLock,
   IconMail,
@@ -21,6 +22,7 @@ const nav = [
   {
     group: "Сайт",
     items: [
+      { href: "/admin", label: "Обзор", icon: IconHome, exact: true },
       { href: "/admin/properties", label: "Объекты", icon: IconLayers },
       { href: "/admin/services", label: "Услуги", icon: IconCase },
     ],
@@ -61,7 +63,10 @@ export function AdminShell({
                 <div className="mb-2 text-sm font-medium text-slate-400">{g.group}</div>
                 <ul className="flex gap-1 md:block md:space-y-1">
                   {g.items.map((item) => {
-                    const active = pathname === item.href || pathname.startsWith(item.href + "/");
+                    const active =
+                      "exact" in item && item.exact
+                        ? pathname === item.href
+                        : pathname === item.href || pathname.startsWith(item.href + "/");
                     const Icon = item.icon;
                     return (
                       <li key={item.href}>

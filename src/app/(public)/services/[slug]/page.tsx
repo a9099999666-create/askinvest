@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DiscussForm } from "@/components/forms/DiscussForm";
+import { CopyLink } from "@/components/public/CopyLink";
 import { GlassFolder } from "@/components/public/GlassFolder";
 import { listPublicChannelStatus } from "@/lib/channels";
 import { getPublishedService, getServiceCards } from "@/lib/public/cache";
@@ -26,6 +27,12 @@ export default async function ServicePage({
   const query = await searchParams;
   const notice = query.lead === "ok" || query.lead === "error" ? query.lead : undefined;
   const channelStatus = listPublicChannelStatus();
+  const catalog = await getServiceCards();
+  const related = catalog.filter((item) => item.id !== service.id).slice(0, 2);
+  const prompts = (service.workItems || [])
+    .map((item) => item.text)
+    .filter((text) => text.length > 0 && text.length <= 42)
+    .slice(0, 3);
 
   return (
     <div className="pt-2">
@@ -42,6 +49,9 @@ export default async function ServicePage({
             {service.title}
           </h1>
           <div className="mt-5 h-[3px] w-16 rounded-full bg-[#ff3142]" />
+          <div className="mt-4">
+            <CopyLink path={`/services/${service.slug}`} />
+          </div>
         </div>
 
         <div className="order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
@@ -55,6 +65,7 @@ export default async function ServicePage({
               channelStatus={channelStatus}
               notice={notice}
               actionLabel="Обсудить задачу"
+              prompts={prompts.length ? prompts : ["Нужна эта услуга", "Есть срочный вопрос"]}
             />
           </div>
         </div>
@@ -78,6 +89,26 @@ export default async function ServicePage({
           ) : null}
         </div>
       </div>
+      {related.length > 0 ? (
+        <section className="mt-10">
+          <h2 className="text-lg font-semibold text-ink">Ещё направления</h2>
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            {related.map((item) => (
+              <Link
+                key={item.id}
+                href={`/services/${item.slug}`}
+                prefetch={false}
+                className="glass-panel flex items-center justify-between gap-4 rounded-[24px] px-5 py-4"
+              >
+                <span className="font-semibold text-ink">{item.title}</span>
+                <span className="text-[#ff3142]" aria-hidden>
+                  →
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }
