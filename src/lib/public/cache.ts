@@ -1,6 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { and, asc, eq, gte, lte, sql } from "drizzle-orm";
 import { db, hasDatabase } from "@/db/client";
+import { isPublicServiceTitle } from "@/lib/content/kinds";
 import { properties, propertyVersions, services, serviceVersions, siteSettings } from "@/db/schema";
 
 const options = { revalidate: 60, tags: ["public-site"] };
@@ -28,9 +29,7 @@ export const getHomeServices = unstable_cache(
       .from(services)
       .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
       .orderBy(asc(services.sortOrder));
-    const publicRows = rows.filter(
-      (row) => !/\d{10,}/.test(row.title) && !/черновик/i.test(row.title),
-    );
+    const publicRows = rows.filter((row) => isPublicServiceTitle(row.title));
     if (featured.length) {
       const picked = featured
         .map((id) => publicRows.find((row) => row.id === id))
@@ -48,7 +47,7 @@ export const getHomeServices = unstable_cache(
 export const getServiceCards = unstable_cache(
   async () => {
     if (!hasDatabase()) return [];
-    return db
+    const rows = await db
       .select({
         id: services.id,
         slug: services.slug,
@@ -59,6 +58,7 @@ export const getServiceCards = unstable_cache(
       .from(services)
       .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
       .orderBy(asc(services.sortOrder));
+    return rows.filter((row) => isPublicServiceTitle(row.title));
   },
   ["service-cards"],
   options,

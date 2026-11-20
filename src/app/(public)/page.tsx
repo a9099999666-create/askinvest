@@ -32,7 +32,7 @@ export default async function HomePage({
   return (
     <div>
       <link rel="preload" href="/brand/home-glass.webp" as="image" type="image/webp" />
-      <section className="grid items-start gap-3 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:gap-y-3">
+      <section className="grid items-start gap-3 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:grid-rows-[auto_1fr] lg:gap-x-10 lg:gap-y-2">
         <h1 className="order-1 font-display text-[40px] font-semibold leading-[1.08] tracking-tight text-ink md:text-[48px] lg:col-start-1 lg:row-start-1 lg:text-[52px]">
           Услуги
           <br />
@@ -47,7 +47,7 @@ export default async function HomePage({
             actionLabel="Обсудить задачу"
           />
         </div>
-        <div className="order-3 min-w-0 lg:order-2 lg:col-start-1 lg:row-start-2 lg:-mb-6">
+        <div className="order-3 min-w-0 lg:order-2 lg:col-start-1 lg:row-start-2 lg:-mb-24">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/home-glass.webp"
@@ -55,12 +55,12 @@ export default async function HomePage({
             width={980}
             height={720}
             fetchPriority="high"
-            className="hero-glass mt-1 h-auto w-full max-h-[150px] max-w-[480px] object-contain object-left select-none sm:max-h-[220px] sm:max-w-[620px] lg:mt-0 lg:max-h-[440px] lg:max-w-[740px]"
+            className="hero-glass mt-1 h-auto w-full max-h-[170px] max-w-[500px] object-contain object-left select-none sm:max-h-[250px] sm:max-w-[660px] lg:mt-0 lg:max-h-[500px] lg:max-w-[820px]"
           />
         </div>
       </section>
 
-      <section className="relative z-10 mt-4 lg:mt-6">
+      <section className="relative z-10 mt-2 lg:mt-0">
         <h2 className="sr-only">Направления услуг</h2>
         <Suspense fallback={<CardSkeleton />}>
           <HomeServices />
@@ -88,12 +88,12 @@ async function HomeServices() {
           key={item.id}
           href={`/services/${item.slug}`}
           prefetch={false}
-          className="glass-panel flex min-h-[76px] items-center justify-between gap-4 rounded-[24px] px-5 py-4 md:min-h-[84px] md:px-6"
+          className="glass-panel flex min-h-[84px] items-center justify-between gap-4 rounded-[24px] px-5 py-5 md:min-h-[92px] md:px-6"
         >
           <span className="text-[17px] font-semibold leading-snug text-ink md:text-lg">
             {item.title}
           </span>
-          <span className="shrink-0 text-xl text-[#ff3142]" aria-hidden>
+          <span className="shrink-0 text-xl text-brand-red" aria-hidden>
             →
           </span>
         </Link>
@@ -101,12 +101,12 @@ async function HomeServices() {
       <Link
         href="/services"
         prefetch={false}
-        className="glass-panel flex min-h-[76px] items-center justify-between gap-4 rounded-[24px] px-5 py-4 md:min-h-[84px] md:px-6"
+        className="glass-panel flex min-h-[84px] items-center justify-between gap-4 rounded-[24px] px-5 py-5 md:min-h-[92px] md:px-6"
       >
         <span className="text-[17px] font-semibold leading-snug text-ink md:text-lg">
           Другие услуги
         </span>
-        <span className="shrink-0 text-xl text-[#ff3142]" aria-hidden>
+        <span className="shrink-0 text-xl text-brand-red" aria-hidden>
           →
         </span>
       </Link>

@@ -1,5 +1,6 @@
 import { desc } from "drizzle-orm";
 import { CampaignPanel } from "@/components/admin/CampaignPanel";
+import { PageTitle } from "@/components/admin/PageTitle";
 import { db } from "@/db/client";
 import { campaigns, subscriptionTopics } from "@/db/schema";
 import { requirePageAccess } from "@/lib/auth/guard";
@@ -13,7 +14,7 @@ export default async function CampaignsPage() {
 
   return (
     <div>
-      <h1 className="mb-4 font-display text-3xl font-bold">Рассылки</h1>
+      <PageTitle className="mb-4" title="Рассылки" />
       <CampaignPanel
         topics={topics.map((t) => ({ id: t.id, title: t.title, slug: t.slug }))}
         campaigns={rows.map((c) => ({

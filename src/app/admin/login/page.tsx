@@ -40,10 +40,12 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-atmosphere px-4">
+    <div className="relative flex min-h-screen items-center justify-center bg-atmosphere px-4">
+      <div className="atmosphere-wash pointer-events-none absolute inset-0 opacity-90" aria-hidden />
+      <div className="paper-grain pointer-events-none absolute inset-0" aria-hidden />
       <form
         onSubmit={onSubmit}
-        className="glass-panel w-full max-w-md rounded-3xl p-8"
+        className="relative glass-panel w-full max-w-md rounded-3xl p-8"
       >
         <Logo />
         <h1 className="mt-6 font-display text-2xl font-bold text-ink">
@@ -54,6 +56,7 @@ export default function AdminLoginPage() {
           <input
             className="field"
             type="email"
+            name="email"
             autoComplete="username"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -65,6 +68,7 @@ export default function AdminLoginPage() {
           <input
             className="field"
             type="password"
+            name="password"
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -72,7 +76,7 @@ export default function AdminLoginPage() {
           />
         </label>
         {error && <p className="field-error">{error}</p>}
-        <button className="btn-primary mt-6 w-full" disabled={pending}>
+        <button className="btn-primary mt-6 w-full" type="submit" disabled={pending}>
           {pending ? "Входим…" : "Войти"}
         </button>
       </form>

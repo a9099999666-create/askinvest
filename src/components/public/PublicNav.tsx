@@ -12,7 +12,7 @@ const links = [
 export function PublicNav() {
   const pathname = usePathname();
   return (
-    <nav className="flex max-w-full flex-wrap items-center justify-start gap-x-3 gap-y-1 text-[13px] font-semibold text-ink sm:justify-end sm:gap-4 sm:text-sm md:gap-8">
+    <nav className="flex max-w-full flex-wrap items-center justify-start gap-x-4 gap-y-1 text-[14px] font-semibold text-ink sm:justify-end sm:gap-6 sm:text-[15px] md:gap-10">
       {links.map((link) => {
         const active =
           pathname === link.href ||

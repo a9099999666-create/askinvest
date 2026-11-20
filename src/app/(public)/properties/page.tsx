@@ -13,7 +13,7 @@ export default function PropertiesPage({
   return (
     <div className="pt-2">
       <link rel="preload" href="/brand/catalog-glass.webp" as="image" type="image/webp" />
-      <div className="grid items-center gap-2 md:grid-cols-[1fr_320px]">
+      <div className="grid items-center gap-2 md:grid-cols-[1fr_380px]">
         <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
           Коммерческая
           <br />
@@ -25,7 +25,7 @@ export default function PropertiesPage({
           alt=""
           width={800}
           height={250}
-          className="w-full max-w-lg select-none justify-self-end"
+          className="hidden w-full max-w-xl select-none justify-self-end md:block"
         />
       </div>
       <Suspense
@@ -77,7 +77,9 @@ async function Catalog({
               href={hrefFor(value)}
               prefetch={false}
               className={`rounded-2xl px-4 py-2 text-sm font-semibold ${
-                deal === value ? "bg-sky-100 text-sky-700" : "bg-white text-ink"
+                deal === value
+                  ? "bg-[#6b7cff] text-white"
+                  : "border border-slate-200 bg-white text-ink"
               }`}
             >
               {label}
@@ -86,7 +88,12 @@ async function Catalog({
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_220px_auto]">
           <label className="relative block">
-            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden>
+              <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none">
+                <circle cx="9" cy="9" r="5.5" stroke="currentColor" strokeWidth="1.6" />
+                <path d="m13.2 13.2 3.3 3.3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+            </span>
             <input className="field pl-10" name="q" defaultValue={q} placeholder="Поиск по адресу" />
           </label>
           <select className="field" name="area" defaultValue={area} aria-label="Площадь, м²">
@@ -97,7 +104,7 @@ async function Catalog({
             <option value="1000p">от 1 000 м²</option>
           </select>
           {deal !== "all" && <input type="hidden" name="deal" value={deal} />}
-          <button className="btn-primary justify-between px-5" type="submit">
+          <button className="btn-primary !justify-between px-5" type="submit">
             <span>Показать объекты</span>
             <span aria-hidden>→</span>
           </button>
@@ -135,7 +142,7 @@ async function Catalog({
             </div>
             <div className="flex items-center justify-between gap-3 px-4 py-4">
               <div className="font-semibold text-ink">{item.address}</div>
-              <span className="text-[#ff3142]">→</span>
+              <span className="text-brand-red">→</span>
             </div>
           </Link>
         ))}

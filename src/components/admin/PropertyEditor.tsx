@@ -183,13 +183,13 @@ export function PropertyEditor({
                       }
                       className={`inline-flex items-center justify-center gap-2 rounded-2xl px-3 py-3 text-sm font-semibold ${
                         active
-                          ? "border-2 border-[#ff3142] bg-white text-ink"
+                          ? "border-2 border-brand-red bg-white text-ink"
                           : "border border-slate-200 bg-white text-ink/70"
                       }`}
                     >
                       <span
                         className={`h-4 w-4 rounded-full border-2 ${
-                          active ? "border-[#ff3142] bg-[#ff3142] shadow-[inset_0_0_0_3px_white]" : "border-slate-300"
+                          active ? "border-brand-red bg-brand-red shadow-[inset_0_0_0_3px_white]" : "border-slate-300"
                         }`}
                       />
                       {value === "sale" ? "Продажа" : "Аренда"}

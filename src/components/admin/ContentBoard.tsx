@@ -186,7 +186,7 @@ function TabButton({
     >
       {children}
       {active && (
-        <span className="absolute inset-x-4 -bottom-1 h-[3px] rounded-full bg-[#ff3142]" />
+        <span className="absolute inset-x-4 -bottom-1 h-[3px] rounded-full bg-brand-red" />
       )}
     </button>
   );

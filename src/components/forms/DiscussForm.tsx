@@ -31,7 +31,7 @@ export function DiscussForm({
   notice?: "ok" | "error";
   actionLabel?: string;
 }) {
-  const storageKey = `askinvest_pk_${intent}_${propertyId || serviceId || "site"}`;
+  const storageKey = `askinvest_pk_${intent}_${propertyId || serviceId || sourcePage || "site"}`;
   const compact = variant === "compact";
   const statusByKind = new Map(channelStatus.map((item) => [item.kind, item.configured]));
   const defaultChannel =
@@ -56,6 +56,8 @@ export function DiscussForm({
     );
   }
 
+  const showReply = compact && notice === "error";
+
   return (
     <form
       className={panelClass}
@@ -68,13 +70,15 @@ export function DiscussForm({
       <div className="mt-3 h-[3px] w-10 rounded bg-brand-red" />
       {notice === "error" ? (
         <p className="lead-notice mt-3 text-sm text-brand-red">
-          Не удалось сохранить. Проверьте поля и нажмите ещё раз.
+          {compact
+            ? "Укажите телефон или email, чтобы мы ответили."
+            : "Не удалось сохранить. Проверьте поля и нажмите ещё раз."}
         </p>
       ) : (
         <p className="lead-notice mt-3 hidden text-sm" />
       )}
       <input type="hidden" name="publicKey" defaultValue="" />
-      <DiscussFormBoot storageKey={storageKey} compact={compact} />
+      <DiscussFormBoot storageKey={storageKey} compact={compact} askReply={showReply} />
       <input type="hidden" name="sourcePage" value={sourcePage || "/"} />
       <input type="hidden" name="intent" value={intent} />
       {serviceId ? <input type="hidden" name="serviceId" value={serviceId} /> : null}
@@ -123,7 +127,7 @@ export function DiscussForm({
         <textarea
           className={
             compact
-              ? "field min-h-[88px] resize-y bg-white md:min-h-[96px]"
+              ? "field min-h-[88px] resize-y bg-white/90 md:min-h-[96px]"
               : "field min-h-[108px] resize-y bg-white"
           }
           name="question"
@@ -136,7 +140,7 @@ export function DiscussForm({
         {channels.map((channel) => (
           <label
             key={channel.id}
-            className="inline-flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-2xl border border-slate-200 bg-white px-2 py-2.5 text-[12px] font-semibold text-ink has-[:checked]:border-sky-300 has-[:checked]:bg-sky-50 sm:text-sm"
+            className="inline-flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-2xl border border-white/80 bg-white/90 px-2 py-2.5 text-[12px] font-semibold text-ink shadow-sm has-[:checked]:border-white has-[:checked]:bg-white has-[:checked]:shadow-md sm:text-sm"
           >
             <input
               type="radio"
@@ -154,13 +158,14 @@ export function DiscussForm({
       </div>
 
       {compact ? (
-        <label className="mt-2 hidden" data-reply-wrap>
+        <label className={showReply ? "mt-2 block" : "mt-2 hidden"} data-reply-wrap>
           <input
             className="field bg-white"
             name="replyTo"
             autoComplete="tel"
             placeholder="Телефон или email для ответа"
             aria-label="Телефон или email для ответа"
+            required={showReply}
           />
         </label>
       ) : null}
@@ -168,8 +173,8 @@ export function DiscussForm({
       <button
         className={
           compact
-            ? "btn-primary mt-4 w-full justify-between rounded-2xl px-5 py-3 text-base"
-            : "btn-primary mt-5 w-full justify-between rounded-2xl px-5 py-3.5 text-base"
+            ? "btn-primary mt-4 flex w-full !justify-between rounded-2xl px-5 py-3 text-base"
+            : "btn-primary mt-5 flex w-full !justify-between rounded-2xl px-5 py-3.5 text-base"
         }
         type="submit"
       >

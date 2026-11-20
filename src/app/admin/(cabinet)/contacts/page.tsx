@@ -1,4 +1,5 @@
 import { desc } from "drizzle-orm";
+import { PageTitle } from "@/components/admin/PageTitle";
 import { db } from "@/db/client";
 import { channelIdentities, contacts, subscriptions } from "@/db/schema";
 import { requirePageAccess } from "@/lib/auth/guard";
@@ -13,8 +14,8 @@ export default async function ContactsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold">Контакты</h1>
-      <div className="mt-4 overflow-hidden rounded-2xl bg-white/80">
+      <PageTitle title="Контакты" />
+      <div className="mt-4 overflow-hidden rounded-[28px] bg-white shadow-panel">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 text-ink/60">
             <tr>

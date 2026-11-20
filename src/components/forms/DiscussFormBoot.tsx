@@ -5,9 +5,11 @@ import { useEffect } from "react";
 export function DiscussFormBoot({
   storageKey,
   compact,
+  askReply = false,
 }: {
   storageKey: string;
   compact: boolean;
+  askReply?: boolean;
 }) {
   useEffect(() => {
     const form = document.querySelector<HTMLFormElement>(
@@ -26,30 +28,50 @@ export function DiscussFormBoot({
     const fieldNames = compact
       ? ["question", "replyTo"]
       : ["visitorName", "visitorPhone", "visitorEmail", "question"];
+    const cleanups: Array<() => void> = [];
     fieldNames.forEach((name) => {
       const el = form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name="${name}"]`);
       if (!el) return;
       const key = `${storageKey}_${name}`;
       const saved = sessionStorage.getItem(key);
       if (saved && !el.value) el.value = saved;
-      el.addEventListener("input", () => sessionStorage.setItem(key, el.value));
+      const onInput = () => sessionStorage.setItem(key, el.value);
+      el.addEventListener("input", onInput);
+      cleanups.push(() => el.removeEventListener("input", onInput));
     });
 
     const replyWrap = form.querySelector<HTMLLabelElement>("[data-reply-wrap]");
     const replyInput = form.querySelector<HTMLInputElement>('input[name="replyTo"]');
+    const notice = form.querySelector<HTMLElement>(".lead-notice");
 
-    const syncReply = () => {
-      const checked = form.querySelector<HTMLInputElement>('input[name="channel"]:checked');
-      const needsCallback = compact && checked?.getAttribute("data-configured") !== "1";
-      if (replyWrap) replyWrap.classList.toggle("hidden", !needsCallback);
-      if (replyInput) replyInput.required = Boolean(needsCallback);
+    const revealReply = () => {
+      replyWrap?.classList.remove("hidden");
+      replyWrap?.classList.add("block");
+      if (replyInput) replyInput.required = true;
+      if (notice) {
+        notice.textContent = "Укажите телефон или email, чтобы мы ответили.";
+        notice.classList.remove("hidden");
+        notice.classList.add("text-brand-red");
+      }
     };
 
-    form.querySelectorAll<HTMLInputElement>('input[name="channel"]').forEach((el) => {
-      el.addEventListener("change", syncReply);
-    });
-    syncReply();
-  }, [storageKey, compact]);
+    if (askReply) revealReply();
+
+    const onSubmit = (event: SubmitEvent) => {
+      if (!compact) return;
+      const checked = form.querySelector<HTMLInputElement>('input[name="channel"]:checked');
+      const needsCallback = checked?.getAttribute("data-configured") !== "1";
+      if (needsCallback && !replyInput?.value.trim()) {
+        event.preventDefault();
+        revealReply();
+        replyInput?.focus();
+      }
+    };
+
+    form.addEventListener("submit", onSubmit);
+    cleanups.push(() => form.removeEventListener("submit", onSubmit));
+    return () => cleanups.forEach((fn) => fn());
+  }, [storageKey, compact, askReply]);
 
   return null;
 }

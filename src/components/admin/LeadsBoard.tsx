@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { leadStages } from "@/lib/crm/stages";
+import { PageTitle } from "./PageTitle";
 
 type Lead = {
   id: string;
@@ -14,11 +16,7 @@ type Lead = {
   propertyTitleSnapshot: string | null;
 };
 
-const stages = [
-  { id: "new", title: "Вопрос" },
-  { id: "in_progress", title: "Созвон" },
-  { id: "done", title: "Закрыто" },
-] as const;
+const stages = leadStages;
 
 export function LeadsBoard({ leads }: { leads: Lead[] }) {
   const [q, setQ] = useState("");
@@ -43,7 +41,7 @@ export function LeadsBoard({ leads }: { leads: Lead[] }) {
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold text-ink">Заявки</h1>
+      <PageTitle title="Заявки" />
       <label className="relative mt-5 block max-w-xl">
         <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
           ⌕

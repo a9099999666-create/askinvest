@@ -348,7 +348,7 @@ export function ServiceEditor({
               </li>
             ))}
           </ul>
-          <div className="mt-4 text-right text-xl text-[#ff3142]" aria-hidden>
+          <div className="mt-4 text-right text-xl text-brand-red" aria-hidden>
             →
           </div>
           {serviceId && slug ? (

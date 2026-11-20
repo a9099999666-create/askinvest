@@ -31,9 +31,9 @@ export default async function ServicePage({
   const items = (service.workItems || []) as WorkItem[];
 
   return (
-    <div className="pt-2">
-      <div className="grid items-start gap-x-8 gap-y-5 lg:grid-cols-2">
-        <div className="order-1">
+    <div className="relative pt-2">
+      <div className="grid items-start gap-x-10 gap-y-6 lg:grid-cols-2">
+        <div className="relative order-1">
           <p className="text-sm text-ink/45">
             <Link href="/services" className="hover:text-ink">
               Услуги
@@ -41,25 +41,24 @@ export default async function ServicePage({
             <span className="mx-2">›</span>
             {service.title}
           </p>
-          <h1 className="mt-4 font-display text-5xl font-bold leading-[1.02] text-ink md:text-6xl">
+          <h1 className="mt-4 max-w-[18ch] font-display text-5xl font-bold leading-[1.02] text-ink md:text-6xl">
             {service.title}
           </h1>
-          <div className="mt-5 h-[3px] w-16 rounded-full bg-[#ff3142]" />
+          <div className="mt-5 h-[3px] w-16 rounded-full bg-brand-red" />
+          <GlassFolder className="pointer-events-none absolute -right-10 top-8 hidden w-[240px] lg:block xl:-right-16 xl:w-[280px]" />
+          <GlassFolder className="mx-auto mt-4 max-h-[140px] max-w-[220px] lg:hidden" />
         </div>
 
-        <div className="order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-          <GlassFolder className="mx-auto max-h-[180px] max-w-sm object-contain lg:max-h-[240px] lg:max-w-md" />
-          <div className="relative z-10 lg:-mt-2">
-            <DiscussForm
-              serviceId={service.id}
-              sourcePage={`/services/${service.slug}`}
-              title="Обсудить задачу"
-              variant="compact"
-              channelStatus={channelStatus}
-              notice={notice}
-              actionLabel="Обсудить задачу"
-            />
-          </div>
+        <div className="relative z-10 order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          <DiscussForm
+            serviceId={service.id}
+            sourcePage={`/services/${service.slug}`}
+            title="Обсудить задачу"
+            variant="compact"
+            channelStatus={channelStatus}
+            notice={notice}
+            actionLabel="Обсудить задачу"
+          />
         </div>
 
         <div className="order-3 glass-panel rounded-[28px] p-5 md:p-6">
@@ -68,11 +67,11 @@ export default async function ServicePage({
             {items.map((item, index) => (
               <li
                 key={item.id}
-                className="flex items-center gap-3 rounded-2xl border border-white bg-white/80 px-4 py-3"
+                className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white/80 px-4 py-3"
               >
                 <WorkIcon kind={workIconFor(item, index)} />
                 <span className="flex-1 font-medium text-ink">{item.text}</span>
-                <span className="text-[#ff3142]">→</span>
+                <span className="text-brand-red">→</span>
               </li>
             ))}
           </ul>

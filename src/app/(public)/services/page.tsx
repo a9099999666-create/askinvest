@@ -53,7 +53,7 @@ async function ServiceList() {
               <span className="mt-1 block text-sm text-ink/55">{item.shortDescription}</span>
             ) : null}
           </span>
-          <span className="shrink-0 text-xl text-[#ff3142]" aria-hidden>
+          <span className="shrink-0 text-xl text-brand-red" aria-hidden>
             →
           </span>
         </Link>

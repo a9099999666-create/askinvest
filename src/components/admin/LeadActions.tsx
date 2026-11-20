@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { leadStages } from "@/lib/crm/stages";
 
 export function LeadActions({
   leadId,
@@ -38,9 +39,11 @@ export function LeadActions({
           value={form.stage}
           onChange={(e) => setForm({ ...form, stage: e.target.value })}
         >
-          <option value="new">Вопрос</option>
-          <option value="in_progress">Созвон</option>
-          <option value="done">Закрыто</option>
+          {leadStages.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.title}
+            </option>
+          ))}
         </select>
       </label>
       <label className="block">

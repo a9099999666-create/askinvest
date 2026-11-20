@@ -10,11 +10,11 @@ export default function PublicLayout({
 }) {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-atmosphere">
-      <div className="atmosphere-wash pointer-events-none absolute inset-0 opacity-80" aria-hidden />
+      <div className="atmosphere-wash pointer-events-none absolute inset-0 opacity-90" aria-hidden />
       <div className="paper-grain pointer-events-none absolute inset-0" aria-hidden />
       <div className="relative">
         <SiteHeader />
-        <main className="mx-auto w-full max-w-6xl px-4 pb-8 md:px-6">{children}</main>
+        <main className="mx-auto w-full max-w-6xl px-4 pb-6 md:px-6">{children}</main>
         <SiteFooter />
       </div>
     </div>

@@ -35,6 +35,14 @@ function pickVersion<T extends { status: string; version: number; id: string }>(
   );
 }
 
+function boardStatus(publishedId: string | null, editable: { id: string; status: string }) {
+  if (editable.status === "review") return "review";
+  if (editable.status === "archived") return "archived";
+  if (publishedId && editable.id === publishedId) return "published";
+  if (publishedId) return "draft";
+  return "draft";
+}
+
 export async function loadMaterials(): Promise<MaterialItem[]> {
   const props = await db.select().from(properties).orderBy(desc(properties.updatedAt));
   const versions = await db.select().from(propertyVersions);
@@ -55,7 +63,7 @@ export async function loadMaterials(): Promise<MaterialItem[]> {
       title: editable.title,
       subtitle: `${placeKindFrom(editable.title, editable.placeKind)} · ${formatArea(editable.areaSqm)}`,
       kind: "property",
-      status: editable.status,
+      status: boardStatus(property.publishedVersionId, editable),
       thumb: editable.coverId ? `/api/media/${editable.coverId}` : null,
       updatedAt: new Date(property.updatedAt).getTime(),
     });
@@ -73,7 +81,7 @@ export async function loadMaterials(): Promise<MaterialItem[]> {
       title: editable.title,
       subtitle: editable.shortDescription,
       kind: "service",
-      status: editable.status,
+      status: boardStatus(service.publishedVersionId, editable),
       thumb: editable.imageId ? `/api/media/${editable.imageId}` : null,
       updatedAt: new Date(service.updatedAt).getTime(),
     });

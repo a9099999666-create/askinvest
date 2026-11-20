@@ -47,8 +47,10 @@ export function AdminShell({
 }) {
   const pathname = usePathname();
   return (
-    <div className="min-h-screen bg-atmosphere">
-      <div className="flex min-h-screen flex-col md:flex-row">
+    <div className="relative min-h-screen bg-atmosphere">
+      <div className="atmosphere-wash pointer-events-none absolute inset-0 opacity-80" aria-hidden />
+      <div className="paper-grain pointer-events-none absolute inset-0" aria-hidden />
+      <div className="relative flex min-h-screen flex-col md:flex-row">
         <aside className="w-full shrink-0 px-4 py-4 md:w-[232px] md:px-4 md:py-5">
           <Logo />
           <div className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-ink shadow-sm">
@@ -70,7 +72,7 @@ export function AdminShell({
                           className={cn(
                             "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold",
                             active
-                              ? "border-l-[3px] border-brand-red bg-[#e7f3ff] text-ink"
+                              ? "bg-white text-ink shadow-sm"
                               : "text-ink/75 hover:bg-white/70",
                           )}
                         >
@@ -90,14 +92,14 @@ export function AdminShell({
           <img
             src="/brand/catalog-glass.webp"
             alt=""
-            className="pointer-events-none absolute right-32 top-1 z-0 hidden w-48 select-none lg:block"
+            className="pointer-events-none absolute right-28 top-0 z-0 hidden w-64 select-none lg:block"
           />
           <div className="absolute right-4 top-4 z-20 flex flex-col items-end gap-2 md:right-6">
             <UserMenu userName={userName} />
             {isOwner && (
               <Link
                 href="/admin/staff"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#3c6fd6]"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#3c6fd6] underline decoration-[#3c6fd6]/40 underline-offset-4"
               >
                 <IconUsers className="h-4 w-4" />
                 Сотрудники

@@ -20,7 +20,7 @@ export default async function ContactsPage({
         <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
           Контакты
         </h1>
-        <div className="mt-5 h-[3px] w-16 rounded-full bg-[#ff3142]" />
+        <div className="mt-5 h-[3px] w-16 rounded-full bg-brand-red" />
         <p className="mt-4 text-ink/70">
           Напишите задачу — заявка попадёт в кабинет, и мы ответим удобным способом.
         </p>
@@ -45,13 +45,13 @@ export default async function ContactsPage({
               <span className="font-semibold text-ink">{contacts.hours}</span>
             </p>
           ) : null}
-          {contacts.html ? (
+          {contacts.html && !/связь через форму/i.test(contacts.html) ? (
             <div
               className="prose prose-slate max-w-none pt-2 text-sm"
               dangerouslySetInnerHTML={{ __html: contacts.html }}
             />
-          ) : !contacts.phone && !contacts.address ? (
-            <p>АСКИНВЕСТ. Связь через форму на сайте.</p>
+          ) : !contacts.phone && !contacts.address && !contacts.hours ? (
+            <p>АСКИНВЕСТ. Напишите задачу через форму — ответим в рабочие часы.</p>
           ) : null}
         </div>
       </div>

@@ -169,17 +169,18 @@ body {
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 18px 50px rgba(20, 55, 100, 0.1);
-  backdrop-filter: blur(16px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(237, 246, 255, 0.58));
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  box-shadow: 0 18px 50px rgba(20, 55, 100, 0.08);
+  backdrop-filter: blur(22px);
 }
 
 .paper-grain {
   background-image:
-    radial-gradient(ellipse 80% 50% at 8% 0%, rgba(255, 255, 255, 0.7), transparent 55%),
-    radial-gradient(ellipse 55% 40% at 92% 8%, rgba(170, 204, 235, 0.35), transparent 50%);
-  opacity: 0.85;
+    radial-gradient(ellipse 70% 48% at 6% 4%, rgba(255, 255, 255, 0.78), transparent 58%),
+    radial-gradient(ellipse 50% 42% at 92% 8%, rgba(164, 204, 236, 0.42), transparent 52%),
+    radial-gradient(ellipse 40% 30% at 70% 90%, rgba(225, 29, 46, 0.08), transparent 60%);
+  opacity: 0.9;
 }
 
 .hero-glass {
@@ -194,7 +195,7 @@ body {
 }
 
 .btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-[#ff3142] px-5 py-3 font-semibold text-white shadow-sm transition hover:brightness-105 disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-red px-5 py-3 font-semibold text-white shadow-sm transition hover:brightness-105 disabled:opacity-60;
 }
 
 .btn-ghost {

@@ -9,9 +9,11 @@ export default async function CabinetLayout({
 }) {
   const user = await getSessionUser();
   if (!user) redirect("/admin/login");
+  const role = user.isOwner ? "Владелец" : "Сотрудник";
+  const userName = user.name === role ? user.name : `${user.name} · ${role}`;
   return (
     <AdminShell
-      userName={`${user.name} · ${user.isOwner ? "Владелец" : "Сотрудник"}`}
+      userName={userName}
       isOwner={user.isOwner}
     >
       {children}

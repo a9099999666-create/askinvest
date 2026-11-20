@@ -34,7 +34,12 @@ export function workIconFor(item: WorkItem, index: number): WorkIconKind {
 }
 
 export function isPublicServiceTitle(title: string) {
-  if (/черновик/i.test(title)) return false;
-  if (/\d{10,}/.test(title)) return false;
+  const value = title.trim();
+  if (value.length < 4) return false;
+  if (/черновик/i.test(value)) return false;
+  if (/\d{10,}/.test(value)) return false;
+  if (/проверк/i.test(value)) return false;
+  if (/приёмк|приемк/i.test(value)) return false;
+  if (/^другие услуги$/i.test(value)) return false;
   return true;
 }

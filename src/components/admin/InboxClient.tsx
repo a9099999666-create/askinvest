@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { channelIcon, channelLabel } from "@/components/icons/channels";
+import { leadStageLabel } from "@/lib/crm/stages";
 import { PageTitle } from "./PageTitle";
 import { IconDoc, IconSearch } from "./icons";
 
@@ -43,12 +44,6 @@ type Lead = {
   visitorPhone: string | null;
   visitorEmail: string | null;
 } | null;
-
-const stages: Record<string, string> = {
-  new: "Новая",
-  in_progress: "В работе",
-  done: "Закрыта",
-};
 
 export function InboxClient({
   threads,
@@ -308,7 +303,7 @@ export function InboxClient({
                     }}
                   />
                   <button
-                    className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#ff3142] text-white"
+                    className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-red text-white"
                     onClick={send}
                     disabled={pending}
                     aria-label="Отправить"
@@ -354,7 +349,7 @@ export function InboxClient({
               <Field label="Клиент">{lead.visitorName || thread?.title || "—"}</Field>
               <Field label="Статус">
                 <span className="rounded-full bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700">
-                  {stages[lead.stage] || lead.stage}
+                  {leadStageLabel(lead.stage)}
                 </span>
               </Field>
               {lead.note ? (
@@ -362,7 +357,7 @@ export function InboxClient({
                   <p className="text-ink/70">{lead.note}</p>
                 </Field>
               ) : null}
-              <a className="inline-flex font-semibold text-[#ff3142]" href={`/admin/leads/${lead.id}`}>
+              <a className="inline-flex font-semibold text-brand-red" href={`/admin/leads/${lead.id}`}>
                 Открыть карточку →
               </a>
             </div>

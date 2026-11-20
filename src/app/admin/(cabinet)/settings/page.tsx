@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { CompanyContacts } from "@/components/admin/CompanyContacts";
+import { PageTitle } from "@/components/admin/PageTitle";
 import { db } from "@/db/client";
 import { siteSettings } from "@/db/schema";
 import { listChannelStatus } from "@/lib/channels";
@@ -16,7 +17,7 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold">Каналы и контакты</h1>
+      <PageTitle title="Каналы и контакты" />
       <p className="mt-2 text-ink/70">
         Боевые Telegram / MAX / WhatsApp включаются через переменные окружения.
         Без credentials используется тестовый адаптер, но кнопки каналов на сайте остаются.

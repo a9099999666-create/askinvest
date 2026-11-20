@@ -47,19 +47,9 @@ async function main() {
       title: "Сопровождение сделок",
       short: "От переговоров до регистрации.",
       items: [
-        { text: "Проведём переговоры", icon: "handshake" as const },
-        { text: "Соберём структуру сделки", icon: "doc" as const },
-        { text: "Зарегистрируем переход", icon: "pen" as const },
-      ],
-    },
-    {
-      slug: "drugie-uslugi",
-      title: "Другие услуги",
-      short: "Консультации и отраслевые решения для бизнеса.",
-      items: [
-        { text: "Разберём задачу", icon: "doc" as const },
-        { text: "Предложим путь", icon: "pen" as const },
-        { text: "Согласуем порядок работ", icon: "handshake" as const },
+        { text: "Проверим документы", icon: "doc" as const },
+        { text: "Подготовим договор", icon: "pen" as const },
+        { text: "Согласуем порядок сделки", icon: "handshake" as const },
       ],
     },
   ];
@@ -111,6 +101,16 @@ async function main() {
       area: "1200",
       price: "1200000",
       unit: "per_month" as const,
+    },
+    {
+      slug: "starobitsevskaya-ulitsa",
+      title: "Офис на Старобитцевской",
+      address: "Старобитцевская улица",
+      dealType: "sale" as const,
+      placeKind: "office" as const,
+      area: "186",
+      price: "38500000",
+      unit: "total" as const,
     },
   ];
 

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { PageTitle } from "@/components/admin/PageTitle";
 import { StaffPanel } from "@/components/admin/StaffPanel";
 import { db } from "@/db/client";
 import { users } from "@/db/schema";
@@ -13,7 +14,7 @@ export default async function StaffPage() {
 
   return (
     <div>
-      <h1 className="mb-4 font-display text-3xl font-bold">Сотрудники</h1>
+      <PageTitle className="mb-4" title="Сотрудники" />
       <StaffPanel
         staff={staff.map((s) => ({
           id: s.id,

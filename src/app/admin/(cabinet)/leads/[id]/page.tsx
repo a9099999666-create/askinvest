@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { leads, threads } from "@/db/schema";
 import { LeadActions } from "@/components/admin/LeadActions";
+import { PageTitle } from "@/components/admin/PageTitle";
 import { listPublicChannelStatus } from "@/lib/channels";
 import { requirePageAccess } from "@/lib/auth/guard";
 
@@ -32,7 +33,7 @@ export default async function LeadDetailPage({
 
   return (
     <div className="max-w-3xl">
-      <h1 className="font-display text-3xl font-bold">Заявка</h1>
+      <PageTitle title="Заявка" />
       <div className="mt-4 space-y-2 rounded-2xl bg-white/80 p-5 text-sm">
         <p>
           <strong>Заинтересовала услуга:</strong>{" "}
