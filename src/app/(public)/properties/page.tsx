@@ -79,7 +79,7 @@ async function Catalog({
               className={`rounded-2xl px-4 py-2 text-sm font-semibold ${
                 deal === value
                   ? "bg-brand-blue text-white"
-                  : "border border-white/15 bg-white/5 text-ink"
+                  : "border border-white/40 bg-white/20 text-ink"
               }`}
             >
               {label}

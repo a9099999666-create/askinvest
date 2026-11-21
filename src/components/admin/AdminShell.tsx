@@ -21,6 +21,7 @@ import {
 const siteNav = [
   { href: "/admin/properties", label: "Объекты", icon: IconLayers },
   { href: "/admin/services", label: "Услуги", icon: IconCase },
+  { href: "/admin/settings", label: "Каналы", icon: IconBell },
 ];
 
 const crmNav: {
@@ -72,7 +73,7 @@ export function AdminShell({
     <div className="relative min-h-screen bg-atmosphere">
       <div className="relative flex min-h-screen flex-col md:flex-row">
         <aside className="w-full shrink-0 px-4 py-4 md:w-[232px] md:px-4 md:py-5">
-          <Logo />
+          <Logo href="/admin/properties" />
           <div className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-ink shadow-sm">
             <IconLock className="h-4 w-4 text-ink/70" />
             Закрытый кабинет

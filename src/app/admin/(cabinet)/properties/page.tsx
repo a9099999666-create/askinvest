@@ -11,7 +11,7 @@ export default async function AdminPropertiesPage() {
   return (
     <ContentBoard
       items={items}
-      initialTab="properties"
+      kind="properties"
       canEdit={can(user, "editContent")}
     />
   );

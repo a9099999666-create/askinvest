@@ -5,13 +5,15 @@ import { cn } from "@/lib/utils";
 export function Logo({
   className = "",
   compact = false,
+  href = "/",
 }: {
   className?: string;
   compact?: boolean;
+  href?: string;
 }) {
   return (
     <Link
-      href="/"
+      href={href}
       className={cn("inline-flex items-center gap-2.5", className)}
       aria-label="АСКИНВЕСТ"
     >

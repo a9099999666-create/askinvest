@@ -82,7 +82,7 @@ body {
 }
 
 .site-public .btn-ghost {
-  @apply border-white/15 bg-white/5 text-ink hover:bg-white/10;
+  @apply border-white/40 bg-white/20 text-ink hover:bg-white/30;
 }
 
 .site-public .field {

@@ -10,9 +10,10 @@ export async function POST(req: Request) {
     return NextResponse.json(result);
   } catch (e) {
     if (e instanceof Response) return e;
-    return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Ошибка" },
-      { status: 400 },
-    );
+    const raw = e instanceof Error ? e.message : "Ошибка";
+    const error = raw.startsWith("Failed query")
+      ? "Не удалось сохранить объект. Проверьте площадь, цену и адрес."
+      : raw;
+    return NextResponse.json({ error }, { status: 400 });
   }
 }
