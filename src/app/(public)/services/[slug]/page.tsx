@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DiscussForm } from "@/components/forms/DiscussForm";
+import { InquiryChat } from "@/components/public/InquiryChat";
 import { WorkIcon } from "@/components/public/WorkIcon";
 import { demoServiceBySlug } from "@/lib/content/demo-catalog";
 import { workIconFor, type WorkItem } from "@/lib/content/kinds";
@@ -43,7 +44,7 @@ export default async function ServicePage({
   const items = (service.workItems || []) as WorkItem[];
 
   return (
-    <div className="pt-2">
+    <div className="pb-28 pt-2">
       <div className="grid items-start gap-x-10 gap-y-6 lg:grid-cols-2">
         <div className="order-1">
           <p className="text-sm text-ink/45">
@@ -90,6 +91,12 @@ export default async function ServicePage({
           ) : null}
         </div>
       </div>
+      <InquiryChat
+        topic={service.title}
+        sourcePage={`/services/${service.slug}`}
+        serviceId={published?.id}
+        channelStatus={channelStatus}
+      />
     </div>
   );
 }

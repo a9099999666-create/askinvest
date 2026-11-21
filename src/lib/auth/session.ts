@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "crypto";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { and, eq, gt, isNull } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { db, hasDatabase } from "@/db/client";
@@ -26,6 +26,15 @@ export async function verifyPassword(password: string, hash: string) {
   return bcrypt.compare(password, hash);
 }
 
+async function cookieSecure() {
+  const h = await headers();
+  const proto = (h.get("x-forwarded-proto") || "").split(",")[0].trim();
+  const host = (h.get("host") || "").split(":")[0];
+  if (proto === "https") return true;
+  if (host === "127.0.0.1" || host === "localhost") return false;
+  return process.env.NODE_ENV === "production";
+}
+
 export async function createSession(userId: string) {
   const token = randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
@@ -38,7 +47,7 @@ export async function createSession(userId: string) {
   jar.set(COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: await cookieSecure(),
     path: "/",
     expires: expiresAt,
   });

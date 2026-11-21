@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DiscussForm } from "@/components/forms/DiscussForm";
+import { InquiryChat } from "@/components/public/InquiryChat";
 import { demoPropertyBySlug } from "@/lib/content/demo-catalog";
 import { asPlaceKind, placeKindLabel } from "@/lib/content/kinds";
 import { listPublicChannelStatus } from "@/lib/channels";
@@ -51,7 +52,8 @@ export default async function PropertyPage({
   );
 
   return (
-    <div className="grid gap-8 pt-4 md:grid-cols-2">
+    <div className="pb-28 pt-4">
+      <div className="grid gap-8 md:grid-cols-2">
       <div>
         {photos.length > 0 ? (
           <div className="mb-5 grid gap-3">
@@ -141,6 +143,14 @@ export default async function PropertyPage({
           />
         </div>
       </div>
+      </div>
+      <InquiryChat
+        topic={property.title}
+        sourcePage={`/properties/${property.slug}`}
+        propertyId={published?.id}
+        channelStatus={channelStatus}
+        placement="left"
+      />
     </div>
   );
 }

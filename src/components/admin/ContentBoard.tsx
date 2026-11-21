@@ -16,9 +16,11 @@ const statuses = [
 export function ContentBoard({
   items,
   initialTab = "properties",
+  canEdit = true,
 }: {
   items: MaterialItem[];
   initialTab?: "properties" | "services";
+  canEdit?: boolean;
 }) {
   const [tab, setTab] = useState(initialTab);
   const [q, setQ] = useState("");
@@ -54,14 +56,16 @@ export function ContentBoard({
             Услуги
           </TabButton>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/admin/properties/new" className="btn-primary px-4 py-2.5 text-sm">
-            + Добавить объект
-          </Link>
-          <Link href="/admin/services/new" className="btn-primary px-4 py-2.5 text-sm">
-            + Добавить услугу
-          </Link>
-        </div>
+        {canEdit ? (
+          <div className="flex flex-wrap gap-2">
+            <Link href="/admin/properties/new" className="btn-primary px-4 py-2.5 text-sm">
+              + Добавить объект
+            </Link>
+            <Link href="/admin/services/new" className="btn-primary px-4 py-2.5 text-sm">
+              + Добавить услугу
+            </Link>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-4 grid gap-3 lg:grid-cols-[1.3fr_1fr_0.8fr]">
@@ -144,13 +148,15 @@ export function ContentBoard({
                   <Status status={item.status} />
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Link
-                    href={item.href}
-                    aria-label={`Изменить ${item.title}`}
-                    className="inline-grid h-9 w-9 place-items-center rounded-xl border border-slate-200 text-ink/50 hover:bg-slate-50"
-                  >
-                    <IconPencil />
-                  </Link>
+                  {canEdit ? (
+                    <Link
+                      href={item.href}
+                      aria-label={`Изменить ${item.title}`}
+                      className="inline-grid h-9 w-9 place-items-center rounded-xl border border-slate-200 text-ink/50 hover:bg-slate-50"
+                    >
+                      <IconPencil />
+                    </Link>
+                  ) : null}
                 </td>
               </tr>
             ))}

@@ -18,12 +18,25 @@ type Staff = {
   };
 };
 
+const permLabel: Record<keyof Staff["permissions"], string> = {
+  editContent: "Контент",
+  publish: "Публикация",
+  leads: "Заявки",
+  contacts: "Контакты",
+  campaigns: "Рассылки",
+};
+
 export function StaffPanel({ staff }: { staff: Staff[] }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [inviteUrl, setInviteUrl] = useState("");
+  const [created, setCreated] = useState<{ login: string; password: string } | null>(
+    null,
+  );
+  const [resetId, setResetId] = useState("");
+  const [resetPassword, setResetPassword] = useState("");
+  const [error, setError] = useState("");
   const [perms, setPerms] = useState({
     editContent: true,
     publish: false,
@@ -34,6 +47,12 @@ export function StaffPanel({ staff }: { staff: Staff[] }) {
   const [pending, start] = useTransition();
 
   function invite() {
+    setError("");
+    setCreated(null);
+    if (password.trim().length < 8) {
+      setError("Пароль сотрудника не короче 8 символов");
+      return;
+    }
     start(async () => {
       const res = await fetch("/api/admin/staff/invite", {
         method: "POST",
@@ -41,9 +60,14 @@ export function StaffPanel({ staff }: { staff: Staff[] }) {
         body: JSON.stringify({ email, name, password, permissions: perms }),
       });
       const data = await res.json();
-      if (data.inviteToken) {
-        setInviteUrl(`${window.location.origin}/admin/login?invite=${data.inviteToken}`);
+      if (!res.ok) {
+        setError(data.error || "Не удалось создать сотрудника");
+        return;
       }
+      setCreated({ login: data.login, password: data.temporaryPassword });
+      setEmail("");
+      setName("");
+      setPassword("");
       router.refresh();
     });
   }
@@ -70,14 +94,55 @@ export function StaffPanel({ staff }: { staff: Staff[] }) {
     });
   }
 
+  function resetStaffPassword(id: string) {
+    setError("");
+    start(async () => {
+      const res = await fetch(`/api/admin/staff/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: resetPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Не удалось обновить пароль");
+        return;
+      }
+      const row = staff.find((item) => item.id === id);
+      setCreated({ login: row?.email || "", password: resetPassword });
+      setResetId("");
+      setResetPassword("");
+      router.refresh();
+    });
+  }
+
   return (
     <div className="space-y-6">
       <div className="rounded-2xl bg-white/80 p-5">
-        <h2 className="font-semibold">Пригласить сотрудника</h2>
+        <h2 className="font-semibold">Добавить сотрудника</h2>
+        <p className="mt-1 text-sm text-ink/60">
+          Сотрудник входит в кабинет по email и паролю на странице /admin/login.
+        </p>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
-          <input className="field" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input className="field" placeholder="Имя" value={name} onChange={(e) => setName(e.target.value)} />
-          <input className="field" placeholder="Временный пароль" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input
+            className="field"
+            type="email"
+            placeholder="Email — логин"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            className="field"
+            placeholder="Имя"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            className="field md:col-span-2"
+            type="text"
+            placeholder="Пароль для входа (от 8 символов)"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
         <div className="mt-3 flex flex-wrap gap-3 text-sm">
           {(Object.keys(perms) as (keyof typeof perms)[]).map((k) => (
@@ -87,18 +152,22 @@ export function StaffPanel({ staff }: { staff: Staff[] }) {
                 checked={perms[k]}
                 onChange={(e) => setPerms({ ...perms, [k]: e.target.checked })}
               />
-              {k}
+              {permLabel[k]}
             </label>
           ))}
         </div>
-        <button className="btn-primary mt-3" disabled={pending} onClick={invite}>
+        <button className="btn-primary mt-3" type="button" disabled={pending} onClick={invite}>
           Создать доступ
         </button>
-        {inviteUrl && (
-          <p className="mt-2 break-all text-xs text-ink/60">
-            Одноразовое приглашение (для журнала): {inviteUrl}
-          </p>
-        )}
+        {error ? <p className="field-error">{error}</p> : null}
+        {created ? (
+          <div className="mt-3 rounded-2xl bg-emerald-50 p-3 text-sm text-ink">
+            <p className="font-semibold">Данные для входа</p>
+            <p className="mt-1">Логин: {created.login}</p>
+            <p>Пароль: {created.password}</p>
+            <p className="mt-1 text-ink/60">Вход: /admin/login</p>
+          </div>
+        ) : null}
       </div>
 
       <div className="space-y-3">
@@ -116,6 +185,7 @@ export function StaffPanel({ staff }: { staff: Staff[] }) {
               {!s.isOwner && (
                 <button
                   className="btn-ghost"
+                  type="button"
                   disabled={pending}
                   onClick={() => toggle(s.id, !s.isActive)}
                 >
@@ -124,25 +194,56 @@ export function StaffPanel({ staff }: { staff: Staff[] }) {
               )}
             </div>
             {!s.isOwner && (
-              <div className="mt-3 flex flex-wrap gap-3 text-sm">
-                {(Object.keys(s.permissions) as (keyof Staff["permissions"])[]).map(
-                  (k) => (
-                    <label key={k} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={s.permissions[k]}
-                        onChange={(e) =>
-                          updatePerms(s.id, {
-                            ...s.permissions,
-                            [k]: e.target.checked,
-                          })
-                        }
-                      />
-                      {k}
-                    </label>
-                  ),
+              <>
+                <div className="mt-3 flex flex-wrap gap-3 text-sm">
+                  {(Object.keys(s.permissions) as (keyof Staff["permissions"])[]).map(
+                    (k) => (
+                      <label key={k} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={s.permissions[k]}
+                          onChange={(e) =>
+                            updatePerms(s.id, {
+                              ...s.permissions,
+                              [k]: e.target.checked,
+                            })
+                          }
+                        />
+                        {permLabel[k]}
+                      </label>
+                    ),
+                  )}
+                </div>
+                {resetId === s.id ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <input
+                      className="field max-w-xs"
+                      placeholder="Новый пароль"
+                      value={resetPassword}
+                      onChange={(e) => setResetPassword(e.target.value)}
+                    />
+                    <button
+                      className="btn-primary"
+                      type="button"
+                      disabled={pending}
+                      onClick={() => resetStaffPassword(s.id)}
+                    >
+                      Сохранить пароль
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="btn-ghost mt-3"
+                    type="button"
+                    onClick={() => {
+                      setResetId(s.id);
+                      setResetPassword("");
+                    }}
+                  >
+                    Выдать новый пароль
+                  </button>
                 )}
-              </div>
+              </>
             )}
           </div>
         ))}

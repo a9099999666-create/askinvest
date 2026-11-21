@@ -4,7 +4,7 @@ import { PropertyEditor } from "@/components/admin/PropertyEditor";
 import { db } from "@/db/client";
 import { mediaAssets, propertyVersions } from "@/db/schema";
 import { can } from "@/lib/auth/permissions";
-import { getSessionUser } from "@/lib/auth/session";
+import { requirePageAccess } from "@/lib/auth/guard";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export default async function EditPropertyPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const user = await getSessionUser();
+  const user = await requirePageAccess("editContent");
   const rows = await db
     .select()
     .from(propertyVersions)

@@ -19,7 +19,7 @@ export default async function AdminServicesPage() {
   ]);
   return (
     <>
-      <ContentBoard items={items} initialTab="services" />
+      <ContentBoard items={items} initialTab="services" canEdit={can(user, "editContent")} />
       {can(user, "publish") ? (
         <HomeFeatured options={published} initialIds={featured} />
       ) : null}

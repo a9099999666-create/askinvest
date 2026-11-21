@@ -15,6 +15,7 @@ export default async function CabinetLayout({
     <AdminShell
       userName={userName}
       isOwner={user.isOwner}
+      permissions={user.permissions}
     >
       {children}
     </AdminShell>

@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { users } from "@/db/schema";
-import { requireUser, revokeUserSessions } from "@/lib/auth/session";
+import { hashPassword, requireUser, revokeUserSessions } from "@/lib/auth/session";
 
 export async function PATCH(
   req: Request,
@@ -14,12 +14,31 @@ export async function PATCH(
       return NextResponse.json({ error: "Только владелец" }, { status: 403 });
     }
     const { id } = await ctx.params;
+    const target = await db.query.users.findFirst({ where: eq(users.id, id) });
+    if (!target) {
+      return NextResponse.json({ error: "Не найдено" }, { status: 404 });
+    }
+    if (target.isOwner) {
+      return NextResponse.json(
+        { error: "Владельца нельзя менять из списка сотрудников" },
+        { status: 403 },
+      );
+    }
     const body = await req.json();
     const patch: Partial<typeof users.$inferInsert> = {
       updatedAt: new Date(),
     };
     if (typeof body.isActive === "boolean") patch.isActive = body.isActive;
     if (body.permissions) patch.permissions = body.permissions;
+    if (typeof body.password === "string") {
+      if (body.password.trim().length < 8) {
+        return NextResponse.json(
+          { error: "Пароль не короче 8 символов" },
+          { status: 400 },
+        );
+      }
+      patch.passwordHash = await hashPassword(body.password.trim());
+    }
 
     const [updated] = await db
       .update(users)
@@ -31,7 +50,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Не найдено" }, { status: 404 });
     }
 
-    if (body.isActive === false) {
+    if (body.isActive === false || patch.passwordHash) {
       await revokeUserSessions(id);
     }
 

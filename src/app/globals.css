@@ -92,6 +92,36 @@ body {
   color: rgba(243, 246, 251, 0.38);
 }
 
+.channel-chip {
+  border: 1px solid rgba(15, 39, 68, 0.12);
+  background: #fff;
+  color: #0f2744;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.channel-chip:has(:checked) {
+  border-color: #38b6ff;
+  box-shadow: 0 0 0 2px rgba(56, 182, 255, 0.35);
+}
+
+.site-public .channel-chip {
+  border-color: rgba(255, 255, 255, 0.85);
+  background: #f4f7fb;
+  color: #10233a;
+}
+
+.site-public .channel-chip span {
+  color: #10233a;
+}
+
+.site-public .prose {
+  color: rgba(243, 246, 251, 0.82);
+}
+
+.site-public .lead-notice.text-emerald-700 {
+  color: #6ee7b7;
+}
+
 .hero-wash {
   position: absolute;
   inset: 0;

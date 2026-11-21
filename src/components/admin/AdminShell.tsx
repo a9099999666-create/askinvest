@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "@/components/public/Logo";
+import type { Permissions } from "@/lib/auth/permissions";
 import { cn } from "@/lib/utils";
 import {
   IconBell,
@@ -17,35 +18,56 @@ import {
   IconUsers,
 } from "./icons";
 
-const nav = [
-  {
-    group: "Сайт",
-    items: [
-      { href: "/admin/properties", label: "Объекты", icon: IconLayers },
-      { href: "/admin/services", label: "Услуги", icon: IconCase },
-    ],
-  },
-  {
-    group: "CRM",
-    items: [
-      { href: "/admin/leads", label: "Заявки", icon: IconClipboard },
-      { href: "/admin/inbox", label: "Диалоги", icon: IconChat },
-      { href: "/admin/contacts", label: "Контакты", icon: IconUsers },
-      { href: "/admin/campaigns", label: "Рассылки", icon: IconMail },
-    ],
-  },
+const siteNav = [
+  { href: "/admin/properties", label: "Объекты", icon: IconLayers },
+  { href: "/admin/services", label: "Услуги", icon: IconCase },
+];
+
+const crmNav: {
+  href: string;
+  label: string;
+  icon: typeof IconClipboard;
+  permission: keyof Permissions;
+}[] = [
+  { href: "/admin/leads", label: "Заявки", icon: IconClipboard, permission: "leads" },
+  { href: "/admin/inbox", label: "Диалоги", icon: IconChat, permission: "leads" },
+  { href: "/admin/contacts", label: "Контакты", icon: IconUsers, permission: "contacts" },
+  { href: "/admin/campaigns", label: "Рассылки", icon: IconMail, permission: "campaigns" },
 ];
 
 export function AdminShell({
   userName,
   isOwner,
+  permissions,
   children,
 }: {
   userName: string;
   isOwner: boolean;
+  permissions: Permissions;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const crmItems = crmNav.filter(
+    (item) => isOwner || Boolean(permissions?.[item.permission]),
+  );
+  const siteItems = siteNav.filter((item) => {
+    if (item.href === "/admin/services") {
+      return isOwner || Boolean(permissions?.editContent);
+    }
+    return true;
+  });
+  const groups = [
+    { group: "Сайт", items: siteItems },
+    ...(crmItems.length ? [{ group: "CRM", items: crmItems }] : []),
+    ...(isOwner
+      ? [
+          {
+            group: "Команда",
+            items: [{ href: "/admin/staff", label: "Сотрудники", icon: IconUsers }],
+          },
+        ]
+      : []),
+  ];
   return (
     <div className="relative min-h-screen bg-atmosphere">
       <div className="relative flex min-h-screen flex-col md:flex-row">
@@ -56,7 +78,7 @@ export function AdminShell({
             Закрытый кабинет
           </div>
           <nav className="mt-6 flex gap-4 overflow-x-auto md:block md:space-y-6 md:overflow-visible">
-            {nav.map((g) => (
+            {groups.map((g) => (
               <div key={g.group} className="min-w-max md:min-w-0">
                 <div className="mb-2 text-sm font-medium text-slate-400">{g.group}</div>
                 <ul className="flex gap-1 md:block md:space-y-1">
@@ -88,15 +110,6 @@ export function AdminShell({
         <div className="relative min-w-0 flex-1">
           <div className="absolute right-4 top-4 z-20 flex flex-col items-end gap-2 md:right-6">
             <UserMenu userName={userName} />
-            {isOwner && (
-              <Link
-                href="/admin/staff"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#3c6fd6] underline decoration-[#3c6fd6]/40 underline-offset-4"
-              >
-                <IconUsers className="h-4 w-4" />
-                Сотрудники
-              </Link>
-            )}
           </div>
           <div className="relative z-10 px-4 pb-10 pt-4 md:px-6 md:pt-5">{children}</div>
         </div>

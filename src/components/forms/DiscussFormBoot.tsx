@@ -55,7 +55,9 @@ export function DiscussFormBoot({
       }
     };
 
-    if (askReply) revealReply();
+    if (askReply && replyInput) {
+      replyInput.required = true;
+    }
 
     const onSubmit = (event: SubmitEvent) => {
       if (!compact) return;

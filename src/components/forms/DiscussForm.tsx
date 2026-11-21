@@ -49,14 +49,15 @@ export function DiscussForm({
       <div className={panelClass}>
         <h2 className={titleClass}>Заявка принята</h2>
         <div className="accent-line mt-3 !w-10" />
-        <p className="lead-notice mt-4 text-sm text-emerald-700">
+        <p className="lead-notice mt-4 text-sm text-emerald-300">
           Мы получили вопрос и ответим в рабочие часы.
         </p>
       </div>
     );
   }
 
-  const showReply = compact && notice === "error";
+  const anyChannelLive = channels.some((channel) => statusByKind.get(channel.id));
+  const showReply = compact;
 
   return (
     <form
@@ -90,7 +91,7 @@ export function DiscussForm({
             <label className="block">
               <span className="mb-1 block text-sm text-ink/70">ФИО</span>
               <input
-                className="field bg-white"
+                className="field"
                 name="visitorName"
                 autoComplete="name"
                 required
@@ -100,7 +101,7 @@ export function DiscussForm({
             <label className="block">
               <span className="mb-1 block text-sm text-ink/70">Телефон</span>
               <input
-                className="field bg-white"
+                className="field"
                 name="visitorPhone"
                 type="tel"
                 autoComplete="tel"
@@ -112,7 +113,7 @@ export function DiscussForm({
           <label className="mt-3 block">
             <span className="mb-1 block text-sm text-ink/70">Email</span>
             <input
-              className="field bg-white"
+              className="field"
               name="visitorEmail"
               type="email"
               autoComplete="email"
@@ -127,8 +128,8 @@ export function DiscussForm({
         <textarea
           className={
             compact
-              ? "field min-h-[88px] resize-y bg-white/90 md:min-h-[96px]"
-              : "field min-h-[108px] resize-y bg-white"
+              ? "field min-h-[88px] resize-y md:min-h-[96px]"
+              : "field min-h-[108px] resize-y"
           }
           name="question"
           placeholder="Чем можем помочь?"
@@ -136,11 +137,11 @@ export function DiscussForm({
         />
       </label>
 
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 grid grid-cols-3 gap-2">
         {channels.map((channel) => (
           <label
             key={channel.id}
-            className="inline-flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-2xl border border-white/80 bg-white/90 px-2 py-2.5 text-[12px] font-semibold text-ink shadow-sm has-[:checked]:border-white has-[:checked]:bg-white has-[:checked]:shadow-md sm:text-sm"
+            className="channel-chip inline-flex min-w-0 items-center justify-center gap-1.5 rounded-2xl px-1.5 py-2.5 text-[12px] font-semibold text-[#10233a] sm:px-2 sm:text-sm"
           >
             <input
               type="radio"
@@ -158,14 +159,14 @@ export function DiscussForm({
       </div>
 
       {compact ? (
-        <label className={showReply ? "mt-2 block" : "mt-2 hidden"} data-reply-wrap>
+        <label className="mt-2 block" data-reply-wrap>
           <input
-            className="field bg-white"
+            className="field"
             name="replyTo"
             autoComplete="tel"
             placeholder="Телефон или email для ответа"
             aria-label="Телефон или email для ответа"
-            required={showReply}
+            required={showReply && !anyChannelLive}
           />
         </label>
       ) : null}
