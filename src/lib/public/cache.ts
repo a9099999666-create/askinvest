@@ -1,0 +1,189 @@
+import { unstable_cache } from "next/cache";
+import { and, asc, eq, gte, lte, sql } from "drizzle-orm";
+import { db, hasDatabase } from "@/db/client";
+import { isPublicServiceTitle } from "@/lib/content/kinds";
+import { properties, propertyVersions, services, serviceVersions, siteSettings } from "@/db/schema";
+
+const options = { revalidate: 60, tags: ["public-site"] };
+
+const areaBands: Record<string, { min?: string; max?: string }> = {
+  "100": { max: "100" },
+  "300": { min: "100", max: "300" },
+  "1000": { min: "300", max: "1000" },
+  "1000p": { min: "1000" },
+};
+
+const emptyContacts = { phone: "", address: "", hours: "", html: "" };
+
+async function withDatabase<T>(fallback: T, run: () => Promise<T>): Promise<T> {
+  if (!hasDatabase()) return fallback;
+  try {
+    return await run();
+  } catch (error) {
+    console.error("public cache", error);
+    return fallback;
+  }
+}
+
+export const getHomeServices = unstable_cache(
+  async () => {
+    return withDatabase([], async () => {
+      const settings = await db.query.siteSettings.findFirst({
+        where: eq(siteSettings.id, 1),
+      });
+      const featured = (settings?.homeServiceIds || []).filter(Boolean).slice(0, 2);
+      const rows = await db
+        .select({
+          id: services.id,
+          slug: services.slug,
+          title: serviceVersions.title,
+        })
+        .from(services)
+        .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
+        .orderBy(asc(services.sortOrder));
+      const publicRows = rows.filter((row) => isPublicServiceTitle(row.title));
+      if (featured.length) {
+        const picked = featured
+          .map((id) => publicRows.find((row) => row.id === id))
+          .filter((row): row is (typeof rows)[number] => Boolean(row));
+        if (picked.length >= 2) return picked.slice(0, 2);
+        const rest = publicRows.filter((row) => !picked.some((item) => item.id === row.id));
+        return [...picked, ...rest].slice(0, 2);
+      }
+      return publicRows.slice(0, 2);
+    });
+  },
+  ["home-services"],
+  options,
+);
+
+export const getServiceCards = unstable_cache(
+  async () => {
+    return withDatabase([], async () => {
+      const rows = await db
+        .select({
+          id: services.id,
+          slug: services.slug,
+          title: serviceVersions.title,
+          shortDescription: serviceVersions.shortDescription,
+          imageId: serviceVersions.imageId,
+        })
+        .from(services)
+        .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
+        .orderBy(asc(services.sortOrder));
+      return rows.filter((row) => isPublicServiceTitle(row.title));
+    });
+  },
+  ["service-cards"],
+  options,
+);
+
+export const getPublishedService = unstable_cache(
+  async (slug: string) => {
+    return withDatabase(null, async () => {
+      const rows = await db
+        .select({
+          id: services.id,
+          slug: services.slug,
+          title: serviceVersions.title,
+          shortDescription: serviceVersions.shortDescription,
+          fullDescription: serviceVersions.fullDescription,
+          workItems: serviceVersions.workItems,
+          imageId: serviceVersions.imageId,
+        })
+        .from(services)
+        .innerJoin(serviceVersions, eq(services.publishedVersionId, serviceVersions.id))
+        .where(eq(services.slug, slug))
+        .limit(1);
+      return rows[0] ?? null;
+    });
+  },
+  ["published-service"],
+  options,
+);
+
+export const getPropertyCards = unstable_cache(
+  async (deal: string, q: string, area: string) => {
+    return withDatabase([], async () => {
+      const band = areaBands[area];
+      const conditions = [eq(propertyVersions.status, "published")];
+      if (deal === "sale" || deal === "rent") {
+        conditions.push(eq(propertyVersions.dealType, deal));
+      }
+      if (q) conditions.push(sql`${propertyVersions.address} ilike ${"%" + q + "%"}`);
+      if (band?.min) conditions.push(gte(propertyVersions.areaSqm, band.min));
+      if (band?.max) conditions.push(lte(propertyVersions.areaSqm, band.max));
+      return db
+        .select({
+          id: properties.id,
+          slug: properties.slug,
+          address: propertyVersions.address,
+          dealType: propertyVersions.dealType,
+          placeKind: propertyVersions.placeKind,
+          coverId: propertyVersions.coverId,
+        })
+        .from(properties)
+        .innerJoin(propertyVersions, eq(properties.publishedVersionId, propertyVersions.id))
+        .where(and(...conditions));
+    });
+  },
+  ["property-cards"],
+  options,
+);
+
+export const getPublishedProperty = unstable_cache(
+  async (slug: string) => {
+    return withDatabase(null, async () => {
+      const rows = await db
+        .select({
+          id: properties.id,
+          slug: properties.slug,
+          title: propertyVersions.title,
+          address: propertyVersions.address,
+          dealType: propertyVersions.dealType,
+          placeKind: propertyVersions.placeKind,
+          areaSqm: propertyVersions.areaSqm,
+          priceRub: propertyVersions.priceRub,
+          priceUnit: propertyVersions.priceUnit,
+          description: propertyVersions.description,
+          coverId: propertyVersions.coverId,
+          galleryIds: propertyVersions.galleryIds,
+          floorPlanId: propertyVersions.floorPlanId,
+        })
+        .from(properties)
+        .innerJoin(propertyVersions, eq(properties.publishedVersionId, propertyVersions.id))
+        .where(eq(properties.slug, slug))
+        .limit(1);
+      return rows[0] ?? null;
+    });
+  },
+  ["published-property"],
+  options,
+);
+
+export const getContactsHtml = unstable_cache(async () => {
+  return withDatabase("", async () => {
+    const settings = await db.query.siteSettings.findFirst({
+      where: eq(siteSettings.id, 1),
+    });
+    return settings?.contactsHtml || "";
+  });
+}, ["contacts-html"], options);
+
+export const getPublicContacts = unstable_cache(
+  async () => {
+    return withDatabase(emptyContacts, async () => {
+      const settings = await db.query.siteSettings.findFirst({
+        where: eq(siteSettings.id, 1),
+      });
+      return {
+        phone: settings?.contactPhone || "",
+        address: settings?.contactAddress || "",
+        hours: settings?.contactHours || "",
+        html: settings?.contactsHtml || "",
+      };
+    });
+  },
+  ["public-contacts"],
+  options,
+);
