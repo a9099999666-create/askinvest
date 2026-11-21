@@ -8,7 +8,7 @@ export default async function CabinetLayout({
   children: React.ReactNode;
 }) {
   const user = await getSessionUser();
-  if (!user) redirect("/admin/login");
+  if (!user) redirect("/cabinet/login");
   const role = user.isOwner ? "Владелец" : "Сотрудник";
   const userName = user.name === role ? user.name : `${user.name} · ${role}`;
   return (

@@ -320,7 +320,14 @@ export async function createPropertyDraft(
   },
 ) {
   if (!can(user, "editContent")) throw new Error("Нет права редактирования");
-  const slugBase = data.slug || slugify(data.address || data.title);
+  const title = data.title?.trim() || "";
+  const address = data.address?.trim() || "";
+  if (!title && !address) throw new Error("Укажите адрес или название");
+  const areaSqm = String(data.areaSqm ?? "").trim();
+  const priceRub = String(data.priceRub ?? "").trim();
+  if (!areaSqm || Number.isNaN(Number(areaSqm))) throw new Error("Укажите площадь");
+  if (!priceRub || Number.isNaN(Number(priceRub))) throw new Error("Укажите цену");
+  const slugBase = data.slug || slugify(address || title);
   let slug = slugBase;
   let n = 1;
   while (
@@ -334,13 +341,13 @@ export async function createPropertyDraft(
     .values({
       propertyId: property.id,
       status: "draft",
-      title: data.title,
-      address: data.address,
+      title: title || address,
+      address: address || title,
       dealType: data.dealType,
       placeKind: data.placeKind || "other",
-      areaSqm: data.areaSqm,
-      priceRub: data.priceRub,
-      priceUnit: data.priceUnit,
+      areaSqm,
+      priceRub,
+      priceUnit: data.priceUnit === "per_month" ? "per_month" : "total",
       description: data.description || "",
       coverId: data.coverId || null,
       galleryIds: data.galleryIds || [],

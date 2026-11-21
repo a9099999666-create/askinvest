@@ -59,7 +59,7 @@ export async function loadMaterials(): Promise<MaterialItem[]> {
     if (!editable) continue;
     items.push({
       id: property.id,
-      href: `/admin/properties/${property.id}`,
+      href: `/cabinet/properties/${property.id}`,
       title: editable.title,
       subtitle: `${placeKindFrom(editable.title, editable.placeKind)} · ${formatArea(editable.areaSqm)}`,
       kind: "property",
@@ -77,7 +77,7 @@ export async function loadMaterials(): Promise<MaterialItem[]> {
     if (!editable) continue;
     items.push({
       id: service.id,
-      href: `/admin/services/${service.id}`,
+      href: `/cabinet/services/${service.id}`,
       title: editable.title,
       subtitle: editable.shortDescription,
       kind: "service",

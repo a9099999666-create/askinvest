@@ -16,7 +16,7 @@ export function PhilosopherStage({
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
       node.pause();
-      node.currentTime = 3.4;
+      node.currentTime = 5;
       return;
     }
     node.play().catch(() => undefined);
@@ -25,11 +25,7 @@ export function PhilosopherStage({
   const video = (
     <video
       ref={ref}
-      className={
-        variant === "hero"
-          ? "h-full w-full object-contain"
-          : "h-full w-full object-contain"
-      }
+      className="h-full w-full object-cover object-center"
       autoPlay
       muted
       loop

@@ -120,7 +120,7 @@ export function StaffPanel({ staff }: { staff: Staff[] }) {
       <div className="rounded-2xl bg-white/80 p-5">
         <h2 className="font-semibold">Добавить сотрудника</h2>
         <p className="mt-1 text-sm text-ink/60">
-          Сотрудник входит в кабинет по email и паролю на странице /admin/login.
+          Сотрудник входит в кабинет по email и паролю на странице /cabinet/login.
         </p>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           <input
@@ -165,7 +165,7 @@ export function StaffPanel({ staff }: { staff: Staff[] }) {
             <p className="font-semibold">Данные для входа</p>
             <p className="mt-1">Логин: {created.login}</p>
             <p>Пароль: {created.password}</p>
-            <p className="mt-1 text-ink/60">Вход: /admin/login</p>
+            <p className="mt-1 text-ink/60">Вход: /cabinet/login</p>
           </div>
         ) : null}
       </div>

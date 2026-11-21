@@ -8,13 +8,15 @@ export const revalidate = 60;
 export default function ServicesPage() {
   return (
     <div className="pt-2">
-      <h1 className="font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
-        Услуги
-      </h1>
-      <div className="accent-line mt-5" />
-      <p className="mt-4 max-w-xl text-ink/70">
-        Направления поддержки бизнеса — от проверки документов до сопровождения сделки.
-      </p>
+      <div className="reveal">
+        <h1 className="font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
+          Услуги
+        </h1>
+        <div className="accent-line mt-5" />
+        <p className="mt-4 max-w-xl text-ink/70">
+          Направления поддержки бизнеса — от проверки документов до сопровождения сделки.
+        </p>
+      </div>
       <Suspense
         fallback={
           <div className="mt-8 grid gap-3 md:grid-cols-2">
@@ -43,13 +45,13 @@ async function ServiceList() {
           imageId: null as string | null,
         }));
   return (
-    <div className="mt-8 grid gap-3 md:grid-cols-2">
+    <div className="stagger-in mt-8 grid gap-3 md:grid-cols-2">
       {items.map((item) => (
         <Link
           key={item.id}
           href={`/services/${item.slug}`}
           prefetch={false}
-          className="glass-panel flex min-h-[96px] items-center justify-between gap-4 rounded-[24px] px-5 py-4 transition hover:-translate-y-0.5 md:px-6"
+          className="glass-panel flex min-h-[96px] items-center justify-between gap-4 rounded-[24px] px-5 py-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-panel md:px-6"
         >
           <span className="min-w-0">
             <span className="block text-[17px] font-semibold leading-snug text-ink md:text-lg">

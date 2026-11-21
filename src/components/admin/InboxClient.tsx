@@ -83,7 +83,7 @@ export function InboxClient({
   function openThread(id: string) {
     setSelected(id);
     setPanel("chat");
-    router.push(`/admin/inbox?thread=${id}`);
+    router.push(`/cabinet/inbox?thread=${id}`);
     router.refresh();
   }
 
@@ -215,7 +215,7 @@ export function InboxClient({
                         ? `Объект: ${lead.propertyTitleSnapshot}`
                         : "Без привязки"}
                   </span>
-                  <a className="font-semibold text-brand-blue" href={`/admin/leads/${lead.id}`}>
+                  <a className="font-semibold text-brand-blue" href={`/cabinet/leads/${lead.id}`}>
                     Заявка №{lead.number}
                   </a>
                 </div>
@@ -324,7 +324,7 @@ export function InboxClient({
             <div className="space-y-4 text-sm">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold">Заявка №{lead.number}</h2>
-                <a href={`/admin/leads/${lead.id}`} className="text-brand-blue" aria-label="Открыть заявку">
+                <a href={`/cabinet/leads/${lead.id}`} className="text-brand-blue" aria-label="Открыть заявку">
                   ↗
                 </a>
               </div>
@@ -352,7 +352,7 @@ export function InboxClient({
                   <p className="text-ink/70">{lead.note}</p>
                 </Field>
               ) : null}
-              <a className="inline-flex font-semibold text-brand-red" href={`/admin/leads/${lead.id}`}>
+              <a className="inline-flex font-semibold text-brand-red" href={`/cabinet/leads/${lead.id}`}>
                 Открыть карточку →
               </a>
             </div>

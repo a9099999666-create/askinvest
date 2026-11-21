@@ -19,8 +19,9 @@ import {
 } from "./icons";
 
 const siteNav = [
-  { href: "/admin/properties", label: "Объекты", icon: IconLayers },
-  { href: "/admin/services", label: "Услуги", icon: IconCase },
+  { href: "/cabinet/properties", label: "Объекты", icon: IconLayers },
+  { href: "/cabinet/services", label: "Услуги", icon: IconCase },
+  { href: "/cabinet/settings", label: "Каналы", icon: IconBell },
 ];
 
 const crmNav: {
@@ -29,10 +30,10 @@ const crmNav: {
   icon: typeof IconClipboard;
   permission: keyof Permissions;
 }[] = [
-  { href: "/admin/leads", label: "Заявки", icon: IconClipboard, permission: "leads" },
-  { href: "/admin/inbox", label: "Диалоги", icon: IconChat, permission: "leads" },
-  { href: "/admin/contacts", label: "Контакты", icon: IconUsers, permission: "contacts" },
-  { href: "/admin/campaigns", label: "Рассылки", icon: IconMail, permission: "campaigns" },
+  { href: "/cabinet/leads", label: "Заявки", icon: IconClipboard, permission: "leads" },
+  { href: "/cabinet/inbox", label: "Диалоги", icon: IconChat, permission: "leads" },
+  { href: "/cabinet/contacts", label: "Контакты", icon: IconUsers, permission: "contacts" },
+  { href: "/cabinet/campaigns", label: "Рассылки", icon: IconMail, permission: "campaigns" },
 ];
 
 export function AdminShell({
@@ -51,7 +52,7 @@ export function AdminShell({
     (item) => isOwner || Boolean(permissions?.[item.permission]),
   );
   const siteItems = siteNav.filter((item) => {
-    if (item.href === "/admin/services") {
+    if (item.href === "/cabinet/services") {
       return isOwner || Boolean(permissions?.editContent);
     }
     return true;
@@ -63,7 +64,7 @@ export function AdminShell({
       ? [
           {
             group: "Команда",
-            items: [{ href: "/admin/staff", label: "Сотрудники", icon: IconUsers }],
+            items: [{ href: "/cabinet/staff", label: "Сотрудники", icon: IconUsers }],
           },
         ]
       : []),
@@ -72,7 +73,7 @@ export function AdminShell({
     <div className="relative min-h-screen bg-atmosphere">
       <div className="relative flex min-h-screen flex-col md:flex-row">
         <aside className="w-full shrink-0 px-4 py-4 md:w-[232px] md:px-4 md:py-5">
-          <Logo />
+          <Logo href="/cabinet/properties" />
           <div className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-ink shadow-sm">
             <IconLock className="h-4 w-4 text-ink/70" />
             Закрытый кабинет
@@ -139,7 +140,7 @@ function UserMenu({ userName }: { userName: string }) {
       {open && (
         <div className="absolute right-0 mt-2 w-48 rounded-2xl bg-white p-1.5 text-sm shadow-panel">
           <Link
-            href="/admin/settings"
+            href="/cabinet/settings"
             className="flex items-center gap-2 rounded-xl px-3 py-2 hover:bg-slate-50"
             onClick={() => setOpen(false)}
           >

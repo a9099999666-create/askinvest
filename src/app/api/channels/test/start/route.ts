@@ -79,7 +79,7 @@ export async function GET(req: Request) {
   <div class="ok">Чат начат с кодом <strong>${safeCode}</strong> (via ${safeVia}).
   Связь: ${linked}.
   Откройте кабинет → Диалоги. Worker отправит автоответ бота.</div>
-  <p><a href="/admin/inbox">Перейти в диалоги</a></p></body></html>`;
+  <p><a href="/cabinet/inbox">Перейти в диалоги</a></p></body></html>`;
 
   return new NextResponse(html, {
     headers: { "Content-Type": "text/html; charset=utf-8" },

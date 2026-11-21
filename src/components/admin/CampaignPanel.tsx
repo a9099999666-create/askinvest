@@ -22,15 +22,29 @@ export function CampaignPanel({
   const [channel, setChannel] = useState("test");
   const [pending, start] = useTransition();
   const [preview, setPreview] = useState<{ count: number } | null>(null);
+  const [error, setError] = useState("");
 
   function create() {
-    if (!topicId) return;
+    setError("");
+    if (!topicId) {
+      setError("Сначала нужна тема подписки");
+      return;
+    }
+    if (!title.trim() || !body.trim()) {
+      setError("Укажите название и текст рассылки");
+      return;
+    }
     start(async () => {
-      await fetch("/api/admin/campaigns", {
+      const res = await fetch("/api/admin/campaigns", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, body, topicId, channel }),
       });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || "Не удалось сохранить кампанию");
+        return;
+      }
       setTitle("");
       setBody("");
       router.refresh();
@@ -97,6 +111,7 @@ export function CampaignPanel({
         <button className="btn-primary mt-3" disabled={pending} onClick={create}>
           Сохранить черновик
         </button>
+        {error ? <p className="field-error">{error}</p> : null}
       </div>
 
       <div className="space-y-3">

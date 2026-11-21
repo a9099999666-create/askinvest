@@ -15,60 +15,67 @@ const statuses = [
 
 export function ContentBoard({
   items,
-  initialTab = "properties",
+  kind,
   canEdit = true,
 }: {
   items: MaterialItem[];
-  initialTab?: "properties" | "services";
+  kind: "properties" | "services";
   canEdit?: boolean;
 }) {
-  const [tab, setTab] = useState(initialTab);
+  const expected = kind === "services" ? "service" : "property";
   const [q, setQ] = useState("");
-  const [type, setType] = useState<"all" | "property" | "service">(
-    initialTab === "services" ? "service" : "all",
-  );
   const [status, setStatus] = useState("all");
 
   const visible = useMemo(() => {
     const query = q.trim().toLowerCase();
     return items.filter((item) => {
-      if (type !== "all" && item.kind !== type) return false;
+      if (item.kind !== expected) return false;
       if (status !== "all" && item.status !== status) return false;
       if (!query) return true;
       return `${item.title} ${item.subtitle}`.toLowerCase().includes(query);
     });
-  }, [items, q, status, type]);
+  }, [items, expected, q, status]);
 
-  function openTab(next: "properties" | "services") {
-    setTab(next);
-    setType(next === "services" ? "service" : "all");
-  }
+  const title = kind === "services" ? "Услуги" : "Объекты";
+  const addHref = kind === "services" ? "/cabinet/services/new" : "/cabinet/properties/new";
+  const addLabel = kind === "services" ? "+ Добавить услугу" : "+ Добавить объект";
 
   return (
     <div>
-      <PageTitle title="Управление сайтом" />
+      <PageTitle title={title} />
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex rounded-2xl bg-white p-1 shadow-sm">
-          <TabButton active={tab === "properties"} onClick={() => openTab("properties")}>
+          <Link
+            href="/cabinet/properties"
+            className={`relative rounded-xl px-5 py-2 text-sm font-semibold ${
+              kind === "properties" ? "text-ink" : "text-ink/45"
+            }`}
+          >
             Объекты
-          </TabButton>
-          <TabButton active={tab === "services"} onClick={() => openTab("services")}>
+            {kind === "properties" ? (
+              <span className="absolute inset-x-4 -bottom-1 h-[3px] rounded-full bg-brand-red" />
+            ) : null}
+          </Link>
+          <Link
+            href="/cabinet/services"
+            className={`relative rounded-xl px-5 py-2 text-sm font-semibold ${
+              kind === "services" ? "text-ink" : "text-ink/45"
+            }`}
+          >
             Услуги
-          </TabButton>
+            {kind === "services" ? (
+              <span className="absolute inset-x-4 -bottom-1 h-[3px] rounded-full bg-brand-red" />
+            ) : null}
+          </Link>
         </div>
         {canEdit ? (
-          <div className="flex flex-wrap gap-2">
-            <Link href="/admin/properties/new" className="btn-primary px-4 py-2.5 text-sm">
-              + Добавить объект
-            </Link>
-            <Link href="/admin/services/new" className="btn-primary px-4 py-2.5 text-sm">
-              + Добавить услугу
-            </Link>
-          </div>
+          <Link href={addHref} className="btn-primary px-4 py-2.5 text-sm">
+            {addLabel}
+          </Link>
         ) : null}
       </div>
 
-      <div className="mt-4 grid gap-3 lg:grid-cols-[1.3fr_1fr_0.8fr]">
+      <div className="mt-4 grid gap-3 md:grid-cols-[1.4fr_0.8fr]">
         <label className="relative block">
           <IconSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -77,23 +84,6 @@ export function ContentBoard({
             onChange={(e) => setQ(e.target.value)}
             placeholder="Поиск по названию..."
           />
-        </label>
-        <label className="field flex items-center gap-2">
-          <span className="shrink-0 text-ink/70">Тип материала:</span>
-          <select
-            className="w-full bg-transparent font-semibold outline-none"
-            value={type}
-            onChange={(e) => {
-              const value = e.target.value as "all" | "property" | "service";
-              setType(value);
-              if (value === "service") setTab("services");
-              if (value === "property" || value === "all") setTab("properties");
-            }}
-          >
-            <option value="all">Все</option>
-            <option value="property">Помещение</option>
-            <option value="service">Услуга</option>
-          </select>
         </label>
         <label className="field flex items-center gap-2">
           <span className="shrink-0 text-ink/70">Статус:</span>
@@ -167,31 +157,6 @@ export function ContentBoard({
         )}
       </div>
     </div>
-  );
-}
-
-function TabButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`relative rounded-xl px-5 py-2 text-sm font-semibold ${
-        active ? "text-ink" : "text-ink/45"
-      }`}
-    >
-      {children}
-      {active && (
-        <span className="absolute inset-x-4 -bottom-1 h-[3px] rounded-full bg-brand-red" />
-      )}
-    </button>
   );
 }
 

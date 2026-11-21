@@ -54,7 +54,7 @@ export default async function PropertyPage({
   return (
     <div className="pb-28 pt-4">
       <div className="grid gap-8 md:grid-cols-2">
-      <div>
+      <div className="reveal">
         {photos.length > 0 ? (
           <div className="mb-5 grid gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -121,6 +121,7 @@ export default async function PropertyPage({
       <div className="space-y-6">
         <div id="ask">
           <DiscussForm
+            className="reveal reveal-delay-2"
             propertyId={published?.id}
             intent="question"
             sourcePage={`/properties/${property.slug}`}
@@ -133,6 +134,7 @@ export default async function PropertyPage({
         </div>
         <div id="viewing">
           <DiscussForm
+            className="reveal reveal-delay-3"
             propertyId={published?.id}
             intent="viewing"
             sourcePage={`/properties/${property.slug}`}

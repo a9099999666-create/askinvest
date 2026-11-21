@@ -94,6 +94,18 @@ export function PropertyEditor({
   function save(extra?: { publish?: boolean; status?: "draft" | "review" }) {
     setError("");
     setConflict("");
+    if (!form.address.trim() && !form.title.trim()) {
+      setError("Укажите адрес или название");
+      return;
+    }
+    if (!form.areaSqm.trim() || Number.isNaN(Number(form.areaSqm))) {
+      setError("Укажите площадь");
+      return;
+    }
+    if (!form.priceRub.trim() || Number.isNaN(Number(form.priceRub))) {
+      setError("Укажите цену");
+      return;
+    }
     start(async () => {
       const url = propertyId
         ? `/api/admin/properties/${propertyId}`
@@ -128,7 +140,7 @@ export function PropertyEditor({
           return;
         }
       }
-      router.push(`/admin/properties/${id}`);
+      router.push(`/cabinet/properties/${id}`);
       router.refresh();
     });
   }

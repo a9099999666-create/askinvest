@@ -1,6 +1,7 @@
 import { DiscussFormBoot } from "@/components/forms/DiscussFormBoot";
 import { MaxIcon, TelegramIcon, WhatsIcon } from "@/components/icons/channels";
 import type { ChannelKind } from "@/lib/channels";
+import { cn } from "@/lib/utils";
 
 const channels: { id: ChannelKind; label: string; icon: React.ReactNode }[] = [
   { id: "telegram", label: "Telegram", icon: <TelegramIcon className="h-4 w-4 shrink-0" /> },
@@ -20,6 +21,7 @@ export function DiscussForm({
   channelStatus = [],
   notice,
   actionLabel,
+  className,
 }: {
   serviceId?: string;
   propertyId?: string;
@@ -30,6 +32,7 @@ export function DiscussForm({
   channelStatus?: ChannelStatus[];
   notice?: "ok" | "error";
   actionLabel?: string;
+  className?: string;
 }) {
   const storageKey = `askinvest_pk_${intent}_${propertyId || serviceId || sourcePage || "site"}`;
   const compact = variant === "compact";
@@ -37,9 +40,11 @@ export function DiscussForm({
   const defaultChannel =
     channels.find((channel) => statusByKind.get(channel.id))?.id || channels[0].id;
   const submitLabel = compact ? actionLabel || "Обсудить задачу" : actionLabel || "Отправить заявку";
-  const panelClass = compact
-    ? "glass-panel rounded-[28px] p-5 md:p-6"
-    : "glass-panel rounded-[28px] p-6 md:p-7";
+  const panelClass = cn(
+    "form-panel glass-panel flex flex-col gap-4 rounded-[28px]",
+    compact ? "p-5 md:p-6" : "p-6 md:p-7",
+    className,
+  );
   const titleClass = compact
     ? "font-display text-[26px] font-semibold leading-none text-ink md:text-[30px]"
     : "font-display text-[28px] font-bold leading-none text-ink";
@@ -47,9 +52,11 @@ export function DiscussForm({
   if (notice === "ok") {
     return (
       <div className={panelClass}>
-        <h2 className={titleClass}>Заявка принята</h2>
-        <div className="accent-line mt-3 !w-10" />
-        <p className="lead-notice mt-4 text-sm text-emerald-300">
+        <div>
+          <h2 className={titleClass}>Заявка принята</h2>
+          <div className="accent-line mt-3 !w-10" />
+        </div>
+        <p className="lead-notice text-sm text-emerald-300">
           Мы получили вопрос и ответим в рабочие часы.
         </p>
       </div>
@@ -67,29 +74,33 @@ export function DiscussForm({
       data-storage-key={storageKey}
       data-compact={compact ? "1" : "0"}
     >
-      <h2 className={titleClass}>{title}</h2>
-      <div className="accent-line mt-3 !w-10" />
+      <div>
+        <h2 className={titleClass}>{title}</h2>
+        <div className="accent-line mt-3 !w-10" />
+      </div>
       {notice === "error" ? (
-        <p className="lead-notice mt-3 text-sm text-brand-red">
+        <p className="lead-notice text-sm text-brand-red">
           {compact
             ? "Укажите телефон или email, чтобы мы ответили."
             : "Не удалось сохранить. Проверьте поля и нажмите ещё раз."}
         </p>
       ) : (
-        <p className="lead-notice mt-3 hidden text-sm" />
+        <p className="lead-notice hidden text-sm" />
       )}
-      <input type="hidden" name="publicKey" defaultValue="" />
-      <DiscussFormBoot storageKey={storageKey} compact={compact} askReply={showReply} />
-      <input type="hidden" name="sourcePage" value={sourcePage || "/"} />
-      <input type="hidden" name="intent" value={intent} />
-      {serviceId ? <input type="hidden" name="serviceId" value={serviceId} /> : null}
-      {propertyId ? <input type="hidden" name="propertyId" value={propertyId} /> : null}
+      <div className="hidden">
+        <input type="hidden" name="publicKey" defaultValue="" />
+        <DiscussFormBoot storageKey={storageKey} compact={compact} askReply={showReply} />
+        <input type="hidden" name="sourcePage" value={sourcePage || "/"} />
+        <input type="hidden" name="intent" value={intent} />
+        {serviceId ? <input type="hidden" name="serviceId" value={serviceId} /> : null}
+        {propertyId ? <input type="hidden" name="propertyId" value={propertyId} /> : null}
+      </div>
 
       {!compact ? (
         <>
-          <div className="mt-5 grid gap-3 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             <label className="block">
-              <span className="mb-1 block text-sm text-ink/70">ФИО</span>
+              <span className="mb-1.5 block text-sm text-ink/70">ФИО</span>
               <input
                 className="field"
                 name="visitorName"
@@ -99,7 +110,7 @@ export function DiscussForm({
               />
             </label>
             <label className="block">
-              <span className="mb-1 block text-sm text-ink/70">Телефон</span>
+              <span className="mb-1.5 block text-sm text-ink/70">Телефон</span>
               <input
                 className="field"
                 name="visitorPhone"
@@ -110,8 +121,8 @@ export function DiscussForm({
               />
             </label>
           </div>
-          <label className="mt-3 block">
-            <span className="mb-1 block text-sm text-ink/70">Email</span>
+          <label className="block">
+            <span className="mb-1.5 block text-sm text-ink/70">Email</span>
             <input
               className="field"
               name="visitorEmail"
@@ -123,8 +134,8 @@ export function DiscussForm({
         </>
       ) : null}
 
-      <label className={compact ? "mt-4 block" : "mt-3 block"}>
-        {!compact ? <span className="mb-1 block text-sm text-ink/70">Задача</span> : null}
+      <label className="block">
+        {!compact ? <span className="mb-1.5 block text-sm text-ink/70">Задача</span> : null}
         <textarea
           className={
             compact
@@ -137,11 +148,11 @@ export function DiscussForm({
         />
       </label>
 
-      <div className="mt-4 grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {channels.map((channel) => (
           <label
             key={channel.id}
-            className="channel-chip inline-flex min-w-0 items-center justify-center gap-1.5 rounded-2xl px-1.5 py-2.5 text-[12px] font-semibold text-[#10233a] sm:px-2 sm:text-sm"
+            className="channel-chip inline-flex min-h-[44px] min-w-0 items-center justify-center gap-1.5 rounded-2xl px-1.5 py-2.5 text-[12px] font-semibold text-[#10233a] sm:px-2 sm:text-sm"
           >
             <input
               type="radio"
@@ -159,7 +170,7 @@ export function DiscussForm({
       </div>
 
       {compact ? (
-        <label className="mt-2 block" data-reply-wrap>
+        <label className="block" data-reply-wrap>
           <input
             className="field"
             name="replyTo"
@@ -172,11 +183,7 @@ export function DiscussForm({
       ) : null}
 
       <button
-        className={
-          compact
-            ? "btn-primary mt-4 flex w-full !justify-between rounded-2xl px-5 py-3 text-base"
-            : "btn-primary mt-5 flex w-full !justify-between rounded-2xl px-5 py-3.5 text-base"
-        }
+        className="btn-primary mt-auto flex w-full !justify-between rounded-2xl px-5 py-3 text-base"
         type="submit"
       >
         <span data-submit-label>{submitLabel}</span>

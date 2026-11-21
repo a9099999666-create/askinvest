@@ -20,7 +20,7 @@ export default async function HomePage({
   return (
     <div>
       <section className="grid min-h-[68vh] items-end gap-8 pb-2 pt-8 lg:min-h-[74vh] lg:grid-cols-2 lg:items-center lg:gap-x-12">
-        <div className="max-w-xl">
+        <div className="reveal max-w-xl">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/45">
             АСКИНВЕСТ
           </p>
@@ -31,10 +31,11 @@ export default async function HomePage({
           </h1>
           <div className="accent-line mt-5" />
           <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/65 md:text-base">
-            Сначала думаем. Потом закрепляем сделку — от мысли к камню.
+            Сначала думаем. Потом вокруг решения вырастает город — от мысли к камню.
           </p>
         </div>
         <DiscussForm
+          className="reveal reveal-delay-2"
           sourcePage="/"
           variant="compact"
           channelStatus={channelStatus}
@@ -67,13 +68,13 @@ async function HomeServices() {
         }));
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4">
+    <div className="stagger-in grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4">
       {items.map((item) => (
         <Link
           key={item.id}
           href={`/services/${item.slug}`}
           prefetch={false}
-          className="glass-panel flex min-h-[84px] items-center justify-between gap-4 rounded-[24px] px-5 py-5 transition hover:-translate-y-0.5 md:min-h-[92px] md:px-6"
+          className="glass-panel flex min-h-[84px] items-center justify-between gap-4 rounded-[24px] px-5 py-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-panel md:min-h-[92px] md:px-6"
         >
           <span className="text-[17px] font-semibold leading-snug text-ink md:text-lg">
             {item.title}
@@ -86,12 +87,12 @@ async function HomeServices() {
       <Link
         href="/services"
         prefetch={false}
-        className="glass-panel flex min-h-[84px] items-center justify-between gap-4 rounded-[24px] px-5 py-5 transition hover:-translate-y-0.5 md:min-h-[92px] md:px-6"
+        className="glass-panel flex min-h-[84px] items-center justify-between gap-4 rounded-[24px] px-5 py-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-panel md:min-h-[92px] md:px-6"
       >
         <span className="text-[17px] font-semibold leading-snug text-ink md:text-lg">
           Другие услуги
         </span>
-        <span className="shrink-0 text-xl text-brand-magenta" aria-hidden>
+          <span className="shrink-0 text-xl text-brand-red" aria-hidden>
           →
         </span>
       </Link>

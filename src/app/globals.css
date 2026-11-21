@@ -9,10 +9,10 @@
   --panel: #ffffff;
   --panel-border: rgba(15, 39, 68, 0.08);
   --panel-shadow: 0 18px 50px rgba(20, 55, 100, 0.08);
-  --brand-red: #e11d2e;
-  --brand-blue: #1a7adf;
-  --brand-cyan: #38b6ff;
-  --brand-magenta: #d926a9;
+  --brand-red: #e7191e;
+  --brand-blue: #00a2e7;
+  --brand-cyan: #00a2e7;
+  --brand-magenta: #e7191e;
 }
 
 html,
@@ -39,7 +39,7 @@ body {
 }
 
 .btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-red px-5 py-3 font-semibold text-white shadow-sm transition hover:brightness-110 disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-red px-5 py-3 font-semibold text-white shadow-sm transition duration-200 hover:brightness-110 active:scale-[0.99] disabled:opacity-60;
 }
 
 .btn-ghost {
@@ -61,20 +61,28 @@ body {
 .site-public {
   --foreground: #f3f6fb;
   --ink: #f3f6fb;
-  --panel: rgba(10, 12, 18, 0.62);
+  --panel: rgba(10, 12, 18, 0.72);
   --panel-border: rgba(255, 255, 255, 0.12);
   --panel-shadow:
     0 24px 80px rgba(0, 0, 0, 0.45),
-    0 0 40px rgba(56, 182, 255, 0.08),
-    0 0 70px rgba(217, 38, 169, 0.06);
-  --brand-red: #d926a9;
-  --brand-blue: #38b6ff;
+    0 0 40px rgba(0, 162, 231, 0.12),
+    0 0 70px rgba(212, 168, 75, 0.1);
+  --brand-red: #e7191e;
+  --brand-blue: #00a2e7;
+  --brand-cyan: #4dc4f5;
+  --brand-magenta: #e7191e;
   color: var(--foreground);
   background: transparent;
 }
 
+.site-public form.glass-panel,
+.site-public .form-panel {
+  background: rgba(10, 12, 18, 0.92);
+  backdrop-filter: blur(16px);
+}
+
 .site-public .btn-ghost {
-  @apply border-white/15 bg-white/5 text-ink hover:bg-white/10;
+  @apply border-white/40 bg-white/20 text-ink hover:bg-white/30;
 }
 
 .site-public .field {
@@ -84,8 +92,8 @@ body {
 }
 
 .site-public .field:focus {
-  border-color: rgba(56, 182, 255, 0.7);
-  box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.15);
+  border-color: rgba(0, 162, 231, 0.75);
+  box-shadow: 0 0 0 3px rgba(0, 162, 231, 0.16);
 }
 
 .site-public .field::placeholder {
@@ -97,11 +105,19 @@ body {
   background: #fff;
   color: #0f2744;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.channel-chip:hover {
+  transform: translateY(-1px);
 }
 
 .channel-chip:has(:checked) {
-  border-color: #38b6ff;
-  box-shadow: 0 0 0 2px rgba(56, 182, 255, 0.35);
+  border-color: #00a2e7;
+  box-shadow: 0 0 0 2px rgba(0, 162, 231, 0.35);
 }
 
 .site-public .channel-chip {
@@ -126,25 +142,123 @@ body {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(8, 10, 16, 0.55) 0%, rgba(8, 10, 16, 0.08) 42%, rgba(8, 10, 16, 0.72) 100%),
-    linear-gradient(180deg, rgba(8, 10, 16, 0.35) 0%, transparent 28%, rgba(8, 10, 16, 0.55) 100%),
-    radial-gradient(ellipse 50% 70% at 18% 40%, rgba(56, 182, 255, 0.16), transparent 60%),
-    radial-gradient(ellipse 40% 60% at 88% 45%, rgba(217, 38, 169, 0.18), transparent 55%);
+    linear-gradient(90deg, rgba(8, 10, 16, 0.62) 0%, rgba(8, 10, 16, 0.1) 44%, rgba(8, 10, 16, 0.58) 100%),
+    linear-gradient(180deg, rgba(8, 10, 16, 0.3) 0%, transparent 30%, rgba(8, 10, 16, 0.62) 100%),
+    radial-gradient(ellipse 55% 48% at 50% 16%, rgba(212, 168, 75, 0.16), transparent 58%),
+    radial-gradient(ellipse 70% 38% at 50% 94%, rgba(0, 162, 231, 0.16), transparent 55%);
 }
 
 .ambient-wash {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 50% 70% at 22% 45%, rgba(56, 182, 255, 0.16), transparent 62%),
-    radial-gradient(ellipse 45% 60% at 78% 40%, rgba(217, 38, 169, 0.16), transparent 58%),
-    linear-gradient(90deg, rgba(8, 10, 16, 0.28) 0%, rgba(8, 10, 16, 0.04) 40%, rgba(8, 10, 16, 0.45) 100%),
-    linear-gradient(180deg, rgba(8, 10, 16, 0.18) 0%, rgba(8, 10, 16, 0.08) 42%, rgba(8, 10, 16, 0.55) 100%);
+    radial-gradient(ellipse 58% 42% at 50% 12%, rgba(212, 168, 75, 0.14), transparent 55%),
+    radial-gradient(ellipse 80% 36% at 50% 96%, rgba(0, 162, 231, 0.14), transparent 58%),
+    linear-gradient(90deg, rgba(8, 10, 16, 0.34) 0%, rgba(8, 10, 16, 0.04) 42%, rgba(8, 10, 16, 0.4) 100%),
+    linear-gradient(180deg, rgba(8, 10, 16, 0.22) 0%, rgba(8, 10, 16, 0.05) 40%, rgba(8, 10, 16, 0.58) 100%);
 }
 
 .accent-line {
   height: 3px;
   width: 4rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, #38b6ff, #d926a9);
+  background: linear-gradient(90deg, #00a2e7, #e7191e);
+  transform-origin: left center;
+  animation: accent-draw 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+@keyframes fade-up {
+  from {
+    transform: translateY(14px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes accent-draw {
+  from {
+    transform: scaleX(0.35);
+    opacity: 0.45;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes chat-in {
+  from {
+    opacity: 0.4;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal {
+  animation: fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-delay-1 {
+  animation-delay: 60ms;
+}
+
+.reveal-delay-2 {
+  animation-delay: 120ms;
+}
+
+.reveal-delay-3 {
+  animation-delay: 180ms;
+}
+
+.reveal-delay-4 {
+  animation-delay: 240ms;
+}
+
+.stagger-in > * {
+  animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.stagger-in > *:nth-child(1) {
+  animation-delay: 40ms;
+}
+.stagger-in > *:nth-child(2) {
+  animation-delay: 90ms;
+}
+.stagger-in > *:nth-child(3) {
+  animation-delay: 140ms;
+}
+.stagger-in > *:nth-child(4) {
+  animation-delay: 190ms;
+}
+.stagger-in > *:nth-child(5) {
+  animation-delay: 240ms;
+}
+.stagger-in > *:nth-child(6) {
+  animation-delay: 290ms;
+}
+
+.chat-in {
+  animation: chat-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-delay-1,
+  .reveal-delay-2,
+  .reveal-delay-3,
+  .reveal-delay-4,
+  .stagger-in > *,
+  .accent-line,
+  .chat-in {
+    animation: none !important;
+  }
+
+  .channel-chip:hover,
+  .btn-primary:active {
+    transform: none;
+  }
 }

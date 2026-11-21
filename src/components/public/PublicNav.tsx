@@ -23,13 +23,13 @@ export function PublicNav() {
             key={link.href}
             href={link.href}
             prefetch={false}
-            className={`relative pb-1 transition ${
+            className={`relative pb-1 transition duration-200 ${
               active ? "text-ink" : "text-ink/70 hover:text-ink"
             }`}
           >
             {link.label}
             {active ? (
-              <span className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded bg-gradient-to-r from-brand-cyan to-brand-magenta" />
+              <span className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded bg-gradient-to-r from-brand-cyan to-brand-red" />
             ) : null}
           </Link>
         );

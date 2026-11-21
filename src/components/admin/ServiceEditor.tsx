@@ -144,7 +144,7 @@ export function ServiceEditor({
       else if (extra?.status === "review") setSaved("Отправлено на проверку.");
       else setSaved("Черновик сохранён.");
       if (!serviceId) {
-        router.push(`/admin/services/${id}`);
+        router.push(`/cabinet/services/${id}`);
       }
       router.refresh();
     });

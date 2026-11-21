@@ -40,8 +40,8 @@ export function HomeFeatured({
     <section className="mt-6 rounded-[28px] bg-white p-5 shadow-panel">
       <h2 className="font-display text-xl font-bold text-ink">Карточки на главной</h2>
       <p className="mt-1 text-sm text-ink/60">
-        На первом экране сайта показываются две выбранные услуги и ссылка «Все
-        услуги». Порядок — сверху вниз в форме, слева направо на сайте.
+        На первом экране сайта показываются две выбранные услуги и ссылка
+        «Другие услуги». Порядок — сверху вниз в форме, слева направо на сайте.
       </p>
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         <label className="block">
