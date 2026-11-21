@@ -1,12 +1,10 @@
-function requireDatabaseUrl() {
-  const url =
+function databaseUrl() {
+  return (
     process.env.DATABASE_URL?.trim() ||
     process.env.POSTGRES_URL?.trim() ||
-    process.env.POSTGRES_PRISMA_URL?.trim();
-  if (!url) {
-    throw new Error("DATABASE_URL is required");
-  }
-  return url;
+    process.env.POSTGRES_PRISMA_URL?.trim() ||
+    ""
+  );
 }
 
 export function isProduction() {
@@ -23,7 +21,7 @@ export function isTestChannelEnabled() {
 
 export function getEnv() {
   return {
-    databaseUrl: requireDatabaseUrl(),
+    databaseUrl: databaseUrl(),
     appUrl:
       process.env.APP_URL ||
       (process.env.VERCEL_PROJECT_PRODUCTION_URL
