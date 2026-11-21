@@ -77,7 +77,7 @@ export function InquiryChat({
       }
     >
       {open ? (
-        <div className="glass-panel overflow-hidden rounded-[24px] shadow-panel">
+        <div className="form-panel glass-panel overflow-hidden rounded-[24px] shadow-panel">
           <div className="flex items-start justify-between gap-3 px-4 pb-2 pt-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/45">

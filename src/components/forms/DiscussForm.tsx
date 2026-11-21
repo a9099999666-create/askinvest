@@ -38,8 +38,8 @@ export function DiscussForm({
     channels.find((channel) => statusByKind.get(channel.id))?.id || channels[0].id;
   const submitLabel = compact ? actionLabel || "Обсудить задачу" : actionLabel || "Отправить заявку";
   const panelClass = compact
-    ? "glass-panel rounded-[28px] p-5 md:p-6"
-    : "glass-panel rounded-[28px] p-6 md:p-7";
+    ? "form-panel glass-panel rounded-[28px] p-5 md:p-6"
+    : "form-panel glass-panel rounded-[28px] p-6 md:p-7";
   const titleClass = compact
     ? "font-display text-[26px] font-semibold leading-none text-ink md:text-[30px]"
     : "font-display text-[28px] font-bold leading-none text-ink";

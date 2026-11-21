@@ -75,6 +75,12 @@ body {
   background: transparent;
 }
 
+.site-public form.glass-panel,
+.site-public .form-panel {
+  background: rgba(10, 12, 18, 0.92);
+  backdrop-filter: blur(16px);
+}
+
 .site-public .btn-ghost {
   @apply border-white/15 bg-white/5 text-ink hover:bg-white/10;
 }
