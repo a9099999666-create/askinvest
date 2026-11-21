@@ -6,19 +6,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "12mb",
     },
   },
-  async headers() {
-    return [
-      {
-        source: "/brand/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=86400, stale-while-revalidate=604800",
-          },
-        ],
-      },
-    ];
-  },
   webpack: (config) => {
     config.resolve.extensionAlias = {
       ...config.resolve.extensionAlias,

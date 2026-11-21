@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DiscussForm } from "@/components/forms/DiscussForm";
-import { InteriorShot } from "@/components/public/InteriorShot";
 import { asPlaceKind, placeKindLabel } from "@/lib/content/kinds";
 import { listPublicChannelStatus } from "@/lib/channels";
 import { getPropertyCards, getPublishedProperty } from "@/lib/public/cache";
@@ -35,35 +34,29 @@ export default async function PropertyPage({
   return (
     <div className="grid gap-8 pt-4 md:grid-cols-2">
       <div>
-        <div className="mb-5 grid gap-3">
-          {photos.length > 0 ? (
-            // eslint-disable-next-line @next/next/no-img-element
+        {photos.length > 0 ? (
+          <div className="mb-5 grid gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`/api/media/${photos[0]}`}
               alt=""
               className="h-64 w-full rounded-[24px] object-cover"
             />
-          ) : (
-            <InteriorShot
-              seed={property.address}
-              kind={asPlaceKind(property.placeKind)}
-              className="h-64 w-full rounded-[24px]"
-            />
-          )}
-          {photos.length > 1 && (
-            <div className="grid grid-cols-3 gap-2">
-              {photos.slice(1).map((id) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={id}
-                  src={`/api/media/${id}`}
-                  alt=""
-                  className="h-24 w-full rounded-2xl object-cover"
-                />
-              ))}
-            </div>
-          )}
-        </div>
+            {photos.length > 1 ? (
+              <div className="grid grid-cols-3 gap-2">
+                {photos.slice(1).map((id) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={id}
+                    src={`/api/media/${id}`}
+                    alt=""
+                    className="h-24 w-full rounded-2xl object-cover"
+                  />
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
         <div className="mb-3 text-sm font-semibold text-ink/50">
           {placeKindLabel[asPlaceKind(property.placeKind)]}
         </div>

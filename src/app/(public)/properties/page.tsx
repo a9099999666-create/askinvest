@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { InteriorShot } from "@/components/public/InteriorShot";
 import { getPropertyCards } from "@/lib/public/cache";
 
 export const revalidate = 60;
@@ -12,27 +11,16 @@ export default function PropertiesPage({
 }) {
   return (
     <div className="pt-2">
-      <link rel="preload" href="/brand/catalog-glass.webp" as="image" type="image/webp" />
-      <div className="grid items-center gap-2 md:grid-cols-[1fr_380px]">
-        <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
-          Коммерческая
-          <br />
-          недвижимость
-        </h1>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/brand/catalog-glass.webp"
-          alt=""
-          width={800}
-          height={250}
-          className="hidden w-full max-w-xl select-none justify-self-end md:block"
-        />
-      </div>
+      <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
+        Коммерческая
+        <br />
+        недвижимость
+      </h1>
       <Suspense
         fallback={
           <>
             <div className="glass-panel mt-6 h-40 rounded-[28px]" />
-            <div className="mt-8 h-56 rounded-[24px] bg-white/50" />
+            <div className="mt-8 h-24 rounded-[24px] bg-white/50" />
           </>
         }
       >
@@ -111,36 +99,24 @@ async function Catalog({
         </div>
       </form>
 
-      <div className="mt-8 grid gap-5 md:grid-cols-3">
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
         {items.map((item) => (
           <Link
             key={item.id}
             href={`/properties/${item.slug}`}
             prefetch={false}
-            className="overflow-hidden rounded-[28px] bg-white shadow-panel transition hover:-translate-y-0.5"
+            className="glass-panel rounded-[28px] px-5 py-5 transition hover:-translate-y-0.5"
           >
-            <div className="relative h-52 bg-slate-100 md:h-56">
-              {item.coverId ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={`/api/media/${item.coverId}`}
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <InteriorShot seed={item.address} kind={item.placeKind} className="h-full w-full" />
-              )}
-              <span
-                className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-xs font-semibold ${
-                  item.dealType === "sale"
-                    ? "bg-rose-50 text-rose-600"
-                    : "bg-sky-50 text-sky-700"
-                }`}
-              >
-                {item.dealType === "sale" ? "Продажа" : "Аренда"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between gap-3 px-4 py-4">
+            <span
+              className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
+                item.dealType === "sale"
+                  ? "bg-rose-50 text-rose-600"
+                  : "bg-sky-50 text-sky-700"
+              }`}
+            >
+              {item.dealType === "sale" ? "Продажа" : "Аренда"}
+            </span>
+            <div className="mt-3 flex items-center justify-between gap-3">
               <div className="font-semibold text-ink">{item.address}</div>
               <span className="text-brand-red">→</span>
             </div>

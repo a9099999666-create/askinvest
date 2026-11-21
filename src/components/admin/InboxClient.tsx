@@ -2,7 +2,6 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { channelIcon, channelLabel } from "@/components/icons/channels";
 import { leadStageLabel } from "@/lib/crm/stages";
 import { PageTitle } from "./PageTitle";
@@ -253,15 +252,11 @@ export function InboxClient({
                           {mine && message.status !== "failed" ? " ✓✓" : ""}
                         </div>
                       </div>
-                      {mine && !message.isInternal && (
-                        <Image
-                          src="/brand/logo.png"
-                          alt=""
-                          width={28}
-                          height={28}
-                          className="mt-auto h-7 w-7"
-                        />
-                      )}
+                      {mine && !message.isInternal ? (
+                        <span className="mt-auto grid h-7 w-7 place-items-center rounded-full bg-slate-100 text-[10px] font-bold text-ink/50">
+                          А
+                        </span>
+                      ) : null}
                     </div>
                   );
                 })}

@@ -327,14 +327,6 @@ export function ServiceEditor({
 
         <aside className="rounded-[28px] bg-white p-5 shadow-panel">
           <div className="text-sm text-ink/45">Предпросмотр</div>
-          <div className="mt-3 overflow-hidden rounded-2xl bg-gradient-to-b from-sky-50 to-white">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/brand/catalog-glass.webp"
-              alt=""
-              className="mx-auto h-36 w-full object-contain object-bottom"
-            />
-          </div>
           <h2 className="mt-4 text-2xl font-bold leading-tight text-ink">
             {title || "Без названия"}
           </h2>

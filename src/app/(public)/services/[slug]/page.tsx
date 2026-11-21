@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DiscussForm } from "@/components/forms/DiscussForm";
-import { GlassFolder } from "@/components/public/GlassFolder";
 import { WorkIcon } from "@/components/public/WorkIcon";
 import { workIconFor, type WorkItem } from "@/lib/content/kinds";
 import { listPublicChannelStatus } from "@/lib/channels";
@@ -31,9 +30,9 @@ export default async function ServicePage({
   const items = (service.workItems || []) as WorkItem[];
 
   return (
-    <div className="relative pt-2">
+    <div className="pt-2">
       <div className="grid items-start gap-x-10 gap-y-6 lg:grid-cols-2">
-        <div className="relative order-1">
+        <div className="order-1">
           <p className="text-sm text-ink/45">
             <Link href="/services" className="hover:text-ink">
               Услуги
@@ -41,15 +40,13 @@ export default async function ServicePage({
             <span className="mx-2">›</span>
             {service.title}
           </p>
-          <h1 className="mt-4 max-w-[18ch] font-display text-5xl font-bold leading-[1.02] text-ink md:text-6xl">
+          <h1 className="mt-4 font-display text-5xl font-bold leading-[1.02] text-ink md:text-6xl">
             {service.title}
           </h1>
           <div className="mt-5 h-[3px] w-16 rounded-full bg-brand-red" />
-          <GlassFolder className="pointer-events-none absolute -right-10 top-8 hidden w-[240px] lg:block xl:-right-16 xl:w-[280px]" />
-          <GlassFolder className="mx-auto mt-4 max-h-[140px] max-w-[220px] lg:hidden" />
         </div>
 
-        <div className="relative z-10 order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+        <div className="order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <DiscussForm
             serviceId={service.id}
             sourcePage={`/services/${service.slug}`}

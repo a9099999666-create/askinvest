@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { InteriorShot } from "@/components/public/InteriorShot";
 import type { MaterialItem } from "@/lib/content/materials";
 import { PageTitle } from "./PageTitle";
 import { IconBox, IconCase, IconCheck, IconDoc, IconPencil, IconSearch } from "./icons";
@@ -123,14 +122,12 @@ export function ContentBoard({
               <tr key={`${item.kind}-${item.id}`} className="border-t border-slate-100">
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-100">
-                      {item.thumb ? (
-                        // eslint-disable-next-line @next/next/no-img-element
+                    {item.thumb ? (
+                      <div className="h-12 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={item.thumb} alt="" className="h-full w-full object-cover" />
-                      ) : (
-                        <InteriorShot seed={item.title} className="h-full w-full" />
-                      )}
-                    </div>
+                      </div>
+                    ) : null}
                     <div className="min-w-0">
                       <div className="truncate font-semibold text-ink">{item.title}</div>
                       <div className="truncate text-xs text-ink/50">{item.subtitle}</div>

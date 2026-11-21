@@ -6,7 +6,7 @@ export function PageTitle({
   className?: string;
 }) {
   return (
-    <div className={`pr-28 sm:pr-44 ${className}`}>
+    <div className={`pr-4 sm:pr-40 ${className}`}>
       <h1 className="font-display text-[32px] font-bold leading-none tracking-tight text-ink md:text-[40px]">
         {title}
       </h1>

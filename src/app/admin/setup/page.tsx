@@ -32,12 +32,10 @@ export default function AdminSetupPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center bg-atmosphere px-4">
-      <div className="atmosphere-wash pointer-events-none absolute inset-0 opacity-90" aria-hidden />
-      <div className="paper-grain pointer-events-none absolute inset-0" aria-hidden />
+    <div className="flex min-h-screen items-center justify-center bg-atmosphere px-4">
       <form
         onSubmit={onSubmit}
-        className="relative glass-panel w-full max-w-md rounded-3xl p-8"
+        className="glass-panel w-full max-w-md rounded-3xl p-8"
       >
         <Logo />
         <h1 className="mt-6 font-display text-2xl font-bold text-ink">

@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { InteriorShot } from "@/components/public/InteriorShot";
 import { asPlaceKind, placeKindLabel, placeKinds, type PlaceKind } from "@/lib/content/kinds";
 import { formatArea } from "@/lib/utils";
 import { PageTitle } from "./PageTitle";
@@ -344,13 +343,11 @@ export function PropertyEditor({
           <div className="text-lg font-bold text-ink">Предпросмотр на сайте</div>
           <p className="mt-1 text-sm text-ink/45">Так будет выглядеть карточка объекта</p>
           <div className="mt-4 overflow-hidden rounded-2xl border border-slate-100">
-            <div className="relative h-44 bg-slate-100">
+            <div className="relative min-h-16 bg-slate-50">
               {previewImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={`/api/media/${previewImage}`} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <InteriorShot seed={form.address || title} kind={form.placeKind} className="h-full w-full" />
-              )}
+                <img src={`/api/media/${previewImage}`} alt="" className="h-44 w-full object-cover" />
+              ) : null}
               <span className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/90 text-rose-400">
                 ♥
               </span>

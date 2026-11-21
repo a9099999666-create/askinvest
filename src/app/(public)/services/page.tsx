@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { GlassFolder } from "@/components/public/GlassFolder";
 import { getServiceCards } from "@/lib/public/cache";
 
 export const revalidate = 60;
@@ -8,17 +7,12 @@ export const revalidate = 60;
 export default function ServicesPage() {
   return (
     <div className="pt-2">
-      <div className="grid items-center gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-        <div>
-          <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
-            Услуги
-          </h1>
-          <p className="mt-3 max-w-xl text-ink/70">
-            Направления поддержки бизнеса — от проверки документов до сопровождения сделки.
-          </p>
-        </div>
-        <GlassFolder className="mx-auto max-w-sm lg:max-w-none" />
-      </div>
+      <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
+        Услуги
+      </h1>
+      <p className="mt-3 max-w-xl text-ink/70">
+        Направления поддержки бизнеса — от проверки документов до сопровождения сделки.
+      </p>
       <Suspense
         fallback={
           <div className="mt-8 grid gap-3 md:grid-cols-2">

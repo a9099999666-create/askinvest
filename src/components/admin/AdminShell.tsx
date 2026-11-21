@@ -48,8 +48,6 @@ export function AdminShell({
   const pathname = usePathname();
   return (
     <div className="relative min-h-screen bg-atmosphere">
-      <div className="atmosphere-wash pointer-events-none absolute inset-0 opacity-80" aria-hidden />
-      <div className="paper-grain pointer-events-none absolute inset-0" aria-hidden />
       <div className="relative flex min-h-screen flex-col md:flex-row">
         <aside className="w-full shrink-0 px-4 py-4 md:w-[232px] md:px-4 md:py-5">
           <Logo />
@@ -88,12 +86,6 @@ export function AdminShell({
           </nav>
         </aside>
         <div className="relative min-w-0 flex-1">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/brand/catalog-glass.webp"
-            alt=""
-            className="pointer-events-none absolute right-28 top-0 z-0 hidden w-64 select-none lg:block"
-          />
           <div className="absolute right-4 top-4 z-20 flex flex-col items-end gap-2 md:right-6">
             <UserMenu userName={userName} />
             {isOwner && (
