@@ -1,24 +1,12 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { DiscussForm } from "@/components/forms/DiscussForm";
+import { DEMO_SERVICES } from "@/lib/content/demo-catalog";
 import { isPublicServiceTitle } from "@/lib/content/kinds";
 import { listPublicChannelStatus } from "@/lib/channels";
 import { getHomeServices } from "@/lib/public/cache";
 
 export const revalidate = 60;
-
-const demoHomeServices = [
-  {
-    id: "demo-legal",
-    slug: "yuridicheskoe-soprovozhdenie",
-    title: "Юридическое сопровождение",
-  },
-  {
-    id: "demo-deals",
-    slug: "soprovozhdenie-sdelok",
-    title: "Сопровождение сделок",
-  },
-];
 
 export default async function HomePage({
   searchParams,
@@ -63,9 +51,11 @@ async function HomeServices() {
   const items =
     published.length > 0
       ? published.slice(0, 2)
-      : process.env.VERCEL_ENV === "production"
-        ? []
-        : demoHomeServices;
+      : DEMO_SERVICES.slice(0, 2).map((item) => ({
+          id: item.slug,
+          slug: item.slug,
+          title: item.title,
+        }));
 
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4">

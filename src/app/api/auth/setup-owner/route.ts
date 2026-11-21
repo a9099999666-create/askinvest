@@ -1,14 +1,20 @@
 import { NextResponse } from "next/server";
 import { count } from "drizzle-orm";
-import { requireIdentity } from "../../../../../cursor/identity";
-import { db } from "@/db/client";
-import { siteSettings, subscriptionTopics, users } from "@/db/schema";
+import { db, hasDatabase } from "@/db/client";
+import { users } from "@/db/schema";
 import { OWNER_PERMISSIONS } from "@/lib/auth/permissions";
 import { createSession, hashPassword } from "@/lib/auth/session";
+import { seedStarterCatalog } from "@/lib/content/seed-catalog";
+import { ensureSchema } from "@/db/ensure-schema";
 
 export async function POST(req: Request) {
-  const identity = await requireIdentity(req);
-  if (identity instanceof Response) return identity;
+  if (!hasDatabase()) {
+    return NextResponse.json(
+      { error: "База данных ещё не подключена" },
+      { status: 503 },
+    );
+  }
+  await ensureSchema();
 
   const [{ value: userCount }] = await db
     .select({ value: count() })
@@ -51,25 +57,10 @@ export async function POST(req: Request) {
     })
     .returning();
 
-  await db
-    .insert(siteSettings)
-    .values({
-      id: 1,
-      contactsHtml:
-        "<p>АСКИНВЕСТ</p><p>Связь через форму на сайте или мессенджеры.</p>",
-      contactHours: "Пн–Пт 10:00–19:00 по Москве",
-    })
-    .onConflictDoNothing();
-
-  const topic = await db.query.subscriptionTopics.findFirst();
-  if (!topic) {
-    await db.insert(subscriptionTopics).values({
-      slug: "rent",
-      title: "Аренда",
-      consentText:
-        "Согласие на получение информационных сообщений об аренде коммерческой недвижимости.",
-      consentVersion: "1",
-    });
+  try {
+    await seedStarterCatalog(user.id);
+  } catch (error) {
+    console.error("seedStarterCatalog", error);
   }
 
   await createSession(user.id);

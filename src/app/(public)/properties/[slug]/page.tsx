@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DiscussForm } from "@/components/forms/DiscussForm";
+import { demoPropertyBySlug } from "@/lib/content/demo-catalog";
 import { asPlaceKind, placeKindLabel } from "@/lib/content/kinds";
 import { listPublicChannelStatus } from "@/lib/channels";
 import { getPropertyCards, getPublishedProperty } from "@/lib/public/cache";
@@ -22,7 +23,25 @@ export default async function PropertyPage({
   searchParams: Promise<{ lead?: string }>;
 }) {
   const { slug } = await params;
-  const property = await getPublishedProperty(slug);
+  const published = await getPublishedProperty(slug);
+  const demo = demoPropertyBySlug(slug);
+  const property = published ?? (demo
+    ? {
+        id: demo.slug,
+        slug: demo.slug,
+        title: demo.title,
+        address: demo.address,
+        dealType: demo.dealType,
+        placeKind: demo.placeKind,
+        areaSqm: demo.areaSqm,
+        priceRub: demo.priceRub,
+        priceUnit: demo.priceUnit,
+        description: demo.description,
+        coverId: null as string | null,
+        galleryIds: [] as string[],
+        floorPlanId: null as string | null,
+      }
+    : null);
   if (!property) notFound();
   const query = await searchParams;
   const notice = query.lead === "ok" || query.lead === "error" ? query.lead : undefined;
@@ -100,7 +119,7 @@ export default async function PropertyPage({
       <div className="space-y-6">
         <div id="ask">
           <DiscussForm
-            propertyId={property.id}
+            propertyId={published?.id}
             intent="question"
             sourcePage={`/properties/${property.slug}`}
             title="Задать вопрос"
@@ -112,7 +131,7 @@ export default async function PropertyPage({
         </div>
         <div id="viewing">
           <DiscussForm
-            propertyId={property.id}
+            propertyId={published?.id}
             intent="viewing"
             sourcePage={`/properties/${property.slug}`}
             title="Записаться на просмотр"

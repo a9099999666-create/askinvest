@@ -1,11 +1,19 @@
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { db } from "@/db/client";
+import { db, hasDatabase } from "@/db/client";
+import { ensureSchema } from "@/db/ensure-schema";
 import { users } from "@/db/schema";
 import { loginAttemptKey, loginRateLimited } from "@/lib/auth/rateLimit";
 import { createSession, verifyPassword } from "@/lib/auth/session";
 
 export async function POST(req: Request) {
+  if (!hasDatabase()) {
+    return NextResponse.json(
+      { error: "База данных ещё не подключена" },
+      { status: 503 },
+    );
+  }
+  await ensureSchema();
   const body = (await req.json()) as { email?: string; password?: string };
   if (!body.email || !body.password) {
     return NextResponse.json({ error: "Укажите email и пароль" }, { status: 400 });

@@ -1,5 +1,9 @@
 import { revalidateTag } from "next/cache";
 
 export function revalidatePublic() {
-  revalidateTag("public-site");
+  try {
+    revalidateTag("public-site");
+  } catch {
+    // CLI seeds run outside the Next.js runtime.
+  }
 }

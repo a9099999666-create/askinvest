@@ -2,7 +2,8 @@ import { createHash, randomBytes } from "crypto";
 import { cookies } from "next/headers";
 import { and, eq, gt, isNull } from "drizzle-orm";
 import bcrypt from "bcryptjs";
-import { db } from "@/db/client";
+import { db, hasDatabase } from "@/db/client";
+import { ensureSchema } from "@/db/ensure-schema";
 import { sessions, users } from "@/db/schema";
 import {
   can,
@@ -64,6 +65,12 @@ export async function revokeUserSessions(userId: string) {
 }
 
 export async function getSessionUser(): Promise<SessionUser | null> {
+  if (!hasDatabase()) return null;
+  try {
+    await ensureSchema();
+  } catch {
+    return null;
+  }
   const jar = await cookies();
   const token = jar.get(COOKIE)?.value;
   if (!token) return null;

@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  outputFileTracingIncludes: {
+    "*": ["./migrations/**/*"],
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "12mb",

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DiscussForm } from "@/components/forms/DiscussForm";
 import { WorkIcon } from "@/components/public/WorkIcon";
+import { demoServiceBySlug } from "@/lib/content/demo-catalog";
 import { workIconFor, type WorkItem } from "@/lib/content/kinds";
 import { listPublicChannelStatus } from "@/lib/channels";
 import { getPublishedService, getServiceCards } from "@/lib/public/cache";
@@ -22,7 +23,19 @@ export default async function ServicePage({
   searchParams: Promise<{ lead?: string }>;
 }) {
   const { slug } = await params;
-  const service = await getPublishedService(slug);
+  const published = await getPublishedService(slug);
+  const demo = demoServiceBySlug(slug);
+  const service = published ?? (demo
+    ? {
+        id: demo.slug,
+        slug: demo.slug,
+        title: demo.title,
+        shortDescription: demo.shortDescription,
+        fullDescription: demo.fullDescription,
+        workItems: demo.workItems,
+        imageId: null as string | null,
+      }
+    : null);
   if (!service) notFound();
   const query = await searchParams;
   const notice = query.lead === "ok" || query.lead === "error" ? query.lead : undefined;
@@ -48,7 +61,7 @@ export default async function ServicePage({
 
         <div className="order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <DiscussForm
-            serviceId={service.id}
+            serviceId={published?.id}
             sourcePage={`/services/${service.slug}`}
             title="Обсудить задачу"
             variant="compact"

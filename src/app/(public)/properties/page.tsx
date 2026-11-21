@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { filterDemoProperties } from "@/lib/content/demo-catalog";
 import { getPropertyCards } from "@/lib/public/cache";
 
 export const revalidate = 60;
@@ -49,7 +50,18 @@ async function Catalog({
     return query ? `/properties?${query}` : "/properties";
   }
 
-  const items = await getPropertyCards(deal, q, area);
+  const catalog = await getPropertyCards("all", "", "");
+  const items =
+    catalog.length > 0
+      ? await getPropertyCards(deal, q, area)
+      : filterDemoProperties(deal, q, area).map((item) => ({
+          id: item.slug,
+          slug: item.slug,
+          address: item.address,
+          dealType: item.dealType,
+          placeKind: item.placeKind,
+          coverId: null as string | null,
+        }));
 
   return (
     <>

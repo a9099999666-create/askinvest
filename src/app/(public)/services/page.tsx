@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { DEMO_SERVICES } from "@/lib/content/demo-catalog";
 import { getServiceCards } from "@/lib/public/cache";
 
 export const revalidate = 60;
@@ -29,7 +30,17 @@ export default function ServicesPage() {
 }
 
 async function ServiceList() {
-  const items = await getServiceCards();
+  const published = await getServiceCards();
+  const items =
+    published.length > 0
+      ? published
+      : DEMO_SERVICES.map((item) => ({
+          id: item.slug,
+          slug: item.slug,
+          title: item.title,
+          shortDescription: item.shortDescription,
+          imageId: null as string | null,
+        }));
   return (
     <div className="mt-8 grid gap-3 md:grid-cols-2">
       {items.map((item) => (

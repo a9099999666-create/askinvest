@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { db } from "@/db/client";
+import { db, hasDatabase } from "@/db/client";
+import { ensureSchema } from "@/db/ensure-schema";
 import { properties, propertyVersions, services, serviceVersions } from "@/db/schema";
 import { getAdapter } from "@/lib/channels";
 import { createLeadFromForm } from "@/lib/crm/leads";
@@ -72,6 +73,10 @@ export async function POST(req: Request) {
   const wantsHtml = (req.headers.get("accept") || "").includes("text/html");
   let sourcePage = "/";
   try {
+    if (!hasDatabase()) {
+      throw new Error("database_missing");
+    }
+    await ensureSchema();
     const body = await readBody(req);
     sourcePage = safeSourcePath(body.sourcePage);
     const reply = parseReplyTo(body.replyTo);
