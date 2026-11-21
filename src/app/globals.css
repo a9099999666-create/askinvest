@@ -19,6 +19,8 @@ html,
 body {
   min-height: 100%;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -39,7 +41,7 @@ body {
 }
 
 .btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-red px-5 py-3 font-semibold text-white shadow-sm transition duration-200 hover:brightness-110 active:scale-[0.99] disabled:opacity-60;
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-brand-red px-5 py-3 font-semibold text-white shadow-sm transition duration-200 hover:brightness-110 active:scale-[0.99] disabled:opacity-60;
 }
 
 .btn-ghost {
@@ -47,7 +49,7 @@ body {
 }
 
 .field {
-  @apply w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-ink placeholder:text-slate-400 focus:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-100;
+  @apply w-full min-h-11 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-ink placeholder:text-slate-400 focus:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-100 sm:text-[15px];
 }
 
 .field-error {

@@ -46,8 +46,8 @@ export function DiscussForm({
     className,
   );
   const titleClass = compact
-    ? "font-display text-[26px] font-semibold leading-none text-ink md:text-[30px]"
-    : "font-display text-[28px] font-bold leading-none text-ink";
+    ? "font-display text-[22px] font-semibold leading-none text-ink sm:text-[26px] md:text-[30px]"
+    : "font-display text-[24px] font-bold leading-none text-ink sm:text-[28px]";
 
   if (notice === "ok") {
     return (
@@ -152,7 +152,8 @@ export function DiscussForm({
         {channels.map((channel) => (
           <label
             key={channel.id}
-            className="channel-chip inline-flex min-h-[44px] min-w-0 items-center justify-center gap-1.5 rounded-2xl px-1.5 py-2.5 text-[12px] font-semibold text-[#10233a] sm:px-2 sm:text-sm"
+            aria-label={channel.label}
+            className="channel-chip inline-flex min-h-11 min-w-0 items-center justify-center gap-1 rounded-2xl px-1 py-2.5 text-[11px] font-semibold text-[#10233a] min-[380px]:gap-1.5 min-[380px]:px-1.5 min-[380px]:text-[12px] sm:px-2 sm:text-sm"
           >
             <input
               type="radio"
@@ -164,7 +165,7 @@ export function DiscussForm({
               className="sr-only"
             />
             {channel.icon}
-            <span className="truncate">{channel.label}</span>
+            <span className="hidden truncate min-[380px]:inline">{channel.label}</span>
           </label>
         ))}
       </div>

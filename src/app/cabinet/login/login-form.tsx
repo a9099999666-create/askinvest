@@ -31,10 +31,10 @@ export function AdminLoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-atmosphere px-4">
+    <div className="flex min-h-dvh items-center justify-center bg-atmosphere px-4 py-8">
       <form
         onSubmit={onSubmit}
-        className="glass-panel w-full max-w-md rounded-3xl p-8"
+        className="glass-panel w-full max-w-md rounded-3xl p-5 sm:p-8"
       >
         <Logo />
         <h1 className="mt-6 font-display text-2xl font-bold text-ink">
