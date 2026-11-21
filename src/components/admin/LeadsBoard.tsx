@@ -66,7 +66,7 @@ export function LeadsBoard({ leads }: { leads: Lead[] }) {
                 {items.map((lead) => (
                   <li key={lead.id}>
                     <Link
-                      href={`/admin/leads/${lead.id}`}
+                      href={`/cabinet/leads/${lead.id}`}
                       className="block rounded-xl border border-slate-100 bg-white p-3 hover:border-brand-blue"
                     >
                       <div className="text-sm font-semibold line-clamp-2">

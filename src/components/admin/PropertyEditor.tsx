@@ -140,7 +140,7 @@ export function PropertyEditor({
           return;
         }
       }
-      router.push(`/admin/properties/${id}`);
+      router.push(`/cabinet/properties/${id}`);
       router.refresh();
     });
   }

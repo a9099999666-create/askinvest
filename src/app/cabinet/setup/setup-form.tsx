@@ -37,7 +37,7 @@ export function AdminSetupForm() {
         setError(data.error || "Не удалось создать владельца");
         return;
       }
-      router.push("/admin/properties");
+      router.push("/cabinet/properties");
       router.refresh();
     });
   }

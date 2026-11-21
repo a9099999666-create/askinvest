@@ -4,9 +4,9 @@ import { getSessionUser } from "@/lib/auth/session";
 
 export async function requirePageAccess(permission?: keyof Permissions) {
   const user = await getSessionUser();
-  if (!user) redirect("/admin/login");
+  if (!user) redirect("/cabinet/login");
   if (permission && !can(user, permission)) {
-    redirect("/admin/properties");
+    redirect("/cabinet/properties");
   }
   return user;
 }

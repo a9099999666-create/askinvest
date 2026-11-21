@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function StaffPage() {
   const me = await getSessionUser();
-  if (!me?.isOwner) redirect("/admin/properties");
+  if (!me?.isOwner) redirect("/cabinet/properties");
   const staff = await db.select().from(users);
 
   return (

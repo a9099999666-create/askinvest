@@ -25,7 +25,7 @@ export function AdminLoginForm() {
         setError(data.error || "Ошибка входа");
         return;
       }
-      router.push("/admin/properties");
+      router.push("/cabinet/properties");
       router.refresh();
     });
   }

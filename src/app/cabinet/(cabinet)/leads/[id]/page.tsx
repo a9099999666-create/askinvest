@@ -69,7 +69,7 @@ export default async function LeadDetailPage({
         </p>
         {thread && (
           <p>
-            <Link className="text-brand-blue" href={`/admin/inbox?thread=${thread.id}`}>
+            <Link className="text-brand-blue" href={`/cabinet/inbox?thread=${thread.id}`}>
               Открыть диалог
             </Link>
           </p>

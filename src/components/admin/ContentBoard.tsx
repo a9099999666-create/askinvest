@@ -37,7 +37,7 @@ export function ContentBoard({
   }, [items, expected, q, status]);
 
   const title = kind === "services" ? "Услуги" : "Объекты";
-  const addHref = kind === "services" ? "/admin/services/new" : "/admin/properties/new";
+  const addHref = kind === "services" ? "/cabinet/services/new" : "/cabinet/properties/new";
   const addLabel = kind === "services" ? "+ Добавить услугу" : "+ Добавить объект";
 
   return (
@@ -46,7 +46,7 @@ export function ContentBoard({
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex rounded-2xl bg-white p-1 shadow-sm">
           <Link
-            href="/admin/properties"
+            href="/cabinet/properties"
             className={`relative rounded-xl px-5 py-2 text-sm font-semibold ${
               kind === "properties" ? "text-ink" : "text-ink/45"
             }`}
@@ -57,7 +57,7 @@ export function ContentBoard({
             ) : null}
           </Link>
           <Link
-            href="/admin/services"
+            href="/cabinet/services"
             className={`relative rounded-xl px-5 py-2 text-sm font-semibold ${
               kind === "services" ? "text-ink" : "text-ink/45"
             }`}

@@ -34,7 +34,7 @@ npm run worker
 
 **Публичные:** `/`, `/services`, `/services/[slug]`, `/properties`, `/properties/[slug]`, `/contacts`
 
-**Кабинет:** `/admin/login`, `/admin/properties`, `/admin/services`, редакторы, `/admin/leads`, `/admin/inbox`, `/admin/contacts`, `/admin/campaigns`, `/admin/staff`, `/admin/settings`
+**Кабинет:** `/cabinet/login`, `/cabinet/properties`, `/cabinet/services`, редакторы, `/cabinet/leads`, `/cabinet/inbox`, `/cabinet/contacts`, `/cabinet/campaigns`, `/cabinet/staff`, `/cabinet/settings`
 
 **API каналов:**  
 `POST /api/channels/{telegram|max|whatsapp|test}/webhook` (подпись обязательна)  
@@ -42,7 +42,7 @@ npm run worker
 
 ## Каналы
 
-Без credentials канала форма сообщит, что канал недоступен. Локально можно включить тестовый адаптер (`ENABLE_TEST_CHANNEL=true`). Статус — `/admin/settings`.
+Без credentials канала форма сообщит, что канал недоступен. Локально можно включить тестовый адаптер (`ENABLE_TEST_CHANNEL=true`). Статус — `/cabinet/settings`.
 
 | Канал | Переменные | Вебхук |
 |---|---|---|

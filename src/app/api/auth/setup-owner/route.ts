@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     .from(users);
   if (Number(userCount) > 0) {
     return NextResponse.json(
-      { error: "Владелец уже создан. Войдите через /admin/login." },
+      { error: "Владелец уже создан. Войдите через /cabinet/login." },
       { status: 403 },
     );
   }

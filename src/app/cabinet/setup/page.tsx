@@ -15,7 +15,7 @@ export default async function AdminSetupPage() {
       return <AdminSetupForm />;
     }
     const [{ value }] = await db.select({ value: count() }).from(users);
-    if (Number(value) > 0) redirect("/admin/login");
+    if (Number(value) > 0) redirect("/cabinet/login");
   }
   return <AdminSetupForm />;
 }
