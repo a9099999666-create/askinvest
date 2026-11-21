@@ -46,7 +46,7 @@ export default async function ServicePage({
   return (
     <div className="pb-28 pt-2">
       <div className="grid items-start gap-x-10 gap-y-6 lg:grid-cols-2">
-        <div className="order-1">
+        <div className="reveal order-1">
           <p className="text-sm text-ink/45">
             <Link href="/services" className="hover:text-ink">
               Услуги
@@ -62,6 +62,7 @@ export default async function ServicePage({
 
         <div className="order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
           <DiscussForm
+            className="reveal reveal-delay-2"
             serviceId={published?.id}
             sourcePage={`/services/${service.slug}`}
             title="Обсудить задачу"
@@ -72,7 +73,7 @@ export default async function ServicePage({
           />
         </div>
 
-        <div className="order-3 glass-panel rounded-[28px] p-5 md:p-6">
+        <div className="reveal reveal-delay-3 order-3 glass-panel rounded-[28px] p-5 md:p-6">
           <h2 className="text-2xl font-bold text-ink">Чем поможем:</h2>
           <ul className="mt-4 space-y-3">
             {items.map((item, index) => (

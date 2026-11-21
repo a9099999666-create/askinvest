@@ -13,49 +13,54 @@ export default async function ContactsPage({
   const params = await searchParams;
   const notice = params.lead === "ok" || params.lead === "error" ? params.lead : undefined;
   const channelStatus = listPublicChannelStatus();
+  const rows = [
+    contacts.phone
+      ? { label: "Телефон", value: contacts.phone, href: `tel:${contacts.phone.replace(/\s/g, "")}` }
+      : null,
+    contacts.address ? { label: "Адрес", value: contacts.address } : null,
+    contacts.hours ? { label: "Часы работы", value: contacts.hours } : null,
+  ].filter((row): row is { label: string; value: string; href?: string } => Boolean(row));
+  const extraHtml =
+    contacts.html && !/связь через форму/i.test(contacts.html) ? contacts.html : null;
 
   return (
-    <div className="grid items-start gap-8 pt-2 md:grid-cols-2">
-      <div>
+    <div className="grid items-start gap-6 pt-2 md:grid-cols-2 md:gap-8">
+      <div className="reveal flex flex-col">
         <h1 className="font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
           Контакты
         </h1>
         <div className="accent-line mt-5" />
-        <p className="mt-4 text-ink/70">
+        <p className="mt-4 text-[15px] leading-relaxed text-ink/70">
           Напишите задачу — заявка попадёт в кабинет, и мы ответим удобным способом.
         </p>
-        <div className="glass-panel mt-6 space-y-3 rounded-[28px] p-6 text-ink/80">
-          {contacts.phone ? (
-            <p>
-              <span className="block text-sm text-ink/45">Телефон</span>
-              <a className="font-semibold text-ink" href={`tel:${contacts.phone.replace(/\s/g, "")}`}>
-                {contacts.phone}
-              </a>
+        <div className="glass-panel mt-6 flex flex-col gap-4 rounded-[28px] p-5 md:p-6">
+          {rows.map((row) => (
+            <p key={row.label} className="min-h-[52px]">
+              <span className="block text-sm leading-5 text-ink/45">{row.label}</span>
+              {row.href ? (
+                <a className="mt-1 block font-semibold leading-6 text-ink" href={row.href}>
+                  {row.value}
+                </a>
+              ) : (
+                <span className="mt-1 block font-semibold leading-6 text-ink">{row.value}</span>
+              )}
             </p>
-          ) : null}
-          {contacts.address ? (
-            <p>
-              <span className="block text-sm text-ink/45">Адрес</span>
-              <span className="font-semibold text-ink">{contacts.address}</span>
-            </p>
-          ) : null}
-          {contacts.hours ? (
-            <p>
-              <span className="block text-sm text-ink/45">Часы работы</span>
-              <span className="font-semibold text-ink">{contacts.hours}</span>
-            </p>
-          ) : null}
-          {contacts.html && !/связь через форму/i.test(contacts.html) ? (
+          ))}
+          {extraHtml ? (
             <div
-              className="prose prose-slate max-w-none pt-2 text-sm"
-              dangerouslySetInnerHTML={{ __html: contacts.html }}
+              className="prose prose-slate max-w-none text-sm"
+              dangerouslySetInnerHTML={{ __html: extraHtml }}
             />
-          ) : !contacts.phone && !contacts.address && !contacts.hours ? (
-            <p>АСКИНВЕСТ. Напишите задачу через форму — ответим в рабочие часы.</p>
+          ) : null}
+          {rows.length === 0 && !extraHtml ? (
+            <p className="text-[15px] leading-relaxed text-ink/70">
+              АСКИНВЕСТ. Напишите задачу через форму — ответим в рабочие часы.
+            </p>
           ) : null}
         </div>
       </div>
       <DiscussForm
+        className="reveal reveal-delay-2"
         sourcePage="/contacts"
         title="Обсудить задачу"
         variant="compact"

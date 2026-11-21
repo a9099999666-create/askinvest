@@ -39,7 +39,7 @@ body {
 }
 
 .btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-red px-5 py-3 font-semibold text-white shadow-sm transition hover:brightness-110 disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-red px-5 py-3 font-semibold text-white shadow-sm transition duration-200 hover:brightness-110 active:scale-[0.99] disabled:opacity-60;
 }
 
 .btn-ghost {
@@ -105,6 +105,14 @@ body {
   background: #fff;
   color: #0f2744;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.channel-chip:hover {
+  transform: translateY(-1px);
 }
 
 .channel-chip:has(:checked) {
@@ -155,4 +163,102 @@ body {
   width: 4rem;
   border-radius: 999px;
   background: linear-gradient(90deg, #00a2e7, #e7191e);
+  transform-origin: left center;
+  animation: accent-draw 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+@keyframes fade-up {
+  from {
+    transform: translateY(14px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes accent-draw {
+  from {
+    transform: scaleX(0.35);
+    opacity: 0.45;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes chat-in {
+  from {
+    opacity: 0.4;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal {
+  animation: fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal-delay-1 {
+  animation-delay: 60ms;
+}
+
+.reveal-delay-2 {
+  animation-delay: 120ms;
+}
+
+.reveal-delay-3 {
+  animation-delay: 180ms;
+}
+
+.reveal-delay-4 {
+  animation-delay: 240ms;
+}
+
+.stagger-in > * {
+  animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.stagger-in > *:nth-child(1) {
+  animation-delay: 40ms;
+}
+.stagger-in > *:nth-child(2) {
+  animation-delay: 90ms;
+}
+.stagger-in > *:nth-child(3) {
+  animation-delay: 140ms;
+}
+.stagger-in > *:nth-child(4) {
+  animation-delay: 190ms;
+}
+.stagger-in > *:nth-child(5) {
+  animation-delay: 240ms;
+}
+.stagger-in > *:nth-child(6) {
+  animation-delay: 290ms;
+}
+
+.chat-in {
+  animation: chat-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-delay-1,
+  .reveal-delay-2,
+  .reveal-delay-3,
+  .reveal-delay-4,
+  .stagger-in > *,
+  .accent-line,
+  .chat-in {
+    animation: none !important;
+  }
+
+  .channel-chip:hover,
+  .btn-primary:active {
+    transform: none;
+  }
 }

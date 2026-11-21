@@ -12,7 +12,7 @@ export default function PropertiesPage({
 }) {
   return (
     <div className="pt-2">
-      <h1 className="font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
+      <h1 className="reveal font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
         Коммерческая
         <br />
         недвижимость
@@ -65,7 +65,7 @@ async function Catalog({
 
   return (
     <>
-      <form className="glass-panel mt-6 rounded-[28px] p-4 md:p-5" action="/properties" method="get">
+      <form className="reveal reveal-delay-2 glass-panel mt-6 flex flex-col gap-4 rounded-[28px] p-4 md:p-5" action="/properties" method="get">
         <div className="flex flex-wrap gap-2">
           {[
             ["all", "Все объекты"],
@@ -76,17 +76,17 @@ async function Catalog({
               key={value}
               href={hrefFor(value)}
               prefetch={false}
-              className={`rounded-2xl px-4 py-2 text-sm font-semibold ${
+              className={`rounded-2xl px-4 py-2 text-sm font-semibold transition duration-200 ${
                 deal === value
                   ? "bg-brand-blue text-white"
-                  : "border border-white/40 bg-white/20 text-ink"
+                  : "border border-white/40 bg-white/20 text-ink hover:bg-white/30"
               }`}
             >
               {label}
             </Link>
           ))}
         </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-[1fr_220px_auto]">
+        <div className="grid gap-3 md:grid-cols-[1fr_220px_auto]">
           <label className="relative block">
             <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden>
               <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none">
@@ -103,21 +103,21 @@ async function Catalog({
             <option value="1000">300–1 000 м²</option>
             <option value="1000p">от 1 000 м²</option>
           </select>
-          {deal !== "all" && <input type="hidden" name="deal" value={deal} />}
           <button className="btn-primary !justify-between px-5" type="submit">
             <span>Показать объекты</span>
             <span aria-hidden>→</span>
           </button>
         </div>
+        {deal !== "all" ? <input type="hidden" name="deal" value={deal} /> : null}
       </form>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
+      <div className="stagger-in mt-8 grid gap-4 md:grid-cols-3">
         {items.map((item) => (
           <Link
             key={item.id}
             href={`/properties/${item.slug}`}
             prefetch={false}
-            className="glass-panel rounded-[28px] px-5 py-5 transition hover:-translate-y-0.5"
+            className="glass-panel rounded-[28px] px-5 py-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-panel"
           >
             <span
               className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
