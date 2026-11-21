@@ -122,7 +122,7 @@ async function Catalog({
             <span
               className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
                 item.dealType === "sale"
-                  ? "bg-brand-magenta/20 text-brand-magenta"
+                  ? "bg-brand-red/20 text-brand-red"
                   : "bg-brand-cyan/20 text-brand-cyan"
               }`}
             >

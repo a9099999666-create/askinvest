@@ -91,7 +91,7 @@ async function HomeServices() {
         <span className="text-[17px] font-semibold leading-snug text-ink md:text-lg">
           Другие услуги
         </span>
-        <span className="shrink-0 text-xl text-brand-magenta" aria-hidden>
+          <span className="shrink-0 text-xl text-brand-red" aria-hidden>
           →
         </span>
       </Link>

@@ -29,7 +29,7 @@ export default {
       },
       backgroundImage: {
         atmosphere:
-          "radial-gradient(ellipse 80% 60% at 15% 20%, rgba(46,197,240,0.28), transparent 55%), radial-gradient(ellipse 70% 50% at 85% 10%, rgba(225,29,46,0.12), transparent 50%), linear-gradient(180deg, #d9ecf8 0%, #eef5fb 45%, #f7fafc 100%)",
+          "radial-gradient(ellipse 80% 60% at 15% 20%, rgba(0,162,231,0.26), transparent 55%), radial-gradient(ellipse 70% 50% at 85% 10%, rgba(231,25,30,0.12), transparent 50%), linear-gradient(180deg, #d9ecf8 0%, #eef5fb 45%, #f7fafc 100%)",
       },
     },
   },
