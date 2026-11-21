@@ -19,12 +19,21 @@ export default async function HomePage({
 
   return (
     <div>
-      <section className="grid items-start gap-8 lg:grid-cols-2 lg:gap-x-12">
-        <h1 className="font-display text-[40px] font-semibold leading-[1.08] tracking-tight text-ink md:text-[48px] lg:text-[52px]">
-          Услуги
-          <br />
-          для бизнеса
-        </h1>
+      <section className="grid min-h-[68vh] items-end gap-8 pb-2 pt-8 lg:min-h-[74vh] lg:grid-cols-2 lg:items-center lg:gap-x-12">
+        <div className="max-w-xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/45">
+            АСКИНВЕСТ
+          </p>
+          <h1 className="mt-3 font-display text-[46px] font-semibold leading-[0.98] tracking-tight text-ink md:text-[64px] lg:text-[72px]">
+            Услуги
+            <br />
+            для бизнеса
+          </h1>
+          <div className="accent-line mt-5" />
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/65 md:text-base">
+            Сначала думаем. Потом закрепляем сделку — от мысли к камню.
+          </p>
+        </div>
         <DiscussForm
           sourcePage="/"
           variant="compact"
@@ -64,12 +73,12 @@ async function HomeServices() {
           key={item.id}
           href={`/services/${item.slug}`}
           prefetch={false}
-          className="glass-panel flex min-h-[84px] items-center justify-between gap-4 rounded-[24px] px-5 py-5 md:min-h-[92px] md:px-6"
+          className="glass-panel flex min-h-[84px] items-center justify-between gap-4 rounded-[24px] px-5 py-5 transition hover:-translate-y-0.5 md:min-h-[92px] md:px-6"
         >
           <span className="text-[17px] font-semibold leading-snug text-ink md:text-lg">
             {item.title}
           </span>
-          <span className="shrink-0 text-xl text-brand-red" aria-hidden>
+          <span className="shrink-0 text-xl text-brand-cyan" aria-hidden>
             →
           </span>
         </Link>
@@ -77,12 +86,12 @@ async function HomeServices() {
       <Link
         href="/services"
         prefetch={false}
-        className="glass-panel flex min-h-[84px] items-center justify-between gap-4 rounded-[24px] px-5 py-5 md:min-h-[92px] md:px-6"
+        className="glass-panel flex min-h-[84px] items-center justify-between gap-4 rounded-[24px] px-5 py-5 transition hover:-translate-y-0.5 md:min-h-[92px] md:px-6"
       >
         <span className="text-[17px] font-semibold leading-snug text-ink md:text-lg">
           Другие услуги
         </span>
-        <span className="shrink-0 text-xl text-brand-red" aria-hidden>
+        <span className="shrink-0 text-xl text-brand-magenta" aria-hidden>
           →
         </span>
       </Link>
@@ -94,7 +103,7 @@ function CardSkeleton() {
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {[0, 1, 2].map((item) => (
-        <div key={item} className="h-[76px] rounded-[24px] bg-white/70" />
+        <div key={item} className="h-[76px] rounded-[24px] bg-white/5" />
       ))}
     </div>
   );

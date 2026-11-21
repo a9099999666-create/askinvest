@@ -48,7 +48,7 @@ export function DiscussForm({
     return (
       <div className={panelClass}>
         <h2 className={titleClass}>Заявка принята</h2>
-        <div className="mt-3 h-[3px] w-10 rounded bg-brand-red" />
+        <div className="accent-line mt-3 !w-10" />
         <p className="lead-notice mt-4 text-sm text-emerald-700">
           Мы получили вопрос и ответим в рабочие часы.
         </p>
@@ -67,7 +67,7 @@ export function DiscussForm({
       data-compact={compact ? "1" : "0"}
     >
       <h2 className={titleClass}>{title}</h2>
-      <div className="mt-3 h-[3px] w-10 rounded bg-brand-red" />
+      <div className="accent-line mt-3 !w-10" />
       {notice === "error" ? (
         <p className="lead-notice mt-3 text-sm text-brand-red">
           {compact

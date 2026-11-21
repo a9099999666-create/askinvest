@@ -12,7 +12,7 @@ export default function PropertiesPage({
 }) {
   return (
     <div className="pt-2">
-      <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
+      <h1 className="font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
         Коммерческая
         <br />
         недвижимость
@@ -78,8 +78,8 @@ async function Catalog({
               prefetch={false}
               className={`rounded-2xl px-4 py-2 text-sm font-semibold ${
                 deal === value
-                  ? "bg-[#6b7cff] text-white"
-                  : "border border-slate-200 bg-white text-ink"
+                  ? "bg-brand-blue text-white"
+                  : "border border-white/15 bg-white/5 text-ink"
               }`}
             >
               {label}
@@ -122,15 +122,15 @@ async function Catalog({
             <span
               className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
                 item.dealType === "sale"
-                  ? "bg-rose-50 text-rose-600"
-                  : "bg-sky-50 text-sky-700"
+                  ? "bg-brand-magenta/20 text-brand-magenta"
+                  : "bg-brand-cyan/20 text-brand-cyan"
               }`}
             >
               {item.dealType === "sale" ? "Продажа" : "Аренда"}
             </span>
             <div className="mt-3 flex items-center justify-between gap-3">
               <div className="font-semibold text-ink">{item.address}</div>
-              <span className="text-brand-red">→</span>
+              <span className="text-brand-cyan">→</span>
             </div>
           </Link>
         ))}

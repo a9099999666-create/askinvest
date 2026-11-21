@@ -8,10 +8,11 @@ export const revalidate = 60;
 export default function ServicesPage() {
   return (
     <div className="pt-2">
-      <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
+      <h1 className="font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
         Услуги
       </h1>
-      <p className="mt-3 max-w-xl text-ink/70">
+      <div className="accent-line mt-5" />
+      <p className="mt-4 max-w-xl text-ink/70">
         Направления поддержки бизнеса — от проверки документов до сопровождения сделки.
       </p>
       <Suspense
@@ -58,7 +59,7 @@ async function ServiceList() {
               <span className="mt-1 block text-sm text-ink/55">{item.shortDescription}</span>
             ) : null}
           </span>
-          <span className="shrink-0 text-xl text-brand-red" aria-hidden>
+          <span className="shrink-0 text-xl text-brand-cyan" aria-hidden>
             →
           </span>
         </Link>

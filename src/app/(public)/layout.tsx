@@ -1,3 +1,4 @@
+import { PhilosopherStage } from "@/components/public/PhilosopherStage";
 import { SiteFooter } from "@/components/public/SiteFooter";
 import { SiteHeader } from "@/components/public/SiteHeader";
 
@@ -9,10 +10,11 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-atmosphere">
-      <div className="relative">
+    <div className="site-public relative min-h-screen overflow-x-hidden bg-void">
+      <PhilosopherStage variant="ambient" />
+      <div className="relative z-10">
         <SiteHeader />
-        <main className="mx-auto w-full max-w-6xl px-4 pb-6 md:px-6">{children}</main>
+        <main className="mx-auto w-full max-w-6xl px-4 pb-10 md:px-6">{children}</main>
         <SiteFooter />
       </div>
     </div>

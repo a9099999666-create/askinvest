@@ -17,10 +17,10 @@ export default async function ContactsPage({
   return (
     <div className="grid items-start gap-8 pt-2 md:grid-cols-2">
       <div>
-        <h1 className="font-display text-5xl font-bold leading-[0.95] text-ink md:text-6xl">
+        <h1 className="font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
           Контакты
         </h1>
-        <div className="mt-5 h-[3px] w-16 rounded-full bg-brand-red" />
+        <div className="accent-line mt-5" />
         <p className="mt-4 text-ink/70">
           Напишите задачу — заявка попадёт в кабинет, и мы ответим удобным способом.
         </p>

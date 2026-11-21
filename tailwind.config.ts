@@ -9,21 +9,23 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: "#0f2744",
+        ink: "var(--ink)",
+        void: "#080a10",
         mist: "#e8f2fb",
-        panel: "rgba(255,255,255,0.72)",
+        panel: "var(--panel)",
         brand: {
-          red: "#e11d2e",
-          blue: "#1a7adf",
-          cyan: "#2ec5f0",
+          red: "var(--brand-red)",
+          blue: "var(--brand-blue)",
+          cyan: "var(--brand-cyan)",
+          magenta: "var(--brand-magenta)",
         },
       },
       fontFamily: {
         sans: ["var(--font-manrope)", "Segoe UI", "sans-serif"],
-        display: ["var(--font-manrope)", "sans-serif"],
+        display: ["var(--font-display)", "Georgia", "serif"],
       },
       boxShadow: {
-        panel: "0 18px 50px rgba(20, 55, 100, 0.12)",
+        panel: "var(--panel-shadow)",
       },
       backgroundImage: {
         atmosphere:

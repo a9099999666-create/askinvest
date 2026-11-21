@@ -56,7 +56,7 @@ export default async function ServicePage({
           <h1 className="mt-4 font-display text-5xl font-bold leading-[1.02] text-ink md:text-6xl">
             {service.title}
           </h1>
-          <div className="mt-5 h-[3px] w-16 rounded-full bg-brand-red" />
+          <div className="accent-line mt-5" />
         </div>
 
         <div className="order-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
@@ -77,11 +77,11 @@ export default async function ServicePage({
             {items.map((item, index) => (
               <li
                 key={item.id}
-                className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white/80 px-4 py-3"
+                className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
               >
                 <WorkIcon kind={workIconFor(item, index)} />
                 <span className="flex-1 font-medium text-ink">{item.text}</span>
-                <span className="text-brand-red">→</span>
+                <span className="text-brand-cyan">→</span>
               </li>
             ))}
           </ul>
