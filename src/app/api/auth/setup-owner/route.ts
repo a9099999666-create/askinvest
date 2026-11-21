@@ -3,6 +3,7 @@ import { count } from "drizzle-orm";
 import { db, hasDatabase } from "@/db/client";
 import { users } from "@/db/schema";
 import { OWNER_PERMISSIONS } from "@/lib/auth/permissions";
+import { authorizeOwnerSetup } from "@/lib/auth/setupGate";
 import { createSession, hashPassword } from "@/lib/auth/session";
 import { seedStarterCatalog } from "@/lib/content/seed-catalog";
 import { ensureSchema } from "@/db/ensure-schema";
@@ -16,6 +17,20 @@ export async function POST(req: Request) {
   }
   await ensureSchema();
 
+  const body = (await req.json()) as {
+    email?: string;
+    name?: string;
+    password?: string;
+    setupToken?: string;
+  };
+
+  if (!(await authorizeOwnerSetup(req, body.setupToken))) {
+    return NextResponse.json(
+      { error: "Первая настройка доступна только администратору приложения." },
+      { status: 401 },
+    );
+  }
+
   const [{ value: userCount }] = await db
     .select({ value: count() })
     .from(users);
@@ -26,11 +41,6 @@ export async function POST(req: Request) {
     );
   }
 
-  const body = (await req.json()) as {
-    email?: string;
-    name?: string;
-    password?: string;
-  };
   const email = body.email?.trim().toLowerCase();
   const name = body.name?.trim() || "Владелец";
   const password = body.password || "";

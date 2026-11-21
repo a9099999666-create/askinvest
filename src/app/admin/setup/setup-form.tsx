@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Logo } from "@/components/public/Logo";
 
@@ -9,8 +9,19 @@ export function AdminSetupForm() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("Владелец");
   const [password, setPassword] = useState("");
+  const [setupToken, setSetupToken] = useState("");
+  const [tokenSetup, setTokenSetup] = useState(false);
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
+
+  useEffect(() => {
+    fetch("/api/auth/setup-status")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.tokenSetup) setTokenSetup(true);
+      })
+      .catch(() => undefined);
+  }, []);
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -19,7 +30,7 @@ export function AdminSetupForm() {
       const res = await fetch("/api/auth/setup-owner", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name, password }),
+        body: JSON.stringify({ email, name, password, setupToken }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -42,8 +53,8 @@ export function AdminSetupForm() {
           Первая настройка
         </h1>
         <p className="mt-2 text-sm text-ink/70">
-          Создайте учётную запись владельца. Страница доступна, только пока в
-          системе нет пользователей.
+          Создайте учётную запись владельца. Это может сделать только
+          администратор приложения, и только пока в системе нет пользователей.
         </p>
         <label className="mt-5 block">
           <span className="mb-1 block text-sm text-ink/70">Email</span>
@@ -79,6 +90,19 @@ export function AdminSetupForm() {
             minLength={12}
           />
         </label>
+        {tokenSetup ? (
+          <label className="mt-3 block">
+            <span className="mb-1 block text-sm text-ink/70">Код настройки</span>
+            <input
+              className="field"
+              type="password"
+              autoComplete="off"
+              value={setupToken}
+              onChange={(e) => setSetupToken(e.target.value)}
+              required
+            />
+          </label>
+        ) : null}
         {error && <p className="field-error">{error}</p>}
         <button className="btn-primary mt-6 w-full" type="submit" disabled={pending}>
           {pending ? "Создаём…" : "Создать владельца"}

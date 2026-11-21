@@ -5,7 +5,39 @@ import { getAdapter, resolveOutboundChannel, type ChannelKind } from "@/lib/chan
 import { parseReplyTo } from "@/lib/crm/replyTo";
 import { nanoid, shortCode } from "@/lib/utils";
 
-async function upsertContact(input: {
+function filled(value?: string | null) {
+  return (value || "").trim();
+}
+
+function sameIgnoreCase(left: string, right: string) {
+  return left.trim().toLowerCase() === right.trim().toLowerCase();
+}
+
+function contactFitsIncoming(
+  existing: { displayName: string | null; phone: string | null; email: string | null },
+  incoming: { name: string; phone: string; email: string },
+) {
+  if (
+    incoming.name &&
+    filled(existing.displayName) &&
+    !sameIgnoreCase(existing.displayName || "", incoming.name)
+  ) {
+    return false;
+  }
+  if (
+    incoming.email &&
+    filled(existing.email) &&
+    !sameIgnoreCase(existing.email || "", incoming.email)
+  ) {
+    return false;
+  }
+  if (incoming.phone && filled(existing.phone) && existing.phone?.trim() !== incoming.phone) {
+    return false;
+  }
+  return true;
+}
+
+async function resolveContact(input: {
   name?: string;
   phone?: string;
   email?: string;
@@ -16,23 +48,44 @@ async function upsertContact(input: {
   const email = input.email?.trim().toLowerCase() || "";
   if (!name && !phone && !email) return null;
 
-  const existing = phone
-    ? await db.query.contacts.findFirst({ where: eq(contacts.phone, phone) })
-    : email
-      ? await db.query.contacts.findFirst({ where: eq(contacts.email, email) })
-      : null;
+  const incoming = { name, phone, email };
+  const seen = new Set<string>();
+  const candidates = [];
+  if (phone) {
+    const row = await db.query.contacts.findFirst({ where: eq(contacts.phone, phone) });
+    if (row) {
+      seen.add(row.id);
+      candidates.push(row);
+    }
+  }
+  if (email) {
+    const row = await db.query.contacts.findFirst({ where: eq(contacts.email, email) });
+    if (row && !seen.has(row.id)) candidates.push(row);
+  }
 
+  const existing = candidates.find((row) => contactFitsIncoming(row, incoming));
   if (existing) {
-    await db
-      .update(contacts)
-      .set({
-        displayName: name || existing.displayName,
-        phone: phone || existing.phone,
-        email: email || existing.email,
-        notes: existing.notes || input.note || "",
-        updatedAt: new Date(),
-      })
-      .where(eq(contacts.id, existing.id));
+    const nextName = filled(existing.displayName) || name || null;
+    const nextPhone = filled(existing.phone) || phone || null;
+    const nextEmail = filled(existing.email) || email || null;
+    const nextNotes = filled(existing.notes) || input.note || "";
+    if (
+      nextName !== existing.displayName ||
+      nextPhone !== existing.phone ||
+      nextEmail !== existing.email ||
+      nextNotes !== (existing.notes || "")
+    ) {
+      await db
+        .update(contacts)
+        .set({
+          displayName: nextName,
+          phone: nextPhone,
+          email: nextEmail,
+          notes: nextNotes,
+          updatedAt: new Date(),
+        })
+        .where(eq(contacts.id, existing.id));
+    }
     return existing.id;
   }
 
@@ -77,7 +130,7 @@ export async function createLeadFromForm(input: {
   const visitorPhone = input.visitorPhone?.trim() || fromReply.phone;
   const visitorEmail = input.visitorEmail?.trim().toLowerCase() || fromReply.email;
 
-  const contactId = await upsertContact({
+  const contactId = await resolveContact({
     name: input.visitorName,
     phone: visitorPhone,
     email: visitorEmail,
