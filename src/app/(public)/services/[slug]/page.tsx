@@ -54,7 +54,7 @@ export default async function ServicePage({
             <span className="mx-2">›</span>
             {service.title}
           </p>
-          <h1 className="mt-4 font-display text-5xl font-bold leading-[1.02] text-ink md:text-6xl">
+          <h1 className="mt-4 break-words font-display text-[clamp(2.05rem,7vw,3.75rem)] font-bold leading-[1.05] text-ink">
             {service.title}
           </h1>
           <div className="accent-line mt-5" />
@@ -82,7 +82,7 @@ export default async function ServicePage({
                 className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
               >
                 <WorkIcon kind={workIconFor(item, index)} />
-                <span className="flex-1 font-medium text-ink">{item.text}</span>
+                <span className="min-w-0 flex-1 break-words font-medium text-ink">{item.text}</span>
                 <span className="text-brand-cyan">→</span>
               </li>
             ))}

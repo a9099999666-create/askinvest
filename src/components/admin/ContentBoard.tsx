@@ -43,7 +43,7 @@ export function ContentBoard({
   return (
     <div>
       <PageTitle title={title} />
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="inline-flex rounded-2xl bg-white p-1 shadow-sm">
           <Link
             href="/cabinet/properties"
@@ -69,7 +69,7 @@ export function ContentBoard({
           </Link>
         </div>
         {canEdit ? (
-          <Link href={addHref} className="btn-primary px-4 py-2.5 text-sm">
+          <Link href={addHref} className="btn-primary w-full px-4 py-2.5 text-sm sm:w-auto">
             {addLabel}
           </Link>
         ) : null}
@@ -101,8 +101,8 @@ export function ContentBoard({
         </label>
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-[28px] bg-white shadow-panel">
-        <table className="w-full text-left text-sm">
+      <div className="mt-4 overflow-x-auto rounded-[28px] bg-white shadow-panel">
+        <table className="w-full min-w-[28rem] text-left text-sm">
           <thead className="text-ink/45">
             <tr>
               <th className="px-5 py-4 font-medium">Материал</th>

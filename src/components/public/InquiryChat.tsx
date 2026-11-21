@@ -28,6 +28,7 @@ export function InquiryChat({
   const [pending, start] = useTransition();
 
   useEffect(() => {
+    if (window.matchMedia("(max-width: 767px)").matches) return;
     const timer = window.setTimeout(() => setOpen(true), 700);
     return () => window.clearTimeout(timer);
   }, []);
@@ -72,8 +73,8 @@ export function InquiryChat({
     <div
       className={
         placement === "left"
-          ? "fixed bottom-4 left-4 z-40 w-[min(100%-2rem,340px)]"
-          : "fixed bottom-4 right-4 z-40 w-[min(100%-2rem,340px)]"
+          ? "fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-4 right-4 z-40 sm:right-auto sm:w-[min(100%-2rem,340px)]"
+          : "fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-4 right-4 z-40 sm:left-auto sm:right-4 sm:w-[min(100%-2rem,340px)]"
       }
     >
       {open ? (

@@ -9,7 +9,7 @@ export default function ServicesPage() {
   return (
     <div className="pt-2">
       <div className="reveal">
-        <h1 className="font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
+        <h1 className="font-display text-[clamp(2.15rem,8vw,3.75rem)] font-semibold leading-[0.95] text-ink">
           Услуги
         </h1>
         <div className="accent-line mt-5" />

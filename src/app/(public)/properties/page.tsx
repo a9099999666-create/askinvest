@@ -12,7 +12,7 @@ export default function PropertiesPage({
 }) {
   return (
     <div className="pt-2">
-      <h1 className="reveal font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
+      <h1 className="reveal font-display text-[clamp(2.15rem,8vw,3.75rem)] font-semibold leading-[0.95] text-ink">
         Коммерческая
         <br />
         недвижимость
@@ -66,7 +66,7 @@ async function Catalog({
   return (
     <>
       <form className="reveal reveal-delay-2 glass-panel mt-6 flex flex-col gap-4 rounded-[28px] p-4 md:p-5" action="/properties" method="get">
-        <div className="flex flex-wrap gap-2">
+        <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {[
             ["all", "Все объекты"],
             ["sale", "Продажа"],
@@ -76,7 +76,7 @@ async function Catalog({
               key={value}
               href={hrefFor(value)}
               prefetch={false}
-              className={`rounded-2xl px-4 py-2 text-sm font-semibold transition duration-200 ${
+              className={`shrink-0 rounded-2xl px-4 py-2.5 text-sm font-semibold transition duration-200 ${
                 deal === value
                   ? "bg-brand-blue text-white"
                   : "border border-white/40 bg-white/20 text-ink hover:bg-white/30"
@@ -103,7 +103,7 @@ async function Catalog({
             <option value="1000">300–1 000 м²</option>
             <option value="1000p">от 1 000 м²</option>
           </select>
-          <button className="btn-primary !justify-between px-5" type="submit">
+          <button className="btn-primary w-full !justify-between px-5 md:w-auto" type="submit">
             <span>Показать объекты</span>
             <span aria-hidden>→</span>
           </button>
@@ -111,7 +111,7 @@ async function Catalog({
         {deal !== "all" ? <input type="hidden" name="deal" value={deal} /> : null}
       </form>
 
-      <div className="stagger-in mt-8 grid gap-4 md:grid-cols-3">
+      <div className="stagger-in mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         {items.map((item) => (
           <Link
             key={item.id}

@@ -26,7 +26,7 @@ export default async function ContactsPage({
   return (
     <div className="grid items-start gap-6 pt-2 md:grid-cols-2 md:gap-8">
       <div className="reveal flex flex-col">
-        <h1 className="font-display text-5xl font-semibold leading-[0.95] text-ink md:text-6xl">
+        <h1 className="font-display text-[clamp(2.15rem,8vw,3.75rem)] font-semibold leading-[0.95] text-ink">
           Контакты
         </h1>
         <div className="accent-line mt-5" />

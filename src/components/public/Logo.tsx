@@ -17,9 +17,9 @@ export function Logo({
       className={cn("inline-flex items-center gap-2.5", className)}
       aria-label="АСКИНВЕСТ"
     >
-      <AskinvestMark className="h-10 w-10 shrink-0 sm:h-11 sm:w-11" />
+      <AskinvestMark className="h-9 w-9 shrink-0 sm:h-11 sm:w-11" />
       {compact ? null : (
-        <span className="font-sans text-[15px] font-semibold tracking-[0.16em] text-ink sm:text-[17px]">
+        <span className="truncate font-sans text-[13px] font-semibold tracking-[0.14em] text-ink sm:text-[17px] sm:tracking-[0.16em]">
           АСКИНВЕСТ
         </span>
       )}
