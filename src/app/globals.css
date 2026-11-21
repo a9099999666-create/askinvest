@@ -61,12 +61,12 @@ body {
 .site-public {
   --foreground: #f3f6fb;
   --ink: #f3f6fb;
-  --panel: rgba(10, 12, 18, 0.62);
+  --panel: rgba(10, 12, 18, 0.72);
   --panel-border: rgba(255, 255, 255, 0.12);
   --panel-shadow:
     0 24px 80px rgba(0, 0, 0, 0.45),
-    0 0 40px rgba(0, 162, 231, 0.1),
-    0 0 70px rgba(231, 25, 30, 0.08);
+    0 0 40px rgba(0, 162, 231, 0.12),
+    0 0 70px rgba(212, 168, 75, 0.1);
   --brand-red: #e7191e;
   --brand-blue: #00a2e7;
   --brand-cyan: #4dc4f5;
@@ -128,20 +128,20 @@ body {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(8, 10, 16, 0.55) 0%, rgba(8, 10, 16, 0.08) 42%, rgba(8, 10, 16, 0.72) 100%),
-    linear-gradient(180deg, rgba(8, 10, 16, 0.35) 0%, transparent 28%, rgba(8, 10, 16, 0.55) 100%),
-    radial-gradient(ellipse 50% 70% at 18% 40%, rgba(0, 162, 231, 0.18), transparent 60%),
-    radial-gradient(ellipse 40% 60% at 88% 45%, rgba(231, 25, 30, 0.16), transparent 55%);
+    linear-gradient(90deg, rgba(8, 10, 16, 0.62) 0%, rgba(8, 10, 16, 0.1) 44%, rgba(8, 10, 16, 0.58) 100%),
+    linear-gradient(180deg, rgba(8, 10, 16, 0.3) 0%, transparent 30%, rgba(8, 10, 16, 0.62) 100%),
+    radial-gradient(ellipse 55% 48% at 50% 16%, rgba(212, 168, 75, 0.16), transparent 58%),
+    radial-gradient(ellipse 70% 38% at 50% 94%, rgba(0, 162, 231, 0.16), transparent 55%);
 }
 
 .ambient-wash {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 50% 70% at 22% 45%, rgba(0, 162, 231, 0.18), transparent 62%),
-    radial-gradient(ellipse 45% 60% at 78% 40%, rgba(231, 25, 30, 0.14), transparent 58%),
-    linear-gradient(90deg, rgba(8, 10, 16, 0.28) 0%, rgba(8, 10, 16, 0.04) 40%, rgba(8, 10, 16, 0.45) 100%),
-    linear-gradient(180deg, rgba(8, 10, 16, 0.18) 0%, rgba(8, 10, 16, 0.08) 42%, rgba(8, 10, 16, 0.55) 100%);
+    radial-gradient(ellipse 58% 42% at 50% 12%, rgba(212, 168, 75, 0.14), transparent 55%),
+    radial-gradient(ellipse 80% 36% at 50% 96%, rgba(0, 162, 231, 0.14), transparent 58%),
+    linear-gradient(90deg, rgba(8, 10, 16, 0.34) 0%, rgba(8, 10, 16, 0.04) 42%, rgba(8, 10, 16, 0.4) 100%),
+    linear-gradient(180deg, rgba(8, 10, 16, 0.22) 0%, rgba(8, 10, 16, 0.05) 40%, rgba(8, 10, 16, 0.58) 100%);
 }
 
 .accent-line {

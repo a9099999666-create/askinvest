@@ -31,7 +31,7 @@ export default async function HomePage({
           </h1>
           <div className="accent-line mt-5" />
           <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/65 md:text-base">
-            Сначала думаем. Потом закрепляем сделку — от мысли к камню.
+            Сначала думаем. Потом вокруг решения вырастает город — от мысли к камню.
           </p>
         </div>
         <DiscussForm
