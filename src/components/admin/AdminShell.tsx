@@ -140,6 +140,7 @@ export function AdminShell({
             type="button"
             className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white text-ink shadow-sm"
             aria-expanded={menuOpen}
+            aria-controls="cabinet-drawer"
             aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
             onClick={() => setMenuOpen((value) => !value)}
           >
@@ -167,11 +168,17 @@ export function AdminShell({
 
       <div className="relative flex min-h-dvh flex-col md:flex-row">
         <aside
+          id="cabinet-drawer"
           className={cn(
-            "fixed inset-y-0 left-0 z-50 w-[min(100%,280px)] overflow-y-auto bg-[#d9ecf8] px-4 py-5 shadow-panel transition-transform duration-200 md:static md:z-auto md:w-[232px] md:translate-x-0 md:overflow-visible md:bg-transparent md:px-4 md:py-5 md:shadow-none",
-            menuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+            "fixed inset-y-0 left-0 z-50 w-[min(100%,280px)] overflow-y-auto bg-[#d9ecf8] px-4 py-5 shadow-panel transition-transform duration-200 md:hidden",
+            menuOpen ? "translate-x-0" : "invisible -translate-x-full",
           )}
+          aria-hidden={!menuOpen}
+          inert={!menuOpen}
         >
+          {nav}
+        </aside>
+        <aside className="hidden shrink-0 md:block md:w-[232px] md:px-4 md:py-5">
           {nav}
         </aside>
         <div className="relative min-w-0 flex-1">
