@@ -71,7 +71,7 @@ export function CampaignPanel({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl bg-white/80 p-5">
+      <div className="cabinet-card p-5 md:p-6">
         <h2 className="font-semibold">Новая кампания</h2>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           <input
@@ -116,7 +116,7 @@ export function CampaignPanel({
 
       <div className="space-y-3">
         {campaigns.map((c) => (
-          <div key={c.id} className="rounded-2xl bg-white/80 p-4">
+          <div key={c.id} className="cabinet-card p-4 md:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <div className="font-semibold">{c.title}</div>

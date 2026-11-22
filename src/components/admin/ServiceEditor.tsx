@@ -165,7 +165,7 @@ export function ServiceEditor({
         <p className="mt-3 text-sm text-amber-700">Черновик отправлен на проверку.</p>
       ) : null}
       <div className="mt-6 grid items-start gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-[28px] bg-white p-5 shadow-panel md:p-6">
+        <div className="cabinet-card p-5 md:p-6">
           <label className="block">
             <span className="mb-1.5 block text-sm font-semibold">Название</span>
             <input
@@ -325,7 +325,7 @@ export function ServiceEditor({
           </div>
         </div>
 
-        <aside className="rounded-[28px] bg-white p-5 shadow-panel">
+        <aside className="cabinet-card p-5">
           <div className="text-sm text-ink/45">Предпросмотр</div>
           <h2 className="mt-4 text-2xl font-bold leading-tight text-ink">
             {title || "Без названия"}

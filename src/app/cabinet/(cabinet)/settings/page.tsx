@@ -8,6 +8,13 @@ import { requirePageAccess } from "@/lib/auth/guard";
 
 export const dynamic = "force-dynamic";
 
+const channelLabel: Record<string, string> = {
+  telegram: "Telegram",
+  max: "MAX",
+  whatsapp: "WhatsApp",
+  test: "Тест",
+};
+
 export default async function SettingsPage() {
   const user = await requirePageAccess();
   const channels = listChannelStatus();
@@ -17,18 +24,26 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <PageTitle title="Каналы и контакты" />
-      <p className="mt-2 text-ink/70">
-        Боевые Telegram / MAX / WhatsApp включаются через переменные окружения.
-        Без credentials используется тестовый адаптер, но кнопки каналов на сайте остаются.
-      </p>
-      <div className="mt-6 grid gap-3 md:grid-cols-2">
+      <PageTitle
+        title="Каналы и контакты"
+        subtitle="Боевые Telegram / MAX / WhatsApp включаются через переменные окружения. Без credentials остаётся тестовый адаптер, кнопки на сайте на месте."
+      />
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
         {channels.map((c) => (
-          <div key={c.kind} className="rounded-2xl bg-white/80 p-4">
-            <div className="font-semibold uppercase">{c.kind}</div>
-            <div className="mt-1 text-sm text-ink/70">
-              {c.configured ? "Настроен" : "Нет credentials"} · режим {c.mode}
+          <div key={c.kind} className="cabinet-card p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="font-semibold text-ink">{channelLabel[c.kind] || c.kind}</div>
+              <span
+                className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                  c.configured
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "bg-slate-100 text-ink/50"
+                }`}
+              >
+                {c.configured ? "Настроен" : "Нет ключа"}
+              </span>
             </div>
+            <div className="mt-2 text-sm text-ink/60">Режим {c.mode}</div>
           </div>
         ))}
       </div>

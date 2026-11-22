@@ -118,8 +118,8 @@ export function InboxClient({
 
   return (
     <div>
-      <PageTitle title="Диалоги" />
-      <div className="mt-5 grid min-h-[min(620px,calc(100dvh-9rem))] overflow-hidden rounded-[28px] bg-white shadow-panel lg:grid-cols-[320px_1fr_270px]">
+      <PageTitle title="Диалоги" subtitle="Переписка по заявкам из форм и каналов." />
+      <div className="cabinet-card mt-5 grid min-h-[min(620px,calc(100dvh-9rem))] overflow-hidden lg:grid-cols-[320px_1fr_270px]">
         <div className={`${panel === "list" ? "block" : "hidden lg:block"} border-slate-100 lg:border-r`}>
           <div className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-[1fr_1fr_4.5rem]">
             <select className="field min-w-0 !px-2 !py-2 text-xs" value={channel} onChange={(e) => setChannel(e.target.value)}>

@@ -31,7 +31,7 @@ export function LeadActions({
   }
 
   return (
-    <div className="mt-4 space-y-3 rounded-2xl bg-white/80 p-5">
+    <div className="cabinet-card mt-4 space-y-3 p-5">
       <label className="block">
         <span className="mb-1 block text-sm">Стадия</span>
         <select

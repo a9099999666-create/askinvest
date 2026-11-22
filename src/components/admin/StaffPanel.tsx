@@ -117,7 +117,7 @@ export function StaffPanel({ staff }: { staff: Staff[] }) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl bg-white/80 p-5">
+      <div className="cabinet-card p-5 md:p-6">
         <h2 className="font-semibold">Добавить сотрудника</h2>
         <p className="mt-1 text-sm text-ink/60">
           Сотрудник входит в кабинет по email и паролю на странице /cabinet/login.
@@ -172,7 +172,7 @@ export function StaffPanel({ staff }: { staff: Staff[] }) {
 
       <div className="space-y-3">
         {staff.map((s) => (
-          <div key={s.id} className="rounded-2xl bg-white/80 p-4">
+          <div key={s.id} className="cabinet-card p-4 md:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <div className="font-semibold">

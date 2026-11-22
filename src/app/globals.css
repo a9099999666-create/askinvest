@@ -60,6 +60,24 @@ body {
   @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
 }
 
+.cabinet-shell {
+  background:
+    radial-gradient(ellipse 70% 50% at 8% 0%, rgba(0, 162, 231, 0.18), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 0%, rgba(231, 25, 30, 0.1), transparent 50%),
+    linear-gradient(180deg, #dceef8 0%, #eef5fb 38%, #f7fafc 100%);
+}
+
+.cabinet-card {
+  @apply rounded-[24px] border border-white/80 bg-white shadow-panel;
+}
+
+.cabinet-sidebar {
+  background: rgba(255, 255, 255, 0.78);
+  border-right: 1px solid rgba(15, 39, 68, 0.08);
+  box-shadow: 8px 0 32px rgba(15, 39, 68, 0.04);
+  backdrop-filter: blur(18px);
+}
+
 .site-public {
   --foreground: #f3f6fb;
   --ink: #f3f6fb;
