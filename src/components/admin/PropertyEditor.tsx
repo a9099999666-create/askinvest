@@ -153,7 +153,7 @@ export function PropertyEditor({
     <div>
       <PageTitle title={heading} />
       <div className="mt-6 grid items-start gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-[28px] bg-white p-5 shadow-panel md:p-6">
+        <div className="cabinet-card p-5 md:p-6">
           <label className="block">
             <span className="mb-1.5 block text-sm font-semibold text-ink">Название</span>
             <input
@@ -351,7 +351,7 @@ export function PropertyEditor({
           </div>
         </div>
 
-        <aside className="rounded-[28px] bg-white p-5 shadow-panel">
+        <aside className="cabinet-card p-5">
           <div className="text-lg font-bold text-ink">Предпросмотр на сайте</div>
           <p className="mt-1 text-sm text-ink/45">Так будет выглядеть карточка объекта</p>
           <div className="mt-4 overflow-hidden rounded-2xl border border-slate-100">

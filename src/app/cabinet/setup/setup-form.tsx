@@ -43,16 +43,20 @@ export function AdminSetupForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-atmosphere px-4">
+    <div className="cabinet-shell flex min-h-dvh items-center justify-center px-4 py-10">
       <form
         onSubmit={onSubmit}
-        className="glass-panel w-full max-w-md rounded-3xl p-8"
+        className="cabinet-card w-full max-w-md p-6 sm:p-8"
       >
         <Logo />
-        <h1 className="mt-6 font-display text-2xl font-bold text-ink">
+        <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/40">
+          Закрытый кабинет
+        </p>
+        <h1 className="mt-2 font-display text-[clamp(1.7rem,5vw,2.1rem)] font-bold leading-none text-ink">
           Первая настройка
         </h1>
-        <p className="mt-2 text-sm text-ink/70">
+        <div className="mt-3 h-[3px] w-10 rounded-full bg-gradient-to-r from-brand-cyan to-brand-red" />
+        <p className="mt-4 text-sm leading-relaxed text-ink/70">
           Создайте учётную запись владельца. Это может сделать только
           администратор приложения, и только пока в системе нет пользователей.
         </p>
@@ -104,8 +108,9 @@ export function AdminSetupForm() {
           </label>
         ) : null}
         {error && <p className="field-error">{error}</p>}
-        <button className="btn-primary mt-6 w-full" type="submit" disabled={pending}>
-          {pending ? "Создаём…" : "Создать владельца"}
+        <button className="btn-primary mt-6 w-full !justify-between" type="submit" disabled={pending}>
+          <span>{pending ? "Создаём…" : "Создать владельца"}</span>
+          <span aria-hidden>→</span>
         </button>
       </form>
     </div>

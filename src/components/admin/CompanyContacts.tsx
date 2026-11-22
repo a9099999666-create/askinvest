@@ -36,7 +36,7 @@ export function CompanyContacts({
   }
 
   return (
-    <section className="mt-8 rounded-[28px] bg-white p-5 shadow-panel">
+    <section className="cabinet-card mt-8 p-5 md:p-6">
       <h2 className="font-display text-2xl font-bold text-ink">Контакты на сайте</h2>
       <p className="mt-1 text-sm text-ink/55">Телефон, адрес и часы видны на странице «Контакты».</p>
       <div className="mt-4 grid gap-3 md:grid-cols-2">

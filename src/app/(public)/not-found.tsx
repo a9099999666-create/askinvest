@@ -6,7 +6,7 @@ export default function PublicNotFound() {
       <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/45">
         АСКИНВЕСТ
       </p>
-      <h1 className="mt-3 font-display text-5xl font-semibold leading-none text-ink">
+      <h1 className="mt-3 font-display text-[clamp(2.15rem,8vw,3.75rem)] font-semibold leading-none text-ink">
         Страница не найдена
       </h1>
       <div className="accent-line mt-5" />

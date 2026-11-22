@@ -6,6 +6,7 @@ import { leads, threads } from "@/db/schema";
 import { LeadActions } from "@/components/admin/LeadActions";
 import { PageTitle } from "@/components/admin/PageTitle";
 import { listPublicChannelStatus } from "@/lib/channels";
+import { leadStageLabel } from "@/lib/crm/stages";
 import { requirePageAccess } from "@/lib/auth/guard";
 
 export const dynamic = "force-dynamic";
@@ -34,47 +35,53 @@ export default async function LeadDetailPage({
   return (
     <div className="max-w-3xl">
       <PageTitle title="Заявка" />
-      <div className="mt-4 space-y-2 rounded-2xl bg-white/80 p-5 text-sm">
-        <p>
-          <strong>Заинтересовала услуга:</strong>{" "}
-          {lead.serviceTitleSnapshot || lead.propertyTitleSnapshot || "—"}
-        </p>
-        <p>
-          <strong>Что спросил:</strong> {lead.question}
-        </p>
-        <p>
-          <strong>Куда ответить:</strong>{" "}
-          {lead.visitorPhone || lead.visitorEmail || "—"}
-        </p>
-        <p>
-          <strong>Канал:</strong> {channelLabel}
-        </p>
-        <p>
-          <strong>Стадия:</strong> {lead.stage}
-        </p>
-        <p>
-          <strong>Связь с чатом:</strong> {lead.chatLinkStatus}
-        </p>
-        <p>
-          <strong>Источник:</strong> {lead.sourcePage}
-        </p>
-        <p>
-          <strong>Клиент:</strong> {lead.visitorName || "—"}
-        </p>
-        <p>
-          <strong>Телефон:</strong> {lead.visitorPhone || "—"}
-        </p>
-        <p>
-          <strong>Email:</strong> {lead.visitorEmail || "—"}
-        </p>
-        {thread && (
-          <p>
-            <Link className="text-brand-blue" href={`/cabinet/inbox?thread=${thread.id}`}>
-              Открыть диалог
+      <dl className="cabinet-card mt-5 grid gap-4 p-5 text-sm sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">Интерес</dt>
+          <dd className="mt-1 font-semibold text-ink">
+            {lead.serviceTitleSnapshot || lead.propertyTitleSnapshot || "—"}
+          </dd>
+        </div>
+        <div className="sm:col-span-2">
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">Вопрос</dt>
+          <dd className="mt-1 text-ink/80">{lead.question}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">Клиент</dt>
+          <dd className="mt-1">{lead.visitorName || "—"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">Канал</dt>
+          <dd className="mt-1">{channelLabel}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">Телефон</dt>
+          <dd className="mt-1">{lead.visitorPhone || "—"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">Email</dt>
+          <dd className="mt-1 break-all">{lead.visitorEmail || "—"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">Стадия</dt>
+          <dd className="mt-1">{leadStageLabel(lead.stage)}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">Источник</dt>
+          <dd className="mt-1 break-all">{lead.sourcePage}</dd>
+        </div>
+        <div className="sm:col-span-2">
+          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-ink/40">Связь с чатом</dt>
+          <dd className="mt-1">{lead.chatLinkStatus}</dd>
+        </div>
+        {thread ? (
+          <div className="sm:col-span-2">
+            <Link className="font-semibold text-brand-cyan" href={`/cabinet/inbox?thread=${thread.id}`}>
+              Открыть диалог →
             </Link>
-          </p>
-        )}
-      </div>
+          </div>
+        ) : null}
+      </dl>
       <LeadActions
         leadId={lead.id}
         stage={lead.stage}

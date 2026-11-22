@@ -19,12 +19,12 @@ export default async function HomePage({
 
   return (
     <div>
-      <section className="grid min-h-[68vh] items-end gap-8 pb-2 pt-8 lg:min-h-[74vh] lg:grid-cols-2 lg:items-center lg:gap-x-12">
+      <section className="grid items-end gap-6 pb-2 pt-4 sm:gap-8 sm:pt-8 lg:min-h-[74vh] lg:grid-cols-2 lg:items-center lg:gap-x-12">
         <div className="reveal max-w-xl">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/45">
             АСКИНВЕСТ
           </p>
-          <h1 className="mt-3 font-display text-[46px] font-semibold leading-[0.98] tracking-tight text-ink md:text-[64px] lg:text-[72px]">
+          <h1 className="mt-3 font-display text-[clamp(2.35rem,8vw,4.5rem)] font-semibold leading-[0.98] tracking-tight text-ink">
             Услуги
             <br />
             для бизнеса

@@ -118,10 +118,10 @@ export function InboxClient({
 
   return (
     <div>
-      <PageTitle title="Диалоги" />
-      <div className="mt-5 grid min-h-[680px] overflow-hidden rounded-[28px] bg-white shadow-panel lg:grid-cols-[320px_1fr_270px]">
+      <PageTitle title="Диалоги" subtitle="Переписка по заявкам из форм и каналов." />
+      <div className="cabinet-card mt-5 grid min-h-[min(620px,calc(100dvh-9rem))] overflow-hidden lg:grid-cols-[320px_1fr_270px]">
         <div className={`${panel === "list" ? "block" : "hidden lg:block"} border-slate-100 lg:border-r`}>
-          <div className="grid grid-cols-[1fr_1fr_4.5rem] gap-2 p-3">
+          <div className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-[1fr_1fr_4.5rem]">
             <select className="field min-w-0 !px-2 !py-2 text-xs" value={channel} onChange={(e) => setChannel(e.target.value)}>
               <option value="all">Все каналы</option>
               <option value="telegram">Telegram</option>
@@ -134,7 +134,7 @@ export function InboxClient({
               <option value="bot">Отвечает бот</option>
               <option value="human">Сотрудник</option>
             </select>
-            <label className="relative">
+            <label className="relative col-span-2 sm:col-span-1">
               <IconSearch className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 className="field w-full !py-2 !pl-7 !pr-2 text-xs"

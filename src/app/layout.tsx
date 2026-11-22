@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 
@@ -18,6 +18,13 @@ const display = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: "АСКИНВЕСТ",
   description: "Услуги для бизнеса и коммерческая недвижимость",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#080a10",
 };
 
 export default function RootLayout({

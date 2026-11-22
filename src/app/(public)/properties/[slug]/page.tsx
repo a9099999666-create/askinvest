@@ -61,7 +61,7 @@ export default async function PropertyPage({
             <img
               src={`/api/media/${photos[0]}`}
               alt=""
-              className="h-64 w-full rounded-[24px] object-cover"
+              className="h-48 w-full rounded-[24px] object-cover sm:h-64"
             />
             {photos.length > 1 ? (
               <div className="grid grid-cols-3 gap-2">
@@ -88,10 +88,10 @@ export default async function PropertyPage({
         >
           {property.dealType === "sale" ? "Продажа" : "Аренда"}
         </div>
-        <h1 className="mt-3 font-display text-4xl font-bold text-ink">
+        <h1 className="mt-3 break-words font-display text-[clamp(1.85rem,6vw,2.5rem)] font-bold text-ink">
           {property.title}
         </h1>
-        <p className="mt-2 text-lg text-ink/70">{property.address}</p>
+        <p className="mt-2 text-base text-ink/70 sm:text-lg">{property.address}</p>
         <div className="mt-4 flex flex-wrap gap-4 text-ink">
           <span>{formatArea(property.areaSqm)}</span>
           <span className="font-semibold">
@@ -109,11 +109,11 @@ export default async function PropertyPage({
             Планировка
           </Link>
         )}
-        <div className="mt-6 flex flex-wrap gap-3">
-          <a href="#ask" className="btn-primary">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <a href="#ask" className="btn-primary w-full sm:w-auto">
             Задать вопрос
           </a>
-          <a href="#viewing" className="btn-ghost">
+          <a href="#viewing" className="btn-ghost w-full sm:w-auto">
             Записаться на просмотр
           </a>
         </div>

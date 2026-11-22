@@ -37,7 +37,7 @@ export function HomeFeatured({
   }
 
   return (
-    <section className="mt-6 rounded-[28px] bg-white p-5 shadow-panel">
+    <section className="cabinet-card mt-6 p-5 md:p-6">
       <h2 className="font-display text-xl font-bold text-ink">Карточки на главной</h2>
       <p className="mt-1 text-sm text-ink/60">
         На первом экране сайта показываются две выбранные услуги и ссылка
