@@ -9,7 +9,10 @@ import { createSession, verifyPassword } from "@/lib/auth/session";
 export async function POST(req: Request) {
   if (!hasDatabase()) {
     return NextResponse.json(
-      { error: "База данных ещё не подключена" },
+      {
+        error:
+          "База не подключена. В Vercel: Storage → Create Database → Postgres, затем Redeploy.",
+      },
       { status: 503 },
     );
   }
