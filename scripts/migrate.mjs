@@ -23,6 +23,30 @@ try {
 
 const DUPLICATE = new Set(["42710", "42P07", "42701", "42P16", "42723"]);
 
+const TABLE_SENTINELS = [
+  ["users", "password_hash"],
+  ["media_assets", "storage_key"],
+  ["site_settings", "contacts_html"],
+  ["contacts", "notes"],
+  ["leads", "public_key"],
+  ["properties", "slug"],
+  ["services", "slug"],
+  ["property_versions", "address"],
+  ["service_versions", "short_description"],
+  ["sessions", "token_hash"],
+  ["messages", "body"],
+  ["threads", "unread_count"],
+  ["campaigns", "title"],
+  ["campaign_recipients", "campaign_id"],
+  ["channel_identities", "external_id"],
+  ["invitations", "token_hash"],
+  ["jobs", "payload"],
+  ["lead_markers", "code"],
+  ["provider_events", "external_event_id"],
+  ["subscription_topics", "consent_text"],
+  ["subscriptions", "consent_version"],
+];
+
 function splitSqlStatements(sql) {
   const out = [];
   let buf = "";
@@ -155,18 +179,56 @@ try {
     "create table if not exists schema_migrations (name text primary key, applied_at timestamptz not null default now())",
   );
 
-  const userCols = await client.query(`
-    select column_name from information_schema.columns
-    where table_schema = 'public' and table_name = 'users'
-  `);
-  if (
-    userCols.rows.length > 0 &&
-    !userCols.rows.some((row) => row.column_name === "password_hash")
-  ) {
-    await client.query(
-      "alter table public.users rename to users_legacy_unused",
+  for (const [table, sentinel] of TABLE_SENTINELS) {
+    const rel = await client.query("select to_regclass($1) as rel", [
+      `public.${table}`,
+    ]);
+    if (!rel.rows[0]?.rel) continue;
+    const col = await client.query(
+      `select 1 from information_schema.columns
+       where table_schema = 'public' and table_name = $1 and column_name = $2`,
+      [table, sentinel],
     );
-    console.log("migrate: renamed leftover public.users");
+    if (col.rowCount > 0) continue;
+    const destBase = `${table}_legacy_unused`;
+    const taken = await client.query("select to_regclass($1) as rel", [
+      `public.${destBase}`,
+    ]);
+    const dest = taken.rows[0]?.rel ? `${table}_legacy_${Date.now()}` : destBase;
+    await client.query(`alter table public.${table} rename to ${dest}`);
+    console.log(`migrate: renamed leftover public.${table}`);
+  }
+
+  const passwordHash = await client.query(`
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'users' and column_name = 'password_hash'
+  `);
+  const mediaAssets = await client.query(
+    "select to_regclass('public.media_assets') as rel",
+  );
+  if (passwordHash.rowCount === 0 || !mediaAssets.rows[0]?.rel) {
+    await client.query(
+      "delete from schema_migrations where name ~ '^[0-9]{3}_'",
+    );
+    console.log("migrate: reset incomplete migration history");
+  }
+
+  const repair = files.find((file) => file.startsWith("007_"));
+  if (repair) {
+    const statements = splitSqlStatements(
+      await readFile(`migrations/${repair}`, "utf8"),
+    );
+    for (const statement of statements) {
+      try {
+        await client.query(statement);
+      } catch (error) {
+        if (!DUPLICATE.has(error?.code)) {
+          console.error(`migrate: failed ${repair} prelude: ${error?.message}`);
+          throw error;
+        }
+      }
+    }
+    console.log("migrate: repaired missing columns");
   }
 
   const done = new Set(

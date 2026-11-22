@@ -1,3 +1,27 @@
+export const TABLE_SENTINELS = [
+  ["users", "password_hash"],
+  ["media_assets", "storage_key"],
+  ["site_settings", "contacts_html"],
+  ["contacts", "notes"],
+  ["leads", "public_key"],
+  ["properties", "slug"],
+  ["services", "slug"],
+  ["property_versions", "address"],
+  ["service_versions", "short_description"],
+  ["sessions", "token_hash"],
+  ["messages", "body"],
+  ["threads", "unread_count"],
+  ["campaigns", "title"],
+  ["campaign_recipients", "campaign_id"],
+  ["channel_identities", "external_id"],
+  ["invitations", "token_hash"],
+  ["jobs", "payload"],
+  ["lead_markers", "code"],
+  ["provider_events", "external_event_id"],
+  ["subscription_topics", "consent_text"],
+  ["subscriptions", "consent_version"],
+] as const;
+
 export const DUPLICATE_SCHEMA_CODES = new Set([
   "42710", // duplicate_object
   "42P07", // duplicate_table

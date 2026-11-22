@@ -4,6 +4,7 @@ import { hasDatabase, sql } from "./client";
 import {
   isDuplicateSchemaError,
   splitSqlStatements,
+  TABLE_SENTINELS,
 } from "./sql-statements";
 
 let pending: Promise<void> | null = null;
@@ -47,17 +48,51 @@ async function applyMigrations() {
       )
     `);
 
-    const userCols = await sql<{ column_name: string }[]>`
-      select column_name from information_schema.columns
-      where table_schema = 'public' and table_name = 'users'
+    for (const [table, sentinel] of TABLE_SENTINELS) {
+      const rel =
+        await sql.unsafe(`select to_regclass('public.${table}') as rel`) as {
+          rel: string | null;
+        }[];
+      if (!rel[0]?.rel) continue;
+      const col = await sql.unsafe(
+        `select 1 as ok from information_schema.columns
+         where table_schema = 'public' and table_name = '${table}' and column_name = '${sentinel}'`,
+      ) as { ok: number }[];
+      if (col.length > 0) continue;
+      const taken =
+        await sql.unsafe(
+          `select to_regclass('public.${table}_legacy_unused') as rel`,
+        ) as { rel: string | null }[];
+      const dest = taken[0]?.rel
+        ? `${table}_legacy_${Date.now()}`
+        : `${table}_legacy_unused`;
+      await sql.unsafe(`alter table public.${table} rename to ${dest}`);
+    }
+
+    const passwordHash = await sql<{ ok: number }[]>`
+      select 1 as ok from information_schema.columns
+      where table_schema = 'public' and table_name = 'users' and column_name = 'password_hash'
     `;
-    if (
-      userCols.length > 0 &&
-      !userCols.some((row) => row.column_name === "password_hash")
-    ) {
+    const mediaAssets =
+      await sql<{ rel: string | null }[]>`select to_regclass('public.media_assets') as rel`;
+    if (passwordHash.length === 0 || !mediaAssets[0]?.rel) {
       await sql.unsafe(
-        "alter table public.users rename to users_legacy_unused",
+        "delete from schema_migrations where name ~ '^[0-9]{3}_'",
       );
+    }
+
+    const repair = files.find((file) => file.startsWith("007_"));
+    if (repair) {
+      const statements = splitSqlStatements(
+        await readFile(path.join(dir, repair), "utf8"),
+      );
+      for (const statement of statements) {
+        try {
+          await sql.unsafe(statement);
+        } catch (error) {
+          if (!isDuplicateSchemaError(error)) throw error;
+        }
+      }
     }
 
     const doneRows =
